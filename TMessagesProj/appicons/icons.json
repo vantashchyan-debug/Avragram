@@ -1,0 +1,104 @@
+{
+  "icons": [
+    {
+      "id": "default",
+      "title": "Классика",
+      "description": "Голубой самолётик",
+      "author": "avragram",
+      "lossless": true,
+      "resource": "ic_launcher",
+      "component": "DefaultIcon",
+      "round": true
+    },
+    {
+      "id": "beta",
+      "resource": "ic_launcher_beta",
+      "author": "avragram",
+      "assetsOnly": true
+    },
+    {
+      "id": "glass",
+      "title": "B Glass",
+      "description": "Светлое жидкое стекло",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "glass_dark",
+      "title": "B Glass тёмная",
+      "description": "Тёмное стекло",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "night",
+      "title": "Ночь",
+      "description": "Глубокий синий",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "obsidian",
+      "title": "Обсидиан",
+      "description": "Чёрное стекло",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "neon_sunset",
+      "title": "Неоновый закат",
+      "description": "Розовый неон и закат",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "sakura",
+      "title": "Сакура",
+      "description": "Нежно-розовый",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "ocean",
+      "title": "Океан",
+      "description": "Бирюза и глубина",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "matrix",
+      "title": "Матрица",
+      "description": "Зелёный на чёрном",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "gold",
+      "title": "Золото",
+      "description": "Тёплый песок",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "forest",
+      "title": "Лес",
+      "description": "Глубокий зелёный",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "sunrise",
+      "title": "Рассвет",
+      "description": "Оранжево-красный",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "mono",
+      "title": "Белая",
+      "description": "Минимализм",
+      "author": "avragram",
+      "lossless": true
+    }
+  ]
+}

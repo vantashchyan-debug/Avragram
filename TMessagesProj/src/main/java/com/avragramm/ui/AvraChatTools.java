@@ -1,0 +1,161 @@
+package com.avragramm.ui;
+
+import android.content.Context;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.avragramm.AvraConfig;
+import com.avragramm.AvraSpam;
+import com.avragramm.AvraVoiceFx;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.ui.ActionBar.AlertDialog;
+import org.telegram.ui.ActionBar.BaseFragment;
+import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.EditTextBoldCursor;
+import org.telegram.ui.Components.LayoutHelper;
+
+/** Chat ⋮ menu tools: per-chat voice changer and message repeater ("Спам"). */
+public final class AvraChatTools {
+
+    private AvraChatTools() {}
+
+    // ---------------------------------------------------------------- voice changer
+
+    public static void showVoiceChanger(BaseFragment fragment, long dialogId) {
+        Context ctx = fragment.getParentActivity();
+        if (ctx == null) return;
+        int current = AvraConfig.voicePreset(dialogId);
+        int pitch = AvraConfig.voicePitch(dialogId);
+        String[] items = new String[AvraVoiceFx.NAMES.length + 1];
+        for (int i = 0; i < AvraVoiceFx.NAMES.length; i++) {
+            items[i] = (i == current ? "● " : "○ ") + AvraVoiceFx.NAMES[i];
+        }
+        items[AvraVoiceFx.NAMES.length] = "Тон: " + (pitch > 0 ? "+" : "") + pitch + " полутонов…";
+        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+        b.setTitle("Войсченджер в этом чате");
+        b.setItems(items, (d, which) -> {
+            if (which == AvraVoiceFx.NAMES.length) {
+                showPitch(fragment, dialogId);
+            } else {
+                AvraConfig.setVoice(dialogId, which, AvraConfig.voicePitch(dialogId));
+                toast(which == 0 ? "Войсченджер выключен" : "Эффект «" + AvraVoiceFx.NAMES[which] + "»: голосовые, кружки и звонки в этом чате");
+            }
+        });
+        b.setNegativeButton("Закрыть", null);
+        fragment.showDialog(b.create());
+    }
+
+    private static void showPitch(BaseFragment fragment, long dialogId) {
+        int[] values = {-12, -9, -7, -5, -3, -2, 0, 2, 3, 5, 7, 9, 12};
+        int pitch = AvraConfig.voicePitch(dialogId);
+        String[] items = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            items[i] = (values[i] == pitch ? "● " : "○ ") + (values[i] > 0 ? "+" : "") + values[i];
+        }
+        AlertDialog.Builder b = new AlertDialog.Builder(fragment.getParentActivity());
+        b.setTitle("Сдвиг тона (полутоны)");
+        b.setItems(items, (d, which) -> {
+            AvraConfig.setVoice(dialogId, AvraConfig.voicePreset(dialogId), values[which]);
+            showVoiceChanger(fragment, dialogId);
+        });
+        fragment.showDialog(b.create());
+    }
+
+    // ---------------------------------------------------------------- spam
+
+    public static void showSpam(BaseFragment fragment, int account, long dialogId, String presetText) {
+        Context ctx = fragment.getParentActivity();
+        if (ctx == null) return;
+        if (AvraSpam.isRunning(dialogId)) {
+            AvraSpam.stop(dialogId, true);
+            return;
+        }
+        LinearLayout ll = new LinearLayout(ctx);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.setPadding(AndroidUtilities.dp(24), AndroidUtilities.dp(4), AndroidUtilities.dp(24), 0);
+
+        EditTextBoldCursor text = field(ctx, "Текст сообщения", InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        if (!TextUtils.isEmpty(presetText)) text.setText(presetText);
+        EditTextBoldCursor count = field(ctx, "Сколько раз (1–" + AvraSpam.MAX_COUNT + ")", InputType.TYPE_CLASS_NUMBER);
+        count.setText("10");
+        EditTextBoldCursor interval = field(ctx, "Интервал, миллисекунд (от " + AvraSpam.MIN_INTERVAL_MS + ")", InputType.TYPE_CLASS_NUMBER);
+        interval.setText("1000");
+
+        ll.addView(label(ctx, "Сообщение"));
+        ll.addView(text, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 12));
+        ll.addView(label(ctx, "Количество"));
+        ll.addView(count, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 12));
+        ll.addView(label(ctx, "Интервал, мс (1000 мс = 1 с)"));
+        ll.addView(interval, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 8));
+        TextView warn = label(ctx, "Telegram ограничивает частые сообщения (FLOOD_WAIT): при интервале меньше ~1000 мс сообщения будут уходить пачками с задержкой, аккаунт могут временно ограничить. Минимум " + AvraSpam.MIN_INTERVAL_MS + " мс. Остановить: ⋮ → «Остановить спам».");
+        warn.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        ll.addView(warn);
+
+        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+        b.setTitle("Спам");
+        b.setView(ll);
+        b.setPositiveButton("Запустить", (d, w) -> {
+            String msg = text.getText() == null ? "" : text.getText().toString().trim();
+            if (msg.isEmpty()) {
+                toast("Пустое сообщение");
+                return;
+            }
+            int n = parseInt(count.getText() == null ? "" : count.getText().toString(), 10);
+            double ms = parseDouble(interval.getText() == null ? "" : interval.getText().toString(), 1000);
+            AvraSpam.start(account, dialogId, msg, n, (long) Math.ceil(ms));
+        });
+        b.setNegativeButton("Отмена", null);
+        fragment.showDialog(b.create());
+    }
+
+    private static EditTextBoldCursor field(Context ctx, String hint, int inputType) {
+        EditTextBoldCursor e = new EditTextBoldCursor(ctx);
+        e.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+        e.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+        e.setHintTextColor(Theme.getColor(Theme.key_dialogTextHint));
+        e.setHint(hint);
+        e.setInputType(inputType);
+        e.setBackground(null);
+        e.setLineColors(Theme.getColor(Theme.key_dialogInputField), Theme.getColor(Theme.key_dialogInputFieldActivated), Theme.getColor(Theme.key_text_RedBold));
+        e.setPadding(0, AndroidUtilities.dp(6), 0, AndroidUtilities.dp(6));
+        e.setCursorColor(Theme.getColor(Theme.key_dialogTextBlack));
+        e.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        return e;
+    }
+
+    private static TextView label(Context ctx, String s) {
+        TextView t = new TextView(ctx);
+        t.setText(s);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
+        t.setTextColor(Theme.getColor(Theme.key_dialogTextGray2));
+        return t;
+    }
+
+    private static int parseInt(String s, int def) {
+        try {
+            return Integer.parseInt(s.trim());
+        } catch (Exception e) {
+            return def;
+        }
+    }
+
+    private static double parseDouble(String s, double def) {
+        try {
+            return Double.parseDouble(s.trim().replace(',', '.'));
+        } catch (Exception e) {
+            return def;
+        }
+    }
+
+    private static void toast(String text) {
+        try {
+            org.telegram.ui.Components.BulletinFactory.global().createSimpleBulletin(org.telegram.messenger.R.raw.info, text).show();
+        } catch (Throwable ignore) {
+        }
+    }
+}
