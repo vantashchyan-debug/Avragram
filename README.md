@@ -44,3 +44,7 @@ Avragram создан на основе **[exteraGram](https://github.com/extera
 1. `git clone --recursive` этого репозитория.
 2. Создайте в корне файл `API_KEYS` и укажите в нём свои `APP_ID` и `APP_HASH`. Получить их можно на https://my.telegram.org. Также нужны пароли от своего keystore. Файл в репозиторий не входит.
 3. `./gradlew :TMessagesProj:assembleFullArm64Release` или `assembleFullArmv7Release`.
+
+## Шрифты
+
+Встроенные шрифты распространяются по лицензии SIL Open Font License 1.1: Manrope, Inter, Unbounded, Golos Text, Onest, JetBrains Mono, Rubik, Montserrat, Nunito, Comfortaa, Exo 2, Oswald, Raleway, Lora, Playfair Display, Caveat, Press Start 2P, Kurale, Ruslan Display (© Oleg Snarsky, Denis Masharov, Vladimir Rabdu), Russo One (© Jovanny Lemonad). Ruslan Display и Russo One включены без изменений.

@@ -1279,7 +1279,9 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         int clipRight = width + getPaddingLeft();
         final boolean predictiveBackTransition = newBackTransitions();
 
-        if (child == getBackgroundView()) {
+        if (avraTransition && transitionAnimationInProgress && (child == containerView || child == containerViewBack)) {
+            // Avragram transitions move / scale both screens: no edge clipping.
+        } else if (child == getBackgroundView()) {
             clipRight = (predictiveBackTransition || springRouteBackgroundDrawable != null) ? width + getPaddingLeft() : translationX + dp(1);
         } else if (child == getForegroundView()) {
             clipLeft = translationX;
@@ -2131,6 +2133,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
             animationRunnable = null;
         }
         setAlpha(1.0f);
+        avraTransition = false;
         resetViewProperties(containerView);
         resetViewProperties(containerViewBack);
         springRouteBackgroundDrawable = null;
@@ -2393,9 +2396,16 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         return !transitionAnimationInProgress || openingAnimation ? containerView : containerViewBack;
     }
 
+    /** Avragram draws this transition itself (see com.avragramm.AvraAnim); set for the whole animation. */
+    private boolean avraTransition;
+
     private void startLayoutAnimation(final boolean open, final boolean first, final boolean preview) {
-        final boolean useAospTransition = !preview && ExteraConfig.getAospTransitions();
-        final boolean useSpringAnimation = ExteraConfig.getSpringAnimations();
+        if (first) {
+            avraTransition = !preview && com.avragramm.AvraAnim.customTransition();
+        }
+        final boolean avra = avraTransition && !preview;
+        final boolean useAospTransition = !avra && !preview && ExteraConfig.getAospTransitions();
+        final boolean useSpringAnimation = !avra && ExteraConfig.getSpringAnimations();
         if (first) {
             animationProgress = 0.0f;
             lastFrameTime = System.nanoTime() / 1000000;
@@ -2527,7 +2537,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                     dt = 18;
                 }
                 lastFrameTime = newTime;
-                float duration = useAospTransition ? aospTransitionDuration : preview && open ? 190.0f : 150.0f;
+                float duration = useAospTransition ? aospTransitionDuration : preview && open ? 190.0f : com.avragramm.AvraAnim.transitionDuration(150.0f);
                 animationProgress += dt / duration;
                 if (animationProgress > 1.0f) {
                     animationProgress = 1.0f;
@@ -2574,7 +2584,11 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                 } else {
                     interpolated = decelerateInterpolator.getInterpolation(animationProgress);
                 }
-                if (useAospTransition) {
+                if (avra) {
+                    com.avragramm.AvraAnim.applyTransition(open ? containerView : containerViewBack, open ? containerViewBack : containerView, open, interpolated);
+                    containerView.invalidate();
+                    invalidate();
+                } else if (useAospTransition) {
                     WindowTransitionAnimationHelper.apply(containerView, containerViewBack, open, interpolated);
                     invalidate();
                 } else if (open) {
@@ -2917,7 +2931,9 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                     animation = fragment.onCustomTransitionAnimation(true, () -> onAnimationEndCheck(false));
                 }
                 if (animation == null) {
-                    if (!preview && ExteraConfig.getAospTransitions()) {
+                    if (!preview && com.avragramm.AvraAnim.customTransition()) {
+                        com.avragramm.AvraAnim.applyTransition(containerView, containerViewBack, true, 0f);
+                    } else if (!preview && ExteraConfig.getAospTransitions()) {
                         containerView.setScaleX(1.0f);
                         containerView.setScaleY(1.0f);
                         WindowTransitionAnimationHelper.apply(containerView, containerViewBack, true, 0f);
@@ -4081,6 +4097,8 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         v.setScaleY(1);
         v.setTranslationX(0);
         v.setTranslationY(0);
+        v.setRotationY(0);
+        v.setRotation(0);
     }
 
     @Override

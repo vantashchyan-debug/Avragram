@@ -41,6 +41,8 @@ public final class AvraFonts {
             {"playfair", "Playfair Display", "playfairdisplay", "400", "playfairdisplay", "800"},
             {"caveat", "Caveat", "caveat", "500", "caveat", "700"},
             {"pressstart", "Press Start 2P", "pressstart2p", "0", "pressstart2p", "0"},
+            {"gothic", "Ruslan Display + Kurale", "kurale", "0", "ruslandisplay", "0"},
+            {"russo", "Russo One + Manrope", "manrope", "500", "russoone", "0"},
     };
 
     private static volatile String current;

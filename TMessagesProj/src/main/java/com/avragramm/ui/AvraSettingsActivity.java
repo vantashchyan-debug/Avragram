@@ -39,7 +39,7 @@ import static org.telegram.messenger.LocaleController.getString;
  */
 public class AvraSettingsActivity extends AvraDesignFragment {
 
-    private static final int ID_THEMES = 10, ID_TEXT = 11, ID_BUBBLES = 12, ID_SHAPES = 13, ID_GLASS = 14, ID_ICON = 15;
+    private static final int ID_THEMES = 10, ID_TEXT = 11, ID_BUBBLES = 12, ID_SHAPES = 13, ID_GLASS = 14, ID_ICON = 15, ID_ANIM = 16;
     private static final int ID_TELEGRAM = 20, ID_CLIENT = 21;
     private static final int ID_RESET_ALL = 30;
     /** Same padding / height the client uses for two-line buttons (BasePreferencesActivity). */
@@ -77,6 +77,7 @@ public class AvraSettingsActivity extends AvraDesignFragment {
         items.add(tab(ID_TEXT, R.drawable.msg_text_outlined, R.string.AvraTabText, fontName() + " · " + getString(R.string.AvraTabTextInfo)));
         items.add(tab(ID_BUBBLES, R.drawable.msg_discussion, R.string.AvraTabBubbles, getString(R.string.AvraTabBubblesInfo)));
         items.add(tab(ID_SHAPES, R.drawable.msg_customize, R.string.AvraTabShapes, getString(R.string.AvraTabShapesInfo)));
+        items.add(tab(ID_ANIM, R.drawable.msg_speed, R.string.AvraTabAnim, AvraAnimActivity.transitionTitle(AvraDesign.transition()) + " · " + getString(R.string.AvraTabAnimInfo)));
         items.add(tab(ID_GLASS, R.drawable.msg_blur_radial, R.string.AvraTabGlass, getString(R.string.AvraTabGlassInfo)));
         items.add(tab(ID_ICON, R.drawable.msg_photos, R.string.AvraAppIcon, AppIconController.getSelectedIcon().getTitle()));
         items.add(UItem.asShadow(null));
@@ -98,6 +99,7 @@ public class AvraSettingsActivity extends AvraDesignFragment {
             case ID_BUBBLES: presentFragment(new AvraBubblesActivity()); break;
             case ID_SHAPES: presentFragment(new AvraShapesActivity()); break;
             case ID_GLASS: presentFragment(new AvraGlassActivity()); break;
+            case ID_ANIM: presentFragment(new AvraAnimActivity()); break;
             case ID_ICON: presentFragment(new AppIconsActivity()); break;
             case ID_TELEGRAM: presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)); break;
             case ID_CLIENT: presentFragment(new AppearancePreferencesActivity()); break;

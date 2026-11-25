@@ -5,6 +5,8 @@
     <string name="AvraStyle_bglass_dark">B Glass Тёмная</string>
     <string name="AvraStyle_light">Avragram</string>
     <string name="AvraStyle_dark">Avragram Тёмная</string>
+    <string name="AvraStyle_gothic">Готика</string>
+    <string name="AvraStyle_miami">Неоновый Майами</string>
     <string name="AvraStyle_air">Воздух</string>
     <string name="AvraStyle_air_dark">Воздух Тёмный</string>
     <string name="AvraStyle_obsidian">Обсидиан</string>

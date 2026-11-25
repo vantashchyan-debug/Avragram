@@ -201,8 +201,8 @@ class AppNavigationPreferencesActivity : BasePreferencesActivity() {
         items.add(uButton(AppNavigationItem.TABLET_MODE.id, getString(R.string.TabletMode), value = tabletModeOptions[tabletMode], linkAlias = "tabletMode"))
         items.add(uButton(AppNavigationItem.BOTTOM_NAVIGATION_BAR_MODE.id, getString(R.string.BottomNavigationBarMode), value = bottomNavigationModes[getMode()], linkAlias = "bottomNavigationBarMode"))
         items.addIf(visible(), uCheck(AppNavigationItem.HIDE_NAVIGATION_BAR_LABELS.id, getString(R.string.HideNavigationBarLabels), hideNavigationBarLabels, linkAlias = "hideNavigationBarLabels"))
-        items.add(uButton(AppNavigationItem.TRANSITION_ANIMATION.id, getString(R.string.TransitionAnimation), value = transitionAnimations[transitionAnimation.ordinal], linkAlias = "transitionAnimation"))
-        items.add(UItem.asShadow(getString(R.string.TransitionAnimationInfo)))
+        // Avragram: the transition animation lives in Appearance → Animations (style base + override).
+        items.add(UItem.asShadow(null))
 
         items.addIf(allowPredictive, UItem.asCustom(AppNavigationItem.PREDICTIVE_BACK_ANIMATION.id, predictiveBackSeekbar).setLinkAlias("predictiveBackAnimation", this))
         items.addIf(allowPredictive, UItem.asShadow(getString(R.string.PredictiveBackInfo)))

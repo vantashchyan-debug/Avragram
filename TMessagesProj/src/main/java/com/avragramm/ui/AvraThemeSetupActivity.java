@@ -23,7 +23,7 @@ import static org.telegram.messenger.LocaleController.getString;
 public class AvraThemeSetupActivity extends AvraDesignFragment {
 
     private static final int ID_WHOLE = 10, ID_PALETTE = 11, ID_LAYOUT = 12;
-    private static final int ID_FONT = 20, ID_PALETTES = 21, ID_BUTTONS = 22, ID_BUBBLES = 23, ID_AVATARS = 24, ID_LISTS = 25;
+    private static final int ID_FONT = 20, ID_PALETTES = 21, ID_BUTTONS = 22, ID_BUBBLES = 23, ID_AVATARS = 24, ID_LISTS = 25, ID_ANIM = 26;
     private static final int PAD = 64, HEIGHT = 60;
 
     /** Index in {@link AvraStyles}, -1 = Telegram. */
@@ -86,6 +86,8 @@ public class AvraThemeSetupActivity extends AvraDesignFragment {
         int dividerTitle = divider == AvraDesign.DIVIDER_CARDS ? R.string.DividerStyleSegments
                 : divider == AvraDesign.DIVIDER_HIDDEN ? R.string.DividerStyleHidden : R.string.DividerStyleLine;
         items.add(UItem.asButton(ID_LISTS, R.drawable.msg_list, getString(R.string.AvraSections), getString(dividerTitle)));
+        items.add(UItem.asButton(ID_ANIM, R.drawable.msg_speed, getString(R.string.AvraTabAnim),
+                AvraAnimActivity.transitionTitle(AvraDesign.baseInt(AvraDesign.Field.TRANSITION, n))));
         items.add(UItem.asShadow(getString(R.string.AvraThemePartsInfo)));
     }
 
@@ -111,6 +113,7 @@ public class AvraThemeSetupActivity extends AvraDesignFragment {
             case ID_FONT: presentFragment(new AvraTextActivity()); break;
             case ID_PALETTES: presentFragment(new AvraPalettesActivity()); break;
             case ID_BUBBLES: presentFragment(new AvraBubblesActivity()); break;
+            case ID_ANIM: presentFragment(new AvraAnimActivity()); break;
             case ID_BUTTONS:
             case ID_AVATARS:
             case ID_LISTS: presentFragment(new AvraShapesActivity()); break;

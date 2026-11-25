@@ -23,6 +23,8 @@ STYLES = [
     ("avra_bglass_dark", "B Glass Dark", "B Glass Тёмная", True, "#5B5FF5", "#0A0B1C", "#15172E", "#111326", "#F1F2FF", "#9497B5", "#1B1D38", "#5457EE", "#FFFFFF", "#FFFFFF", ["#090A1E", "#2E33A6", "#5B2A2C", "#0E3A34"], True),
     ("avra_light", "Avragram", "Avragram", False, "#4F5BF0", "#EEF0F6", "#FFFFFF", "#FFFFFF", "#11131A", "#6B7085", "#FFFFFF", "#4F5BF0", "#FFFFFF", "#FFFFFF", ["#B9C3FF", "#FFD3C2", "#BDEFE0", "#E3D5FF"], False),
     ("avra_dark", "Avragram Dark", "Avragram Тёмная", True, "#7C86FF", "#0B0C12", "#14151D", "#14151D", "#F2F3F8", "#8D92A8", "#1E2030", "#4F5BF0", "#FFFFFF", "#FFFFFF", ["#1B1F4A", "#3A1E2A", "#0F3A33", "#241A45"], False),
+    ("avra_gothic", "Gothic", "Готика", True, "#B3122E", "#0A0708", "#140E10", "#120B0D", "#E8DCCB", "#8C7B74", "#1C1316", "#5A0F1E", "#F3E6D3", "#F3E6D3", ["#0A0708", "#2A0A12", "#120A14", "#1E0E0A"], False),
+    ("avra_miami", "Miami Nights", "Неоновый Майами", True, "#FF3E9A", "#160A2A", "#22103D", "#1E0E36", "#FFF3E6", "#C9A8D9", "#2B1650", "#FF6A3D", "#FFFFFF", "#FFFFFF", ["#FF9F45", "#FF3E9A", "#7B2FF7", "#1FD1C9"], True),
     ("avra_air", "Air", "Воздух", False, "#3F8CFF", "#EAF3FF", "#FFFFFF", "#FFFFFF", "#0F1B2D", "#62738C", "#FFFFFF", "#3F8CFF", "#FFFFFF", "#FFFFFF", ["#BFDCFF", "#FFE0CC", "#CFF3E4", "#F6D6F2"], True),
     ("avra_air_dark", "Air Dark", "Воздух Тёмный", True, "#6EA8FF", "#08111F", "#0F1A2B", "#0F1A2B", "#EEF4FF", "#8A9AB5", "#18263B", "#2F6FE0", "#FFFFFF", "#FFFFFF", ["#0E2547", "#3A2430", "#0E3A3A", "#2A1E4A"], True),
     ("avra_obsidian", "Obsidian", "Обсидиан", True, "#C6F432", "#0B0B0C", "#141416", "#141416", "#EDEDED", "#8A8A8F", "#1C1C1F", "#C6F432", "#0B0B0C", "#0B0B0C", ["#0B0B0C", "#151A0A", "#0E0E10", "#1A1F0C"], False),
@@ -61,6 +63,8 @@ DESIGN = {
     "avra_bglass_dark": ("manrope",        1, 17, 20, 2, 24, False, False, True,  True,  True,  True),
     "avra_light":       ("inter",          2, 16, 22, 2, 20, False, False, False, True,  True,  False),
     "avra_dark":        ("inter",          2, 16, 22, 2, 20, False, False, False, True,  True,  False),
+    "avra_gothic":      ("gothic",         3,  6,  8, 1,  4, True,  True,  False, False, False, False),
+    "avra_miami":       ("russo",          4, 12, 14, 2, 16, False, True,  True,  True,  True,  True),
     "avra_air":         ("nunito",         1, 17, 28, 2, 26, True,  False, True,  True,  True,  True),
     "avra_air_dark":    ("nunito",         1, 17, 28, 2, 26, True,  False, True,  True,  True,  True),
     "avra_obsidian":    ("onest_mono",     3,  4,  4, 1,  4, False, True,  False, False, False, False),
@@ -91,6 +95,25 @@ DESIGN = {
     "avra_cherry":      ("raleway",        2, 14, 20, 2, 18, False, False, False, True,  True,  False),
 }
 
+
+# Per-style animations: screen transition (0 Telegram, 1 Android, 2 Spring, 3 Slide, 4 Fade, 5 Zoom,
+# 6 Slide up, 7 Flip, 8 Glitch, 9 Mist, 10 None), new message (0 Telegram, 1 Fade, 2 Pop, 3 Slide,
+# 4 Swing, 5 Rise), speed in percent of the normal duration (more = slower)
+ANIM = {
+    "avra_bglass": (2, 2, 100), "avra_bglass_dark": (2, 2, 100),
+    "avra_light": (2, 0, 100), "avra_dark": (2, 0, 100),
+    "avra_gothic": (9, 1, 140), "avra_miami": (5, 3, 90),
+    "avra_air": (5, 5, 110), "avra_air_dark": (5, 5, 110),
+    "avra_obsidian": (3, 0, 85), "avra_signal": (6, 2, 100), "avra_neon_sunset": (5, 3, 100),
+    "avra_sakura": (4, 4, 120), "avra_ocean": (6, 5, 115), "avra_matrix": (8, 1, 100),
+    "avra_sand": (4, 1, 120), "avra_neon": (8, 2, 90), "avra_forest": (3, 5, 110),
+    "avra_graphite": (1, 0, 100), "avra_sunset": (5, 2, 100), "avra_aurora": (9, 1, 110),
+    "avra_lavender": (4, 4, 115), "avra_mint": (2, 2, 100), "avra_coffee": (3, 1, 120),
+    "avra_paper": (7, 1, 110), "avra_terminal": (3, 0, 60), "avra_pixel": (7, 2, 80),
+    "avra_cyber": (8, 3, 90), "avra_minimal": (0, 0, 100), "avra_caramel": (5, 2, 110),
+    "avra_midnight": (6, 1, 110), "avra_notebook": (7, 4, 110), "avra_royal": (9, 1, 120),
+    "avra_ice": (4, 5, 110), "avra_cherry": (5, 4, 100),
+}
 
 
 def parse_hex(h):
@@ -252,6 +275,9 @@ def main():
             f.write("    public static final int[] %s = {%s};\n" % (name, j(str(d[k]) for d in D)))
         for name, k in (("CENTER", 6), ("SQUARE_FAB", 7)):
             f.write("    public static final boolean[] %s = {%s};\n" % (name, j(b(d[k]) for d in D)))
+        N = [ANIM[e[0]] for e in entries]
+        for name, k in (("TRANSITION", 0), ("MSG_ANIM", 1), ("ANIM_SPEED", 2)):
+            f.write("    public static final int[] %s = {%s};\n" % (name, j(str(n[k]) for n in N)))
         f.write('\n    public static boolean isAvra(String assetName) {\n        return assetName != null && assetName.startsWith("avra_");\n    }\n')
         f.write("\n    public static int indexOfAsset(String assetName) {\n        if (assetName != null) for (int i = 0; i < ASSETS.length; i++) if (ASSETS[i].equals(assetName)) return i;\n        return -1;\n    }\n")
         f.write("\n    public static int indexOfName(String name) {\n        if (name != null) for (int i = 0; i < NAMES.length; i++) if (NAMES[i].equals(name)) return i;\n        return -1;\n    }\n")

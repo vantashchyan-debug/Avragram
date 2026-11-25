@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.exteragram.messenger.DividerStyle;
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.TransitionAnimation;
 
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessagesController;
@@ -34,6 +35,14 @@ public final class AvraDesign {
 
     public static final int BUBBLE_MAX = 17, AVATAR_MAX = 28, SECTION_MAX = 28;
 
+    /** Screen transitions. 0–2 are Telegram / the client's own engines, the rest are Avragram's ({@link AvraAnim}). */
+    public static final int TR_TELEGRAM = 0, TR_ANDROID = 1, TR_SPRING = 2, TR_SLIDE = 3, TR_FADE = 4, TR_ZOOM = 5,
+            TR_SLIDE_UP = 6, TR_FLIP = 7, TR_GLITCH = 8, TR_MIST = 9, TR_NONE = 10, TR_MAX = 10;
+    /** New-message animations. */
+    public static final int MSG_TELEGRAM = 0, MSG_FADE = 1, MSG_POP = 2, MSG_SLIDE = 3, MSG_SWING = 4, MSG_RISE = 5, MSG_MAX = 5;
+    /** Speed in percent of the normal duration (more = slower). */
+    public static final int SPEED_MIN = 25, SPEED_MAX = 300;
+
     /** Every mechanic the layers manage. The order is part of nothing persistent; keys use {@link #key}. */
     public enum Field {
         FONT("font"),
@@ -47,7 +56,11 @@ public final class AvraDesign {
         SECTION("section"),
         SEPARATE_HEADERS("separateHeaders"),
         CENTER_TITLE("centerTitle"),
-        SQUARE_FAB("squareFab");
+        SQUARE_FAB("squareFab"),
+        TRANSITION("transition"),
+        TRANSITION_SPEED("transitionSpeed"),
+        MSG_ANIM("msgAnim"),
+        MSG_SPEED("msgSpeed");
 
         public final String key;
 
@@ -58,11 +71,13 @@ public final class AvraDesign {
 
     private static final String KEY_BASE = "design.base";
     private static final String KEY_MIGRATED = "design.v3";
+    private static final String KEY_MIGRATED_ANIM = "design.anim1";
     private static final String TELEGRAM = "";
 
     /** Effective values cached for hot paths (bubble drawing, button creation). */
     private static volatile int buttonShape = -1;
     private static volatile int nearRadius = -1;
+    private static volatile int transition = -1, transitionSpeed = -1, msgAnim = -1, msgSpeed = -1;
     /** Set when a theme switch changed the effective font; the Appearance screens offer a restart. */
     public static volatile boolean fontChangedByTheme;
 
@@ -102,6 +117,10 @@ public final class AvraDesign {
             case SEPARATE_HEADERS: return 1;
             case CENTER_TITLE: return i < 0 ? 0 : (AvraStyles.CENTER[i] ? 1 : 0);
             case SQUARE_FAB: return i < 0 ? 0 : (AvraStyles.SQUARE_FAB[i] ? 1 : 0);
+            case TRANSITION: return i < 0 ? TR_SPRING : AvraStyles.TRANSITION[i];
+            case TRANSITION_SPEED:
+            case MSG_SPEED: return i < 0 ? 100 : AvraStyles.ANIM_SPEED[i];
+            case MSG_ANIM: return i < 0 ? MSG_TELEGRAM : AvraStyles.MSG_ANIM[i];
             default: throw new IllegalArgumentException(f.name());
         }
     }
@@ -175,6 +194,10 @@ public final class AvraDesign {
             case AVATAR: return Math.max(0, Math.min(AVATAR_MAX, v));
             case SECTION: return Math.max(0, Math.min(SECTION_MAX, v));
             case DIVIDER: return Math.max(DIVIDER_HIDDEN, Math.min(DIVIDER_CARDS, v));
+            case TRANSITION: return Math.max(TR_TELEGRAM, Math.min(TR_MAX, v));
+            case MSG_ANIM: return Math.max(MSG_TELEGRAM, Math.min(MSG_MAX, v));
+            case TRANSITION_SPEED:
+            case MSG_SPEED: return Math.max(SPEED_MIN, Math.min(SPEED_MAX, v));
             default: return v != 0 ? 1 : 0;
         }
     }
@@ -222,10 +245,29 @@ public final class AvraDesign {
             if (!prefs().getBoolean(KEY_MIGRATED, false)) {
                 ensureMigrated(AvraStyles.isAvra(theme.assetName) ? theme.name : TELEGRAM);
             }
+            ensureAnimMigrated();
             if (sync()) fontChangedByTheme = true;
         } catch (Throwable e) {
             FileLog.e(e);
         }
+    }
+
+    /**
+     * 1.5: the client's transition setting (Telegram / Android / Spring) moved here. A value the user
+     * picked before becomes an override if it differs from the active style, so nothing changes visibly.
+     */
+    private static void ensureAnimMigrated() {
+        SharedPreferences p = prefs();
+        if (p.getBoolean(KEY_MIGRATED_ANIM, false)) return;
+        SharedPreferences.Editor e = p.edit();
+        TransitionAnimation t = ExteraConfig.getTransitionAnimation();
+        int current = t == TransitionAnimation.AOSP ? TR_ANDROID : t == TransitionAnimation.SPRING ? TR_SPRING : TR_TELEGRAM;
+        // Spring is the client's default: only a value the user actually changed is kept, so styles show their own animation.
+        if (!p.contains(Field.TRANSITION.key) && current != TR_SPRING && current != baseInt(Field.TRANSITION)) {
+            e.putInt(Field.TRANSITION.key, current);
+        }
+        e.putBoolean(KEY_MIGRATED_ANIM, true);
+        e.apply();
     }
 
     // ------------------------------------------------------------------------------------ layout presets
@@ -254,7 +296,9 @@ public final class AvraDesign {
         return AvraStyles.FONT[a].equals(AvraStyles.FONT[b]) && AvraStyles.BUTTON[a] == AvraStyles.BUTTON[b]
                 && AvraStyles.BUBBLE[a] == AvraStyles.BUBBLE[b] && AvraStyles.AVATAR[a] == AvraStyles.AVATAR[b]
                 && AvraStyles.DIVIDER[a] == AvraStyles.DIVIDER[b] && AvraStyles.SECTION[a] == AvraStyles.SECTION[b]
-                && AvraStyles.CENTER[a] == AvraStyles.CENTER[b] && AvraStyles.SQUARE_FAB[a] == AvraStyles.SQUARE_FAB[b];
+                && AvraStyles.CENTER[a] == AvraStyles.CENTER[b] && AvraStyles.SQUARE_FAB[a] == AvraStyles.SQUARE_FAB[b]
+                && AvraStyles.TRANSITION[a] == AvraStyles.TRANSITION[b] && AvraStyles.MSG_ANIM[a] == AvraStyles.MSG_ANIM[b]
+                && AvraStyles.ANIM_SPEED[a] == AvraStyles.ANIM_SPEED[b];
     }
 
     /** True if the active layout is the one of style {@code i} (-1 = Telegram). */
@@ -290,6 +334,14 @@ public final class AvraDesign {
     public static synchronized boolean sync() {
         buttonShape = value(Field.BUTTON);
         nearRadius = value(Field.BUBBLE_NEAR);
+        transition = value(Field.TRANSITION);
+        transitionSpeed = value(Field.TRANSITION_SPEED);
+        msgAnim = value(Field.MSG_ANIM);
+        msgSpeed = value(Field.MSG_SPEED);
+        // Telegram / Android / Spring are the client's engines; Avragram's own styles run on the classic frame loop.
+        TransitionAnimation engine = transition == TR_ANDROID ? TransitionAnimation.AOSP
+                : transition == TR_SPRING ? TransitionAnimation.SPRING : TransitionAnimation.DEFAULT;
+        if (ExteraConfig.getTransitionAnimation() != engine) ExteraConfig.setTransitionAnimation(engine);
 
         int bubble = value(Field.BUBBLE);
         if (SharedConfig.bubbleRadius != bubble) {
@@ -370,6 +422,31 @@ public final class AvraDesign {
     }
 
     // ------------------------------------------------------------------------------------ hot-path readers
+
+    /** Active screen transition ({@link #TR_TELEGRAM} …). */
+    public static int transition() {
+        int v = transition;
+        if (v < 0) transition = v = value(Field.TRANSITION);
+        return v;
+    }
+
+    public static int transitionSpeed() {
+        int v = transitionSpeed;
+        if (v < 0) transitionSpeed = v = value(Field.TRANSITION_SPEED);
+        return v;
+    }
+
+    public static int msgAnim() {
+        int v = msgAnim;
+        if (v < 0) msgAnim = v = value(Field.MSG_ANIM);
+        return v;
+    }
+
+    public static int msgSpeed() {
+        int v = msgSpeed;
+        if (v < 0) msgSpeed = v = value(Field.MSG_SPEED);
+        return v;
+    }
 
     public static int buttonShape() {
         int s = buttonShape;

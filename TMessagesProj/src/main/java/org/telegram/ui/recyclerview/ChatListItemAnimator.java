@@ -350,7 +350,9 @@ public class ChatListItemAnimator extends DefaultItemAnimator {
         if (!(chatMessageCell != null && chatMessageCell.getTransitionParams().ignoreAlpha)) {
             holder.itemView.setAlpha(1);
         }
+        boolean sendTransition = false;
         if (activity != null && chatMessageCell != null && activity.animatingMessageObjects.contains(chatMessageCell.getMessageObject())) {
+            sendTransition = true;
             activity.animatingMessageObjects.remove(chatMessageCell.getMessageObject());
             if (activity.getChatActivityEnterView().canShowMessageTransition()) {
                 if (chatMessageCell.getMessageObject().isVoice()) {
@@ -367,8 +369,20 @@ public class ChatListItemAnimator extends DefaultItemAnimator {
                 activity.getChatActivityEnterView().startMessageTransition();
             }
         }
-        animation.translationY(0).setDuration(getMoveDuration())
-                .setInterpolator(translationInterpolator)
+        // Avragram: extra entrance for new messages (own text messages keep Telegram's flight from the input field).
+        final boolean avraEnter = chatMessageCell != null && !sendTransition && !chatMessageCell.getTransitionParams().ignoreAlpha
+                && com.avragramm.AvraAnim.customMessages();
+        long duration = getMoveDuration();
+        android.view.animation.Interpolator interpolator = translationInterpolator;
+        if (avraEnter) {
+            com.avragramm.AvraAnim.prepareMessage(view, chatMessageCell.getMessageObject() != null && chatMessageCell.getMessageObject().isOutOwner());
+            view.setTranslationY(view.getTranslationY() + com.avragramm.AvraAnim.extraRise());
+            duration = com.avragramm.AvraAnim.messageDuration(duration);
+            interpolator = com.avragramm.AvraAnim.messageInterpolator(translationInterpolator);
+            animation.alpha(1f).scaleX(1f).scaleY(1f).translationX(0f).rotation(0f);
+        }
+        animation.translationY(0).setDuration(duration)
+                .setInterpolator(interpolator)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animator) {
@@ -377,6 +391,7 @@ public class ChatListItemAnimator extends DefaultItemAnimator {
 
                     @Override
                     public void onAnimationCancel(Animator animator) {
+                        if (avraEnter) com.avragramm.AvraAnim.finishMessage(view);
                         view.setTranslationY(0);
                         if (view instanceof ChatMessageCell) {
                             ((ChatMessageCell) view).getTransitionParams().messageEntering = false;
@@ -385,6 +400,7 @@ public class ChatListItemAnimator extends DefaultItemAnimator {
 
                     @Override
                     public void onAnimationEnd(Animator animator) {
+                        if (avraEnter) com.avragramm.AvraAnim.finishMessage(view);
                         if (view instanceof ChatMessageCell) {
                             ((ChatMessageCell) view).getTransitionParams().messageEntering = false;
                         }

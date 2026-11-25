@@ -51,12 +51,13 @@ public class AvraLayoutsActivity extends AvraDesignFragment {
         return n == null ? getString(R.string.AvraFontSystem) : n;
     }
 
-    /** "Manrope · buttons: Pill · bubbles 17 dp" for a layout (-1 = Telegram). */
+    /** "Manrope · buttons: Pill · bubbles 17 dp · Zoom" for a layout (-1 = Telegram). */
     static String describe(int i) {
         String name = i < 0 ? "" : AvraStyles.NAMES[i];
         int button = AvraDesign.baseInt(AvraDesign.Field.BUTTON, name);
         return formatString(R.string.AvraLayoutDesc, fontTitle(AvraDesign.baseFont(name)),
-                getString(BUTTON_TITLES[button]), AvraDesign.baseInt(AvraDesign.Field.BUBBLE, name));
+                getString(BUTTON_TITLES[button]), AvraDesign.baseInt(AvraDesign.Field.BUBBLE, name),
+                AvraAnimActivity.transitionTitle(AvraDesign.baseInt(AvraDesign.Field.TRANSITION, name)));
     }
 
     /** Title of the active layout. */
