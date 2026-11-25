@@ -13,6 +13,8 @@ import org.telegram.ui.ActionBar.Theme;
  */
 public final class AvraBrand {
     public static final String NAME = "Avragram";
+    /** Avragram's own release number (see CHANGELOG.md); the base client version stays in versionName for plugin compatibility. */
+    public static final String VERSION = "1.2.0";
     public static final String[] AUTHORS = {"mangofag", "obijenniy_baka"};
     /** The single attribution line required by the base project's license (GPL-3 additional terms). */
     public static final String BASED_ON_URL = "https://github.com/exteraSquad/exteraGram";
@@ -20,7 +22,7 @@ public final class AvraBrand {
     private AvraBrand() {}
 
     public static String version() {
-        return NAME + " " + BuildVars.BUILD_VERSION_STRING + " (" + BuildVars.BUILD_VERSION + ")";
+        return NAME + " " + VERSION + " (" + BuildVars.BUILD_VERSION_STRING + ", " + BuildVars.BUILD_VERSION + ")";
     }
 
     public static String footer() {

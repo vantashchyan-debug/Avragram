@@ -313,9 +313,13 @@ public class AvraSettingsActivity extends UniversalFragment {
         Context ctx = ApplicationLoader.applicationContext;
         Intent i = ctx.getPackageManager().getLaunchIntentForPackage(ctx.getPackageName());
         if (i == null) return;
-        Intent restart = Intent.makeRestartActivityTask(i.getComponent());
-        ctx.startActivity(restart);
-        Runtime.getRuntime().exit(0);
+        // Let pending writes (language pack, settings) finish before the process goes away.
+        org.telegram.messenger.SharedConfig.saveConfig();
+        AndroidUtilities.runOnUIThread(() -> {
+            Intent restart = Intent.makeRestartActivityTask(i.getComponent());
+            ctx.startActivity(restart);
+            AndroidUtilities.runOnUIThread(() -> android.os.Process.killProcess(android.os.Process.myPid()), 400);
+        }, 600);
     }
 
     private void applyTelegram() {

@@ -23,6 +23,146 @@
         </activity-alias>
 
         <activity-alias
+            android:name="com.avragramm.app.SpaceIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_space"
+            android:roundIcon="@mipmap/ic_launcher_space"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.PixelIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_pixel"
+            android:roundIcon="@mipmap/ic_launcher_pixel"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.NeonIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_neon"
+            android:roundIcon="@mipmap/ic_launcher_neon"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.OrigamiIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_origami"
+            android:roundIcon="@mipmap/ic_launcher_origami"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.SynthwaveIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_synthwave"
+            android:roundIcon="@mipmap/ic_launcher_synthwave"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.BlueprintIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blueprint"
+            android:roundIcon="@mipmap/ic_launcher_blueprint"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.CloudsIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_clouds"
+            android:roundIcon="@mipmap/ic_launcher_clouds"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
             android:name="com.avragramm.app.GlassIcon"
             android:enabled="false"
             android:exported="true"
@@ -63,11 +203,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.NightIcon"
+            android:name="com.avragramm.app.HoloIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_night"
-            android:roundIcon="@mipmap/ic_launcher_night"
+            android:icon="@mipmap/ic_launcher_holo"
+            android:roundIcon="@mipmap/ic_launcher_holo"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -83,11 +223,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.ObsidianIcon"
+            android:name="com.avragramm.app.MoonIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_obsidian"
-            android:roundIcon="@mipmap/ic_launcher_obsidian"
+            android:icon="@mipmap/ic_launcher_moon"
+            android:roundIcon="@mipmap/ic_launcher_moon"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -103,11 +243,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.NeonSunsetIcon"
+            android:name="com.avragramm.app.WatermelonIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_neon_sunset"
-            android:roundIcon="@mipmap/ic_launcher_neon_sunset"
+            android:icon="@mipmap/ic_launcher_watermelon"
+            android:roundIcon="@mipmap/ic_launcher_watermelon"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -123,11 +263,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.SakuraIcon"
+            android:name="com.avragramm.app.CandyIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_sakura"
-            android:roundIcon="@mipmap/ic_launcher_sakura"
+            android:icon="@mipmap/ic_launcher_candy"
+            android:roundIcon="@mipmap/ic_launcher_candy"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -143,11 +283,31 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.OceanIcon"
+            android:name="com.avragramm.app.LavaIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_ocean"
-            android:roundIcon="@mipmap/ic_launcher_ocean"
+            android:icon="@mipmap/ic_launcher_lava"
+            android:roundIcon="@mipmap/ic_launcher_lava"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.avragramm.app.CamoIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_camo"
+            android:roundIcon="@mipmap/ic_launcher_camo"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -183,11 +343,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.GoldIcon"
+            android:name="com.avragramm.app.SakuraIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_gold"
-            android:roundIcon="@mipmap/ic_launcher_gold"
+            android:icon="@mipmap/ic_launcher_sakura"
+            android:roundIcon="@mipmap/ic_launcher_sakura"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -203,31 +363,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.avragramm.app.ForestIcon"
+            android:name="com.avragramm.app.ObsidianIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_forest"
-            android:roundIcon="@mipmap/ic_launcher_forest"
-            android:targetActivity="org.telegram.ui.LaunchActivity">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
-        </activity-alias>
-
-        <activity-alias
-            android:name="com.avragramm.app.SunriseIcon"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_sunrise"
-            android:roundIcon="@mipmap/ic_launcher_sunrise"
+            android:icon="@mipmap/ic_launcher_obsidian"
+            android:roundIcon="@mipmap/ic_launcher_obsidian"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>

@@ -17,9 +17,58 @@
       "assetsOnly": true
     },
     {
+      "id": "space",
+      "title": "Космос",
+      "description": "Звёзды, планета и след",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "pixel",
+      "title": "8 бит",
+      "description": "Пиксельный самолётик",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "neon",
+      "title": "Неон",
+      "description": "Светящийся контур",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "origami",
+      "title": "Оригами",
+      "description": "Бумажный самолётик",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "synthwave",
+      "title": "Ретровейв",
+      "description": "Закат и неоновая сетка",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "blueprint",
+      "title": "Чертёж",
+      "description": "Инженерный эскиз",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "clouds",
+      "title": "В облаках",
+      "description": "Небо, солнце, пунктир",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
       "id": "glass",
       "title": "B Glass",
-      "description": "Светлое жидкое стекло",
+      "description": "Жидкое стекло",
       "author": "avragram",
       "lossless": true
     },
@@ -31,65 +80,65 @@
       "lossless": true
     },
     {
-      "id": "night",
-      "title": "Ночь",
-      "description": "Глубокий синий",
+      "id": "holo",
+      "title": "Голограмма",
+      "description": "Переливы",
       "author": "avragram",
       "lossless": true
     },
     {
-      "id": "obsidian",
-      "title": "Обсидиан",
-      "description": "Чёрное стекло",
+      "id": "moon",
+      "title": "Луна",
+      "description": "Ночной полёт",
       "author": "avragram",
       "lossless": true
     },
     {
-      "id": "neon_sunset",
-      "title": "Неоновый закат",
-      "description": "Розовый неон и закат",
+      "id": "watermelon",
+      "title": "Арбуз",
+      "description": "Сочный",
       "author": "avragram",
       "lossless": true
     },
     {
-      "id": "sakura",
-      "title": "Сакура",
-      "description": "Нежно-розовый",
+      "id": "candy",
+      "title": "Леденец",
+      "description": "Полоски",
       "author": "avragram",
       "lossless": true
     },
     {
-      "id": "ocean",
-      "title": "Океан",
-      "description": "Бирюза и глубина",
+      "id": "lava",
+      "title": "Лава",
+      "description": "Горячий",
+      "author": "avragram",
+      "lossless": true
+    },
+    {
+      "id": "camo",
+      "title": "Камуфляж",
+      "description": "Хаки",
       "author": "avragram",
       "lossless": true
     },
     {
       "id": "matrix",
       "title": "Матрица",
-      "description": "Зелёный на чёрном",
+      "description": "Цифровой дождь",
       "author": "avragram",
       "lossless": true
     },
     {
-      "id": "gold",
-      "title": "Золото",
-      "description": "Тёплый песок",
+      "id": "sakura",
+      "title": "Сакура",
+      "description": "Лепестки",
       "author": "avragram",
       "lossless": true
     },
     {
-      "id": "forest",
-      "title": "Лес",
-      "description": "Глубокий зелёный",
-      "author": "avragram",
-      "lossless": true
-    },
-    {
-      "id": "sunrise",
-      "title": "Рассвет",
-      "description": "Оранжево-красный",
+      "id": "obsidian",
+      "title": "Обсидиан",
+      "description": "Чёрный и лайм",
       "author": "avragram",
       "lossless": true
     },

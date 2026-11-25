@@ -35,7 +35,7 @@ class TelegramBuildAppPlugin : Plugin<Project> {
                 keptStringsXml.from(
                     resourceProjects.map { module ->
                         module.fileTree("src/main/res/values") {
-                            include("extera.xml")
+                            include("extera.xml", "avra.xml", "avra_styles.xml")
                         }
                     }
                 )
@@ -51,7 +51,7 @@ class TelegramBuildAppPlugin : Plugin<Project> {
                 keptLocalizationFiles.from(
                     resourceProjects.map { module ->
                         module.fileTree("src/main/res") {
-                            include("values-*/extera.xml")
+                            include("values-*/extera.xml", "values-*/avra.xml", "values-*/avra_styles.xml")
                         }
                     }
                 )
