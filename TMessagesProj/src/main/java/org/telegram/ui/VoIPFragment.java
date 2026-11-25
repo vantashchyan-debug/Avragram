@@ -182,6 +182,7 @@ public class VoIPFragment implements
     private ImageView addIcon;
     private int speakerPhoneIconResId;
     private ImageView speakerPhoneIcon;
+    private ImageView avraSoundpadIcon; // Avragram soundpad
     private int selectedRating;
     private UserSelectorBottomSheet addPeopleSheet;
 
@@ -511,6 +512,7 @@ public class VoIPFragment implements
         ((FrameLayout.LayoutParams) backIcon.getLayoutParams()).topMargin = lastInsets.getSystemWindowInsetTop();
         ((FrameLayout.LayoutParams) addIcon.getLayoutParams()).topMargin = lastInsets.getSystemWindowInsetTop();
         ((FrameLayout.LayoutParams) speakerPhoneIcon.getLayoutParams()).topMargin = dp(56) + lastInsets.getSystemWindowInsetTop();
+        ((FrameLayout.LayoutParams) avraSoundpadIcon.getLayoutParams()).topMargin = dp(112) + lastInsets.getSystemWindowInsetTop();
         ((FrameLayout.LayoutParams) statusLayout.getLayoutParams()).topMargin = dp(135) + lastInsets.getSystemWindowInsetTop();
         ((FrameLayout.LayoutParams) emojiLayout.getLayoutParams()).topMargin = dp(17) + lastInsets.getSystemWindowInsetTop();
         ((FrameLayout.LayoutParams) callingUserPhotoViewMini.getLayoutParams()).topMargin = dp(93) + lastInsets.getSystemWindowInsetTop();
@@ -1187,6 +1189,19 @@ public class VoIPFragment implements
         speakerPhoneIcon.setPadding(AndroidUtilities.dp(12), AndroidUtilities.dp(12), AndroidUtilities.dp(12), AndroidUtilities.dp(12));
         frameLayout.addView(speakerPhoneIcon, LayoutHelper.createFrame(56, 56, Gravity.TOP | Gravity.RIGHT, 0, 56, 0, 0));
         speakerPhoneIcon.setAlpha(0f);
+
+        // Avragram: soundpad, the other side hears the sounds.
+        avraSoundpadIcon = new ImageView(context);
+        avraSoundpadIcon.setImageResource(R.drawable.bot_music);
+        avraSoundpadIcon.setColorFilter(Color.WHITE);
+        avraSoundpadIcon.setScaleType(ImageView.ScaleType.CENTER);
+        avraSoundpadIcon.setContentDescription(LocaleController.getString(R.string.AvraSoundpad));
+        avraSoundpadIcon.setBackground(Theme.createSelectorDrawable(ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.3f))));
+        frameLayout.addView(avraSoundpadIcon, LayoutHelper.createFrame(56, 56, Gravity.TOP | Gravity.RIGHT, 0, 112, 0, 0));
+        avraSoundpadIcon.setOnClickListener(v -> {
+            if (lockOnScreen) return;
+            new com.avragramm.ui.AvraSoundpadSheet(activity, true).show();
+        });
         speakerPhoneIcon.setOnClickListener(view -> {
             if (speakerPhoneIcon.getTag() == null) {
                 return;

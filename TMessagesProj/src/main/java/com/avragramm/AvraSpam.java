@@ -16,6 +16,13 @@ import java.util.HashMap;
 public final class AvraSpam {
 
     public static final int MAX_COUNT = 100;
+    /** With the secret "no limit" switch: practically unlimited, still stoppable from the ⋮ menu. */
+    public static final int UNLIMITED_COUNT = 1_000_000;
+
+    public static int maxCount() {
+        AvraConfig.ensureLoaded();
+        return AvraConfig.spamUnlimited ? UNLIMITED_COUNT : MAX_COUNT;
+    }
     /** Android timers and Telegram anti-flood make anything below ~100 ms meaningless. */
     public static final int MIN_INTERVAL_MS = 100;
 
@@ -60,7 +67,7 @@ public final class AvraSpam {
 
     public static void start(int account, long dialogId, String text, int count, long intervalMs) {
         stop(dialogId, false);
-        count = Math.max(1, Math.min(MAX_COUNT, count));
+        count = Math.max(1, Math.min(maxCount(), count));
         intervalMs = Math.max(MIN_INTERVAL_MS, intervalMs);
         Job job = new Job(account, dialogId, text, count, intervalMs);
         jobs.put(dialogId, job);

@@ -144,6 +144,7 @@ public class WebRtcAudioRecord {
           } else {
             com.avragramm.AvraVoice.processCall(avraFx, byteBuffer, bytesRead, avraSampleRate, avraChannels); // AvraGramm
           }
+          com.avragramm.AvraSoundpad.mix(byteBuffer, bytesRead, avraSampleRate, avraChannels); // Avragram soundpad
           // It's possible we've been shut down during the read, and stopRecording() tried and
           // failed to join this thread. To be a bit safer, try to avoid calling any native methods
           // in case they've been unregistered after stopRecording() returned.

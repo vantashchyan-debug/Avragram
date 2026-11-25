@@ -245,6 +245,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
     private static final int noise_item = 11;
     private static final int comments_enable_item = 12;
     private static final int comments_disable_item = 13;
+    private static final int avra_soundpad_item = 40;
     private static final int user_item_gap = 0;
 
     private static final int MUTE_BUTTON_STATE_UNMUTE = 0;
@@ -2310,6 +2311,8 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                             userSwitchObject = object;
                         }
                     });
+                } else if (id == avra_soundpad_item) {
+                    new com.avragramm.ui.AvraSoundpadSheet(getContext(), true).show();
                 } else if (id == noise_item) {
                     SharedConfig.toggleNoiseSupression();
                     VoIPService service = VoIPService.getSharedInstance();
@@ -4901,6 +4904,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
 
         noiseItem = otherItem.addSubItem(noise_item, R.drawable.msg_noise_on, null, getString(R.string.VoipNoiseCancellation), true, false);
         noiseItem.setItemHeight(56);
+        otherItem.addSubItem(avra_soundpad_item, R.drawable.bot_music, null, getString(R.string.AvraSoundpad), true, false).setItemHeight(56);
 
         soundItemDivider = otherItem.addDivider(ColorUtils.blendARGB(Theme.getColor(Theme.key_voipgroup_actionBar), Color.BLACK, 0.3f));
         ((ViewGroup.MarginLayoutParams) soundItemDivider.getLayoutParams()).topMargin = 0;

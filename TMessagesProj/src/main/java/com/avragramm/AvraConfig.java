@@ -17,6 +17,8 @@ public final class AvraConfig {
     public static boolean saveViewOnce = true;
     /** 0 off, 1 frosted blur, 2 liquid glass (Android 13+, frosted below). */
     public static int glassMode = 2;
+    /** Secret (debug menu): no cap on the number of spam messages. */
+    public static boolean spamUnlimited = false;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
 
     private static volatile boolean loaded;
@@ -37,6 +39,7 @@ public final class AvraConfig {
         // Weak devices (e.g. Galaxy Note 10.1) lag with real-time blur: default to off there.
         int defaultGlass = org.telegram.messenger.SharedConfig.getDevicePerformanceClass() <= org.telegram.messenger.SharedConfig.PERFORMANCE_CLASS_LOW ? GLASS_OFF : GLASS_LIQUID;
         glassMode = p.getInt("glassMode", defaultGlass);
+        spamUnlimited = p.getBoolean("spamUnlimited", false);
         loaded = true;
     }
 
@@ -45,6 +48,7 @@ public final class AvraConfig {
                 .putBoolean("saveDeleted", saveDeleted)
                 .putBoolean("saveViewOnce", saveViewOnce)
                 .putInt("glassMode", glassMode)
+                .putBoolean("spamUnlimited", spamUnlimited)
                 .apply();
     }
 

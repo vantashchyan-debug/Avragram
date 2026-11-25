@@ -85,7 +85,8 @@ public final class AvraChatTools {
 
         EditTextBoldCursor text = field(ctx, getString(R.string.AvraSpamText), InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         if (!TextUtils.isEmpty(presetText)) text.setText(presetText);
-        EditTextBoldCursor count = field(ctx, formatString(R.string.AvraSpamCountHint, AvraSpam.MAX_COUNT), InputType.TYPE_CLASS_NUMBER);
+        EditTextBoldCursor count = field(ctx, AvraSpam.maxCount() > AvraSpam.MAX_COUNT ? getString(R.string.AvraSpamCountHintUnlimited)
+                : formatString(R.string.AvraSpamCountHint, AvraSpam.MAX_COUNT), InputType.TYPE_CLASS_NUMBER);
         count.setText("10");
         EditTextBoldCursor interval = field(ctx, formatString(R.string.AvraSpamIntervalHint, AvraSpam.MIN_INTERVAL_MS), InputType.TYPE_CLASS_NUMBER);
         interval.setText("1000");

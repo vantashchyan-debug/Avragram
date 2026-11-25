@@ -181,6 +181,7 @@ public class WebRtcAudioRecord {
           } else {
             com.avragramm.AvraVoice.processCall(avraFx, byteBuffer, bytesRead, avraSampleRate, avraChannels); // AvraGramm
           }
+          com.avragramm.AvraSoundpad.mix(byteBuffer, bytesRead, avraSampleRate, avraChannels); // Avragram soundpad
           if (bytesRead == deviceBytesRead) {
             deviceByteBuffer.position(0);
             byteBuffer.position(0);
