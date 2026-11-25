@@ -8074,6 +8074,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             final ItemOptions o = ItemOptions.makeOptions(this, view, !isFragmentPhoneNumber && !externalApps.isEmpty());
             o.setScrimViewBackground(listView.getClipBackground(view));
             o.setLongPressSelectionEnabled(false);
+            if (!isFragmentPhoneNumber && com.avragramm.AvraPhoneRegion.enabled()) {
+                com.avragramm.AvraPhoneRegion.Info region = com.avragramm.AvraPhoneRegion.lookup(currentAccount, "+" + user.phone);
+                if (region != null) {
+                    o.addText(com.avragramm.AvraPhoneRegion.describe(region), 14);
+                    o.addGap();
+                }
+            }
             if (position == phoneRow) {
                 if (false && userInfo != null && userInfo.phone_calls_available) {
                     o.add(R.drawable.msg_calls, getString(R.string.CallViaTelegram), () -> {

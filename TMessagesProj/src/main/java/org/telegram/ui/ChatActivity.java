@@ -48678,6 +48678,13 @@ public class ChatActivity extends BaseFragment implements
             final ItemOptions options = ItemOptions.makeOptions(ChatActivity.this, cell, true);
             final ScrimOptions dialog = new ScrimOptions(getContext(), themeDelegate);
             options.setOnDismiss(dialog::dismiss);
+            if (com.avragramm.AvraPhoneRegion.enabled()) {
+                com.avragramm.AvraPhoneRegion.Info region = com.avragramm.AvraPhoneRegion.lookup(currentAccount, user != null && !TextUtils.isEmpty(user.phone) ? "+" + user.phone : phone);
+                if (region != null) {
+                    options.addText(com.avragramm.AvraPhoneRegion.describe(region), 14);
+                    options.addGap();
+                }
+            }
 
             Utilities.Callback<Boolean> addToContacts = asNew -> {
                 if (getParentActivity() == null) return;

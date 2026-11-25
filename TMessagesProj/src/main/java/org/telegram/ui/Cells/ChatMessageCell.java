@@ -16469,6 +16469,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             loadingProgressLayout = null;
             return;
         }
+        final boolean avraSpeed = documentAttachType == DOCUMENT_ATTACH_TYPE_DOCUMENT && com.avragramm.AvraDownloadSpeed.enabled();
+        final double avraBytesPerSec = avraSpeed ? com.avragramm.AvraDownloadSpeed.update(documentAttach.id, loadedSize, totalSize) : 0;
         long hash = (loadedSize << 16) + totalSize;
         if (loadingProgressLayout != null && loadingProgressLayoutHash == hash) {
             return;
@@ -16490,7 +16492,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         int w;
         w = (int) Math.ceil(Theme.chat_infoPaint.measureText(maxAvailableString));
         boolean fullWidth = true;
-        if (documentAttachType == DOCUMENT_ATTACH_TYPE_DOCUMENT) {
+        if (avraSpeed) {
+            // Avragram: percent, speed and time left under the file name
+            int max = Math.max(this.infoWidth, docTitleWidth);
+            str = com.avragramm.AvraDownloadSpeed.full(loadedSize, totalSize, avraBytesPerSec);
+            if (Theme.chat_infoPaint.measureText(str) > max) {
+                str = com.avragramm.AvraDownloadSpeed.compact(loadedSize, totalSize, avraBytesPerSec);
+                if (Theme.chat_infoPaint.measureText(str) > max) {
+                    str = com.avragramm.AvraDownloadSpeed.percent(loadedSize, totalSize);
+                }
+            }
+        } else if (documentAttachType == DOCUMENT_ATTACH_TYPE_DOCUMENT) {
             int max = Math.max(this.infoWidth, docTitleWidth);
             if (w <= max) {
                 str = String.format("%s / %s", AndroidUtilities.formatFileSize(loadedSize), totalStr);

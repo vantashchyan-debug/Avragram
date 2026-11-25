@@ -25,6 +25,8 @@ public final class AvraConfig {
     public static boolean presenceDemo = false;
     /** /calc"expr" in outgoing messages is replaced by the result. */
     public static boolean calcCommand = true;
+    public static boolean downloadSpeed = true;
+    public static boolean phoneRegion = true;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
 
     private static volatile boolean loaded;
@@ -49,6 +51,8 @@ public final class AvraConfig {
         presenceBar = p.getBoolean("presenceBar", true);
         presenceDemo = p.getBoolean("presenceDemo", false);
         calcCommand = p.getBoolean("calcCommand", true);
+        downloadSpeed = p.getBoolean("downloadSpeed", true);
+        phoneRegion = p.getBoolean("phoneRegion", true);
         loaded = true;
     }
 
@@ -61,6 +65,8 @@ public final class AvraConfig {
                 .putBoolean("presenceBar", presenceBar)
                 .putBoolean("presenceDemo", presenceDemo)
                 .putBoolean("calcCommand", calcCommand)
+                .putBoolean("downloadSpeed", downloadSpeed)
+                .putBoolean("phoneRegion", phoneRegion)
                 .apply();
     }
 

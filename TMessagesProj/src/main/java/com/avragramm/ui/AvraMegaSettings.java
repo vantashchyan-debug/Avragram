@@ -29,7 +29,7 @@ import static org.telegram.messenger.LocaleController.getString;
 public final class AvraMegaSettings {
 
     public static final int ID_AVRA = -101, ID_ICON = -102, ID_GENERAL = -103, ID_APPEARANCE = -104,
-            ID_CHATS = -105, ID_PLUGINS = -106, ID_OTHER = -107, ID_PRIVACY = -108, ID_CREATORS = -110, ID_REPORT = -111, ID_SOUNDPAD = -112, ID_FUN = -113, ID_BEHIND = -114;
+            ID_CHATS = -105, ID_PLUGINS = -106, ID_OTHER = -107, ID_PRIVACY = -108, ID_CREATORS = -110, ID_REPORT = -111, ID_SOUNDPAD = -112, ID_FUN = -113, ID_BEHIND = -114, ID_CALC = -115;
 
     private AvraMegaSettings() {}
 
@@ -37,7 +37,7 @@ public final class AvraMegaSettings {
         items.add(UItem.asHeader(AvraBrand.NAME));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_AVRA, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_theme, getString(R.string.AvraSectionAppearance), getString(R.string.AvraSectionAppearanceInfo)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_PRIVACY, 0xFF34AADC, 0xFF1C82C9, R.drawable.msg_secret, getString(R.string.AvraPrivacy), getString(R.string.AvraPrivacyInfoShort)));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_SOUNDPAD, 0xFFFF9F0A, 0xFFE58600, R.drawable.bot_music, getString(R.string.AvraSoundpad), getString(R.string.AvraSoundpadInfoShort)));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_CALC, 0xFFFF9F0A, 0xFFE58600, R.drawable.msg_calculator, getString(R.string.AvraCalc), getString(R.string.AvraCalcInfoShort)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_FUN, 0xFF30B0C7, 0xFF1E8FA3, R.drawable.dialog_media_game_20, getString(R.string.AvraFun), getString(R.string.AvraFunInfoShort)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_BEHIND, 0xFFFF3B30, 0xFFD62D22, R.drawable.msg_block2, getString(R.string.AvraBehind), getString(R.string.AvraBehindInfoShort)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_GENERAL, 0xFF8E8E93, 0xFF6D6D72, R.drawable.msg_media, getString(R.string.AvraGeneral), getString(R.string.AvraGeneralInfo)));
@@ -88,11 +88,7 @@ public final class AvraMegaSettings {
             case ID_REPORT:
                 AvraCreatorsActivity.showReport(f);
                 return true;
-            case ID_SOUNDPAD:
-                if (f.getParentActivity() != null) {
-                    new AvraSoundpadSheet(f.getParentActivity(), org.telegram.ui.ActionBar.Theme.isCurrentThemeDark()).show();
-                }
-                return true;
+            case ID_CALC: next = new AvraCalcActivity(); break;
             default: return false;
         }
         f.presentFragment(next);

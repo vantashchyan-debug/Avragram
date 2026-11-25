@@ -248,7 +248,7 @@ Actual:
     <string name="AvraMuted">%1$s is muted: new messages are deleted for both</string>
     <string name="AvraUnmuted">%1$s is unmuted</string>
     <string name="AvraFun">Fun</string>
-    <string name="AvraFunInfoShort">Games, calculator, spam</string>
+    <string name="AvraFunInfoShort">Games, soundpad, spam, plugins</string>
     <string name="AvraFunGames">Games</string>
     <string name="AvraFunGamesInfo">The result of every game goes to this chat. If the game was already played here, the chat record of all players is added.</string>
     <string name="AvraFunGamesInfoNoChat">Opened from Settings: results stay on this device. Open “Fun” from a chat’s ⋮ menu to send them to the chat.</string>
@@ -327,4 +327,11 @@ Actual:
     <string name="AvraGameNewRecord">New record!</string>
     <string name="AvraGameSending">Sending to the chat…</string>
     <string name="AvraGameSent">Sent to the chat</string>
+    <string name="AvraCalcInfoShort">Engineering calculator</string>
+    <string name="AvraFunPlugins">Plugins</string>
+    <string name="AvraDownloadSpeed">Download speed &amp; time left</string>
+    <string name="AvraDownloadSpeedInfo">Percent, speed and time left under the file name while it loads</string>
+    <string name="AvraDownloadSpeedPerSec">%1$s/s</string>
+    <string name="AvraPhoneRegion">Phone number region</string>
+    <string name="AvraPhoneRegionInfo">Country, ISO code and flag in the menu of a number in profiles and chats</string>
 </resources>

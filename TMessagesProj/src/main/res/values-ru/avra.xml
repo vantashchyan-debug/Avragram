@@ -248,7 +248,7 @@
     <string name="AvraMuted">%1$s в муте: новые сообщения удаляются у обоих</string>
     <string name="AvraUnmuted">%1$s больше не в муте</string>
     <string name="AvraFun">Развлекуха</string>
-    <string name="AvraFunInfoShort">Игры, калькулятор, спам</string>
+    <string name="AvraFunInfoShort">Игры, саундпад, спам, плагины</string>
     <string name="AvraFunGames">Игры</string>
     <string name="AvraFunGamesInfo">Счёт каждой игры отправляется в этот чат. Если в эту игру тут уже играли, добавляется рекорд чата среди всех игроков.</string>
     <string name="AvraFunGamesInfoNoChat">Открыто из настроек: результаты остаются на устройстве. Чтобы отправлять их в чат, открой «Развлекуху» из меню ⋮ чата.</string>
@@ -327,4 +327,11 @@
     <string name="AvraGameNewRecord">Новый рекорд!</string>
     <string name="AvraGameSending">Отправляю в чат…</string>
     <string name="AvraGameSent">Отправлено в чат</string>
+    <string name="AvraCalcInfoShort">Инженерный калькулятор</string>
+    <string name="AvraFunPlugins">Плагины</string>
+    <string name="AvraDownloadSpeed">Скорость и время загрузки</string>
+    <string name="AvraDownloadSpeedInfo">Проценты, скорость и оставшееся время под именем файла во время загрузки</string>
+    <string name="AvraDownloadSpeedPerSec">%1$s/с</string>
+    <string name="AvraPhoneRegion">Регион номера</string>
+    <string name="AvraPhoneRegionInfo">Страна, ISO-код и флаг в меню номера в профиле и в чатах</string>
 </resources>
