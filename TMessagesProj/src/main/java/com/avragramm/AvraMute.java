@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Telegram lets either side of a private chat delete any message for both, so this is a plain
  * messages.deleteMessages(revoke) — queued as a pending task, i.e. retried after restart/offline.
  * Secret chats, groups and channels are not affected. Messages sent before the mute stay.
+ * Before deletion a local copy goes to {@link AvraMuteLog} ("Said behind your back").
  *
  * Muted ids are per account, kept in prefs "avragramm" as "mute_<account>" and mirrored in a
  * concurrent set, because the check runs on the stage queue (update processing).
@@ -55,6 +56,17 @@ public final class AvraMute {
 
     public static boolean isMuted(int account, long userId) {
         return userId > 0 && set(account).contains(userId);
+    }
+
+    /** Ids of all muted people of an account. */
+    public static long[] mutedIds(int account) {
+        Set<Long> s = set(account);
+        long[] out = new long[s.size()];
+        int i = 0;
+        for (Long id : s) {
+            if (i < out.length) out[i++] = id;
+        }
+        return i == out.length ? out : java.util.Arrays.copyOf(out, i);
     }
 
     /** Mutes / unmutes a user; returns the new state. */
@@ -94,6 +106,7 @@ public final class AvraMute {
         if (message.dialog_id != 0 && DialogObject.isEncryptedDialog(message.dialog_id)) return false;
         long userId = message.peer_id.user_id;
         if (!isMuted(account, userId)) return false;
+        AvraMuteLog.get(account).store(message); // "Said behind your back" keeps a local copy
         final ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(message.id);
         AndroidUtilities.runOnUIThread(() -> MessagesController.getInstance(account)

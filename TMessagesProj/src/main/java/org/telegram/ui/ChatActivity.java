@@ -4385,7 +4385,7 @@ public class ChatActivity extends BaseFragment implements
                 } else if (id == avra_voice) {
                     com.avragramm.ui.AvraChatTools.showVoiceChanger(ChatActivity.this, dialog_id);
                 } else if (id == avra_spam) {
-                    com.avragramm.ui.AvraChatTools.showSpam(ChatActivity.this, currentAccount, dialog_id, null);
+                    presentFragment(new com.avragramm.ui.AvraFunActivity(dialog_id)); // "Fun": spam lives there now
                 } else if (id == avra_mute || id == avra_unmute) {
                     com.avragramm.ui.AvraChatTools.showMute(ChatActivity.this, currentAccount, currentUser, ChatActivity.this::avraUpdateMuteItems);
                 } else if (id == report) {
@@ -4865,7 +4865,7 @@ public class ChatActivity extends BaseFragment implements
             }
             translateItem = headerItem.lazilyAddSubItem(translate, R.drawable.msg_translate, LocaleController.getString(R.string.TranslateMessage));
             headerItem.lazilyAddSubItem(avra_voice, R.drawable.msg_voicechat, getString(R.string.AvraVoiceChanger)); // Avragram
-            headerItem.lazilyAddSubItem(avra_spam, R.drawable.msg_retry, getString(R.string.AvraSpam)); // Avragram
+            headerItem.lazilyAddSubItem(avra_spam, R.drawable.dialog_media_game_20, getString(R.string.AvraFun)); // Avragram: games, calculator, spam, settings
             if (com.avragramm.AvraMute.canMute(currentAccount, currentUser, currentEncryptedChat != null) && chatMode == MODE_DEFAULT) { // Avragram
                 headerItem.lazilyAddSubItem(avra_mute, R.drawable.msg_block2, getString(R.string.AvraMuteUser));
                 headerItem.lazilyAddSubItem(avra_unmute, R.drawable.msg_unmute, getString(R.string.AvraUnmuteUser));

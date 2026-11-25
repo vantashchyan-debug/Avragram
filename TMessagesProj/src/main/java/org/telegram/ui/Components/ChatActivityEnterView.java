@@ -8434,6 +8434,12 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public boolean processSendingText(CharSequence text, boolean notify, int scheduleDate, int scheduleRepeatPeriod, long payStars) {
+        // Avragram: /calc"12937/21" → result, before anything else touches the text
+        com.avragramm.AvraConfig.ensureLoaded();
+        if (com.avragramm.AvraConfig.calcCommand && com.avragramm.AvraCalc.hasCommand(text)) {
+            char sep = java.text.DecimalFormatSymbols.getInstance(LocaleController.getInstance().getCurrentLocale()).getDecimalSeparator() == ',' ? ',' : '.';
+            text = com.avragramm.AvraCalc.replaceInMessage(text, sep);
+        }
         if (replyingQuote != null && parentFragment != null && replyingQuote.outdated) {
             parentFragment.showQuoteMessageUpdate();
             return false;

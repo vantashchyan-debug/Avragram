@@ -23,6 +23,8 @@ public final class AvraConfig {
     public static boolean presenceBar = true;
     /** Secret (debug menu): show a sample presence bar for every online user, to check the layout. */
     public static boolean presenceDemo = false;
+    /** /calc"expr" in outgoing messages is replaced by the result. */
+    public static boolean calcCommand = true;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
 
     private static volatile boolean loaded;
@@ -46,6 +48,7 @@ public final class AvraConfig {
         spamUnlimited = p.getBoolean("spamUnlimited", false);
         presenceBar = p.getBoolean("presenceBar", true);
         presenceDemo = p.getBoolean("presenceDemo", false);
+        calcCommand = p.getBoolean("calcCommand", true);
         loaded = true;
     }
 
@@ -57,6 +60,7 @@ public final class AvraConfig {
                 .putBoolean("spamUnlimited", spamUnlimited)
                 .putBoolean("presenceBar", presenceBar)
                 .putBoolean("presenceDemo", presenceDemo)
+                .putBoolean("calcCommand", calcCommand)
                 .apply();
     }
 
