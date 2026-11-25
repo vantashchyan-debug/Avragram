@@ -175,10 +175,7 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
     override fun getTitle(): String = getString(R.string.Appearance)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asCustom(AppearanceItem.AVATAR_CORNERS_PREVIEW.id, avatarCornersPreviewCell).setLinkAlias("avatarCorners", this))
-        items.add(uCheck(AppearanceItem.SINGLE_CORNER_RADIUS, getString(R.string.SingleCornerRadius), singleCornerRadius, linkAlias = "singleCornerRadius"))
-        items.add(UItem.asShadow(getString(R.string.SingleCornerRadiusInfo)))
-
+        // Avragram: avatar shape, app icon, font, sections and glass moved to Settings → Appearance (merged)
         items.add(UItem.asHeader(getString(R.string.ListOfChats)))
         items.add(UItem.asCustom(AppearanceItem.CHAT_LIST_PREVIEW.id, chatListPreviewCell))
         items.add(uCheck(AppearanceItem.FORCE_SNOW, getString(R.string.ForceSnow), forceSnow, subtext = getString(R.string.ForceSnowInfo), linkAlias = "forceSnow"))
@@ -199,43 +196,18 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
         items.add(UItem.asShadow(getString(R.string.FoldersInfo)))
 
         items.add(uButton(AppearanceItem.APP_NAVIGATION_SETTINGS, getString(R.string.AppNavigation), R.drawable.msg_newphone, subtext = getString(R.string.AppNavigationInfo), linkAlias = "appNavigationSettings"))
-        items.add(uButton(AppearanceItem.APP_ICON, getString(R.string.AppIcon), R.drawable.menu_edit_appearance, subtext = AppIconController.getSelectedIcon().getTitle(), linkAlias = "appIcon")
-            .onBind { view ->
-                if (view !is TextCell) return@onBind
-                view.apply {
-                    valueImageView.visibility = View.VISIBLE
-                    valueImageView.setImageDrawable(getAppIconDrawable())
-                    valueImageRight = (view.heightDp - APP_ICON_PREVIEW_SIZE_DP) / 2
-                }
-            }
-        )
         items.add(uButton(AppearanceItem.ICON_PACKS, getString(R.string.IconPacks), R.drawable.msg_sticker, subtext = getString(R.string.IconPacksInfo), linkAlias = "iconPacks"))
         items.add(uButton(AppearanceItem.PILL_STACK, getString(R.string.PillStackPills), R.drawable.outline_header_search, subtext = getString(R.string.PillStackPillsInfo), linkAlias = "pillStack"))
         items.add(UItem.asShadow())
 
         items.add(UItem.asHeader(getString(R.string.Appearance)))
         items.add(UItem.asCustom(AppearanceItem.FAB_SHAPE.id, fabShapeCell).setLinkAlias("fabShape", this))
-        items.add(uCheck(AppearanceItem.USE_SYSTEM_FONTS, getString(R.string.UseSystemFonts), useSystemFonts, linkAlias = "useSystemFonts"))
         items.add(uCheck(AppearanceItem.USE_SYSTEM_EMOJI, getString(R.string.UseSystemEmoji), SharedConfig.useSystemEmoji, linkAlias = "useSystemEmoji"))
         md3Styles.fill(items)
         items.add(uCheck(AppearanceItem.GOOEY_AVATAR_ANIMATION, getString(R.string.GooeyAvatarAnimation), gooeyAvatarAnimation, linkAlias = "gooeyAvatarAnimation"))
         items.add(uCheck(AppearanceItem.CUSTOM_THEMES, getString(R.string.CustomChatThemes), customThemes, linkAlias = "customThemes"))
         items.add(UItem.asShadow(getString(R.string.CustomChatThemesInfo)))
 
-        items.add(UItem.asHeader(if (SettingsRegistry.markAsNewFeature("Appearance-Sections")) LocaleUtils.applyNewSpan(getString(R.string.Sections)) else getString(R.string.Sections)))
-        items.add(createSectionRadiusSliderItem().setSearchable(this).setLinkAlias("sectionRadius", this))
-        val segmentedDividers = dividerStyle == DividerStyle.SEGMENTS
-        val separatedHeadersCheck = uCheck(AppearanceItem.SEPARATED_HEADERS, getString(R.string.SeparateHeaders), sectionsSeparatedHeaders, linkAlias = "sectionsSeparatedHeaders")
-        separatedHeadersCheck.setEnabled(!segmentedDividers)
-        items.add(separatedHeadersCheck)
-        items.add(uButton(AppearanceItem.DIVIDER_STYLE, getString(R.string.DividerStyle), value = dividerStyles[dividerStyle.ordinal], linkAlias = "dividerStyle"))
-        items.add(UItem.asShadow())
-
-        items.add(UItem.asHeader(getString(R.string.BlurOptions)))
-        items.add(uButton(AppearanceItem.GLASS_OUTLINE_STYLE, getString(R.string.GlassOutlineStyle), value = glassOutlineStyles[glassOutlineStyle.ordinal], linkAlias = "glassOutlineStyle"))
-        items.add(uCheck(AppearanceItem.GLASS_MESSAGE_MENU, getString(R.string.GlassMessageMenu), glassMessageMenu, getString(R.string.GlassMessageMenuInfo), linkAlias = "glassMessageMenu"))
-        items.addIf(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S, uButton(AppearanceItem.HEADER_BLUR_STYLE, getString(R.string.HeaderBlurStyle), value = getHeaderBlurStyleName(currentHeaderBlurStyle()), linkAlias = "headerBlurStyle"))
-        items.add(UItem.asShadow())
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {

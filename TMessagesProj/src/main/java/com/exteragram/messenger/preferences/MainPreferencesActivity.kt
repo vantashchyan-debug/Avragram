@@ -89,11 +89,6 @@ class MainPreferencesActivity : BasePreferencesActivity(), NotificationCenter.No
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asCustomShadow(headerSettingsCell, 198).setId(PreferenceItem.HEADER_CELL.id))
 
-        items.add(UItem.asHeader("Avragram"))
-        items.add(uButton(PreferenceItem.AVRA_CATEGORY, "Стили, стекло, приватность", R.drawable.msg_theme, linkAlias = "avragramm"))
-        items.add(uButton(PreferenceItem.AVRA_BASED_ON, "Avragram создан на основе exteraGram", R.drawable.msg_info, "GitHub", showDivider = false, linkAlias = "basedOn"))
-        items.add(UItem.asShadow())
-
         items.add(UItem.asHeader(getString(R.string.Categories)))
         items.add(uButton(PreferenceItem.GENERAL_CATEGORY, getString(R.string.General), R.drawable.msg_media, linkAlias = "general"))
         items.add(uButton(PreferenceItem.APPEARANCE_CATEGORY, getString(R.string.Appearance), R.drawable.msg_theme, linkAlias = "appearance"))

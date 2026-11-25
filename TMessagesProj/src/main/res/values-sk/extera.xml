@@ -405,7 +405,6 @@
     <string name="Plugins">Pluginy</string>
     <string name="PluginsEngine">Engine pluginov</string>
     <string name="EnablePluginsEngine">Povoliť engine pluginov</string>
-    <string name="PluginsInfo">Pluginy nájdete na @exteraPlugins.</string>
     <string name="PluginsNotFound">Nenašli sa žiadne pluginy.</string>
     <string name="InstallPlugin">Inštalovať</string>
     <string name="UpdatePlugin">Aktualizovať</string>

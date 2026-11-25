@@ -233,19 +233,13 @@ object BadgesController {
     ) {
         user ?: return
         val isDev = isDeveloper(user)
-        if (!isDev && user.id == UserConfig.getInstance(fragment.currentAccount).clientUserId && isSupporter(user.id)) {
-            SupporterBottomSheet.showAlert(fragment, null, resourcesProvider, enterFrom)
+        if (false) {
         } else if (isDev || hasCustomBadge(user)) {
             val badge = getBadge(user) ?: return
             val fallbackText = LocaleController.formatString(if (isDev) R.string.Developer else R.string.Supporter, user.first_name)
-            showBadgeBulletin(fragment, badge, formatBadgeText(badge, UserObject.getUserName(user), fallbackText), resourcesProvider, fragment.currentAccount, null, if (isDev) {
-                null
-            } else {
-                Runnable { SupporterBottomSheet.showAlert(fragment, user, resourcesProvider) }
-            })
-        } else {
-            SupporterBottomSheet.showAlert(fragment, user, resourcesProvider, enterFrom)
+            showBadgeBulletin(fragment, badge, formatBadgeText(badge, UserObject.getUserName(user), fallbackText), resourcesProvider, fragment.currentAccount, null, null)
         }
+        // Avragram: no exteraGram donation sheet
     }
 
     @JvmOverloads
@@ -285,7 +279,7 @@ object BadgesController {
         val text = formatBadgeText(badge, chat.title, fallbackText)
         val btn = showButton ?: !(isExtera || isTrusted)
         showBadgeBulletin(fragment, badge, text, resourcesProvider, account, containerLayout, if (btn) {
-            Runnable { SupporterBottomSheet.showAlert(fragment, chat, resourcesProvider) }
+            null
         } else {
             null
         })

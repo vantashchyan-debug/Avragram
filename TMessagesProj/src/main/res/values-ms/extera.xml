@@ -403,7 +403,6 @@
     <string name="Plugins">Plugin</string>
     <string name="PluginsEngine">Enjin Plugin</string>
     <string name="EnablePluginsEngine">Dayakan Enjin Plugin</string>
-    <string name="PluginsInfo">Anda boleh mencari plugin di @exteraPlugins.</string>
     <string name="PluginsNotFound">Tiada plugin ditemui.</string>
     <string name="InstallPlugin">Pasang</string>
     <string name="UpdatePlugin">Kemas Kini</string>

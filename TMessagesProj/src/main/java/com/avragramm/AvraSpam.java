@@ -1,6 +1,8 @@
 package com.avragramm;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.ui.Components.BulletinFactory;
 
@@ -43,7 +45,7 @@ public final class AvraSpam {
             sent++;
             if (sent >= total) {
                 jobs.remove(dialogId);
-                toast("Спам завершён: отправлено " + sent);
+                toast(LocaleController.formatString(R.string.AvraSpamDone, sent));
             } else {
                 AndroidUtilities.runOnUIThread(this, intervalMs);
             }
@@ -63,7 +65,7 @@ public final class AvraSpam {
         Job job = new Job(account, dialogId, text, count, intervalMs);
         jobs.put(dialogId, job);
         AndroidUtilities.runOnUIThread(job);
-        toast("Спам запущен: " + count + " × каждые " + intervalMs + " мс");
+        toast(LocaleController.formatString(R.string.AvraSpamStarted, count, (int) intervalMs));
     }
 
     public static void stop(long dialogId, boolean notify) {
@@ -71,7 +73,7 @@ public final class AvraSpam {
         if (job != null) {
             job.cancelled = true;
             AndroidUtilities.cancelRunOnUIThread(job);
-            if (notify) toast("Спам остановлен: отправлено " + job.sent + " из " + job.total);
+            if (notify) toast(LocaleController.formatString(R.string.AvraSpamStopped, job.sent, job.total));
         }
     }
 

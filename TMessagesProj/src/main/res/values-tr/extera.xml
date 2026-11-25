@@ -484,7 +484,6 @@
     <string name="Plugins">Eklentiler</string>
     <string name="PluginsEngine">Eklenti Motoru</string>
     <string name="EnablePluginsEngine">Eklenti Motorunu Aç</string>
-    <string name="PluginsInfo">Birbirinden kullanışlı eklentileri @exteraPlugins kanalında bulabilirsiniz.</string>
     <string name="PluginsNotFound">Hiç eklenti bulunamadı.</string>
     <string name="InstallPlugin">Yükle</string>
     <string name="UpdatePlugin">Güncelle</string>

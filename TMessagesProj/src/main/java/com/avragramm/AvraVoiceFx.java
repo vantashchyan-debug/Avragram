@@ -11,7 +11,13 @@ import java.nio.ShortBuffer;
 public final class AvraVoiceFx {
 
     public static final int OFF = 0, BASS = 1, HELIUM = 2, ROBOT = 3, ECHO = 4, RADIO = 5, DEMON = 6, ANON = 7, CHIPMUNK = 8, GIANT = 9;
-    public static final String[] NAMES = {"Без эффекта", "Бас", "Хелий", "Робот", "Эхо", "Рация", "Демон", "Аноним", "Бурундук", "Великан"};
+    public static final int[] TITLES = {org.telegram.messenger.R.string.AvraFx0, org.telegram.messenger.R.string.AvraFx1, org.telegram.messenger.R.string.AvraFx2,
+            org.telegram.messenger.R.string.AvraFx3, org.telegram.messenger.R.string.AvraFx4, org.telegram.messenger.R.string.AvraFx5, org.telegram.messenger.R.string.AvraFx6,
+            org.telegram.messenger.R.string.AvraFx7, org.telegram.messenger.R.string.AvraFx8, org.telegram.messenger.R.string.AvraFx9};
+
+    public static String name(int i) {
+        return org.telegram.messenger.LocaleController.getString(TITLES[i]);
+    }
 
     private int sampleRate;
     private int preset = -1;

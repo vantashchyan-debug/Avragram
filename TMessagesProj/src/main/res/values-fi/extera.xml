@@ -410,7 +410,6 @@
     <string name="Plugins">Laajennukset</string>
     <string name="PluginsEngine">Laajennusmoottori</string>
     <string name="EnablePluginsEngine">Ota laajennusmoottori käyttöön</string>
-    <string name="PluginsInfo">Löydät laajennuksia @exteraPlugins.</string>
     <string name="PluginsNotFound">Laajennuksia ei löytynyt.</string>
     <string name="InstallPlugin">Asenna</string>
     <string name="UpdatePlugin">Päivitä</string>

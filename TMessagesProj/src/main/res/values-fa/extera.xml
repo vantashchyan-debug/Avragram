@@ -449,7 +449,6 @@
     <string name="Plugins">افزونه‌ها</string>
     <string name="PluginsEngine">موتور افزونه‌ها</string>
     <string name="EnablePluginsEngine">فعال‌سازی موتور افزونه‌ها</string>
-    <string name="PluginsInfo">می‌توانید افزونه‌ها را در @exteraPlugins پیدا کنید.</string>
     <string name="PluginsNotFound">هیچ افزونه‌ای یافت نشد.</string>
     <string name="InstallPlugin">نصب</string>
     <string name="UpdatePlugin">به‌روزرسانی</string>

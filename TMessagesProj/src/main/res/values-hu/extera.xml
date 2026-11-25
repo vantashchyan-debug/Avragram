@@ -409,7 +409,6 @@
     <string name="Plugins">Bővítmények</string>
     <string name="PluginsEngine">Bővítmény motor</string>
     <string name="EnablePluginsEngine">Bővítmény motor engedélyezése</string>
-    <string name="PluginsInfo">Bővítményeket találsz a @exteraPlugins csatornán.</string>
     <string name="PluginsNotFound">Nem található bővítmény.</string>
     <string name="InstallPlugin">Telepítés</string>
     <string name="UpdatePlugin">Frissítés</string>

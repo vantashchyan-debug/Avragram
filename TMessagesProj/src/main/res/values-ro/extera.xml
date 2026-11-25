@@ -405,7 +405,6 @@
     <string name="Plugins">Plugin-uri</string>
     <string name="PluginsEngine">Motor Plugin-uri</string>
     <string name="EnablePluginsEngine">Activează motorul pentru plugin-uri</string>
-    <string name="PluginsInfo">Puteți găsi plugin-uri în @exteraPlugins.</string>
     <string name="PluginsNotFound">Nici-un plugin găsit.</string>
     <string name="InstallPlugin">Instalează</string>
     <string name="UpdatePlugin">Actualizare</string>

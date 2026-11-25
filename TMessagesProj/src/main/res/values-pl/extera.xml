@@ -491,7 +491,6 @@
     <string name="Plugins">Wtyczki</string>
     <string name="PluginsEngine">Silnik wtyczek</string>
     <string name="EnablePluginsEngine">Włącz silnik wtyczek</string>
-    <string name="PluginsInfo">Wtyczki znajdziesz na @exteraPlugins.</string>
     <string name="PluginsNotFound">Nie znaleziono wtyczek.</string>
     <string name="InstallPlugin">Zainstaluj</string>
     <string name="UpdatePlugin">Aktualizuj</string>

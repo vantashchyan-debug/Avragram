@@ -403,7 +403,6 @@
     <string name="Plugins">Complementos</string>
     <string name="PluginsEngine">Motor de complementos</string>
     <string name="EnablePluginsEngine">Habilitar el motor de complementos</string>
-    <string name="PluginsInfo">Puedes encontrar complementos en @exteraPlugins.</string>
     <string name="PluginsNotFound">No se encontraron complementos.</string>
     <string name="InstallPlugin">Instalar</string>
     <string name="UpdatePlugin">Actualizar</string>

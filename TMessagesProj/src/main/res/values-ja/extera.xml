@@ -413,7 +413,6 @@
     <string name="Plugins">プラグイン</string>
     <string name="PluginsEngine">プラグインエンジン</string>
     <string name="EnablePluginsEngine">プラグインエンジンを有効にする</string>
-    <string name="PluginsInfo">プラグインは @exteraPlugins で見つけることができます。</string>
     <string name="PluginsNotFound">プラグインが見つかりません。</string>
     <string name="InstallPlugin">インストール</string>
     <string name="UpdatePlugin">更新</string>

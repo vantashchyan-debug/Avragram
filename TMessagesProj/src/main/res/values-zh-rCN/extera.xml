@@ -722,10 +722,8 @@
     <string name="Plugins">插件</string>
     <string name="PluginsEngine">插件引擎</string>
     <string name="EnablePluginsEngine">启用插件引擎</string>
-    <string name="PluginsInfo">您可以在 @exteraPlugins 获取更多插件。</string>
     <string name="PluginsNotFound">未找到插件。</string>
     <string name="PluginsEmptyTitle">暂无插件</string>
-    <string name="PluginsEmptyInfo">在插件目录中选择插件，或前往 @exteraPlugins 获取更多。</string>
     <string name="PluginCatalogOpen">打开插件目录</string>
     <string name="PluginCatalog">插件目录</string>
     <string name="PluginCatalogInfo">浏览发布在 Telegram 频道和 Git 仓库中的插件，轻点即可安装。</string>

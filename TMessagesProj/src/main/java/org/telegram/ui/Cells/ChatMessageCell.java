@@ -16731,7 +16731,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             currentTimeString = SpannableStringBuilder.valueOf(repeatString);
         }
         if (com.avragramm.AvraDeleted.get(currentAccount).isDeleted(currentMessageObject)) { // AvraGramm
-            currentTimeString = new SpannableStringBuilder("удалено · ").append(currentTimeString);
+            currentTimeString = new SpannableStringBuilder(org.telegram.messenger.LocaleController.getString(R.string.AvraDeletedMark) + " · ").append(currentTimeString);
         }
         timeTextWidth = timeWidth = (int) Math.ceil(Theme.chat_timePaint.measureText(currentTimeString, 0, currentTimeString == null ? 0 : currentTimeString.length()));
         if (additionalDrawableWidth != 0) {

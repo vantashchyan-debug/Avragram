@@ -404,7 +404,6 @@
     <string name="Plugins">Programtillegg</string>
     <string name="PluginsEngine">Plugin-motor</string>
     <string name="EnablePluginsEngine">Aktiver plugin-motor</string>
-    <string name="PluginsInfo">Du finner programtillegg i @exteraPlugins.</string>
     <string name="PluginsNotFound">Ingen programtillegg funnet.</string>
     <string name="InstallPlugin">Installer</string>
     <string name="UpdatePlugin">Oppdater</string>

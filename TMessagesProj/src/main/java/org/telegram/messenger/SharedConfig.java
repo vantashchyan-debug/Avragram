@@ -1574,6 +1574,10 @@ public class SharedConfig {
             ram != -1 && ram < 2L * 1024L * 1024L * 1024L
         ) {
             performanceClass = PERFORMANCE_CLASS_LOW;
+        } else if (cpuCount >= 8 && androidVersion >= 33 && ram >= 6L * 1024L * 1024L * 1024L && maxCpuFreq >= 1900) {
+            // Avragram: modern mid-range phones (e.g. Honor Magic 7 Lite, Snapdragon 6 Gen 1, 120 Hz)
+            // handle the full animation/blur set smoothly; Telegram's frequency rule rated them "average".
+            performanceClass = PERFORMANCE_CLASS_HIGH;
         } else if (
             cpuCount < 8 ||
             memoryClass <= 160 ||

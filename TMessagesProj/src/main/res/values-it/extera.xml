@@ -401,7 +401,6 @@
     <string name="Plugins">Plug-in</string>
     <string name="PluginsEngine">Plug-in</string>
     <string name="EnablePluginsEngine">Abilita i plug-in</string>
-    <string name="PluginsInfo">Puoi installare i plugin da @exteraPlugins.</string>
     <string name="PluginsNotFound">Nessun plug-in trovato.</string>
     <string name="InstallPlugin">Installa</string>
     <string name="UpdatePlugin">Aggiorna</string>

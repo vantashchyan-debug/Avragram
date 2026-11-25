@@ -148,7 +148,7 @@ class OtherPreferencesActivity : BasePreferencesActivity(), NotificationCenter.N
     override fun getTitle(): String = getString(R.string.LocalOther)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        donates = getDonates()
+        donates = emptyList() // Avragram: no exteraGram donations in a fork
         val isDarkTheme = Theme.isCurrentThemeDark()
         val donateIcons = mapOf(
             "keeper" to IconInfo(R.drawable.keeper_icon, -0xe28c0b),
@@ -157,9 +157,7 @@ class OtherPreferencesActivity : BasePreferencesActivity(), NotificationCenter.N
             "boosty" to IconInfo(R.drawable.boosty_icon, if (isDarkTheme) -0x111112 else -0xdbd4d4)
         )
 
-        if (donates.isNotEmpty() || BadgesController.isSupporter(userConfig.clientUserId)) {
-            items.add(UItem.asCustomShadow(supportBanner).setId(OtherItem.SUPPORT_BANNER.id))
-        }
+        // Avragram: exteraGram support banner removed
         addDonateSection(items, donates, donateIcons)
 
         items.add(UItem.asHeader("Google"))

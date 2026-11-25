@@ -415,7 +415,6 @@
     <string name="Plugins">Плагиндер</string>
     <string name="PluginsEngine">Плагиндер қозғалтқышы</string>
     <string name="EnablePluginsEngine">Плагиндер қозғалтқышын қосу</string>
-    <string name="PluginsInfo">Плагиндерді @exteraPlugins-тен табуға болады.</string>
     <string name="PluginsNotFound">Плагиндер табылмады.</string>
     <string name="InstallPlugin">Орнату</string>
     <string name="UpdatePlugin">Жаңарту</string>

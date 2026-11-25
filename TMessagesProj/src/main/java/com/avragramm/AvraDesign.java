@@ -3,75 +3,96 @@ package com.avragramm;
 import com.exteragram.messenger.DividerStyle;
 import com.exteragram.messenger.ExteraConfig;
 
-import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.SharedConfig;
 
 /**
- * Per-style geometry: each Avragram style changes not only colours but the shape of the UI —
- * bubble radius, avatar shape, card ("segments") vs flat lists, centred titles, FAB and font.
+ * One source of truth for the shape of the UI. A style sets all of it at once; every value can then
+ * be changed separately in Settings → Appearance (single merged control per mechanic).
  */
 public final class AvraDesign {
 
-    /** bubbleRadius (0..17), avatarCorners (0 square .. 28 circle), divider, centerTitle, squareFab, systemFont. */
-    private static final class Spec {
-        final int bubble; final float avatar; final DividerStyle divider; final boolean center, squareFab, systemFont;
-        Spec(int bubble, float avatar, DividerStyle divider, boolean center, boolean squareFab, boolean systemFont) {
-            this.bubble = bubble; this.avatar = avatar; this.divider = divider; this.center = center; this.squareFab = squareFab; this.systemFont = systemFont;
-        }
-    }
+    public static final int BUTTON_TELEGRAM = 0, BUTTON_PILL = 1, BUTTON_ROUNDED = 2, BUTTON_SHARP = 3, BUTTON_TILE = 4;
+    public static final int DIVIDER_HIDDEN = 0, DIVIDER_LINE = 1, DIVIDER_CARDS = 2;
 
-    /** Plain Telegram geometry (the default). */
-    private static final Spec TELEGRAM = new Spec(17, 28f, DividerStyle.LINE, false, false, true);
+    private static int buttonShape = -1;
 
     private AvraDesign() {}
 
-    private static Spec spec(String name) {
-        if (name == null) return TELEGRAM;
-        switch (name) {
-            case "B Glass":
-            case "B Glass Тёмная": return new Spec(17, 18f, DividerStyle.SEGMENTS, false, false, true);   // soft glass cards, squircle avatars
-            case "Avragram":
-            case "Avragram Тёмная": return new Spec(16, 22f, DividerStyle.SEGMENTS, false, false, true);
-            case "Воздух":
-            case "Воздух Тёмный": return new Spec(17, 28f, DividerStyle.SEGMENTS, true, false, true);    // airy, round, centred
-            case "Обсидиан": return new Spec(6, 8f, DividerStyle.HIDDEN, true, true, false);               // sharp, minimal
-            case "Сигнал": return new Spec(3, 10f, DividerStyle.SEGMENTS, false, true, false);             // bold tiles
-            case "Неоновый закат": return new Spec(14, 28f, DividerStyle.HIDDEN, true, false, false);
-            case "Сакура": return new Spec(17, 28f, DividerStyle.SEGMENTS, true, false, true);
-            case "Океан": return new Spec(12, 20f, DividerStyle.SEGMENTS, false, false, true);
-            case "Матрица": return new Spec(0, 0f, DividerStyle.HIDDEN, true, true, false);               // terminal: square everything
-            case "Песок": return new Spec(10, 16f, DividerStyle.LINE, false, false, false);
-            case "Неон": return new Spec(6, 6f, DividerStyle.HIDDEN, false, true, false);
-            case "Лес": return new Spec(12, 18f, DividerStyle.SEGMENTS, false, false, true);
-            case "Графит": return new Spec(8, 12f, DividerStyle.LINE, false, true, true);
-            case "Закат": return new Spec(15, 24f, DividerStyle.SEGMENTS, false, false, true);
-            default: return TELEGRAM;
-        }
+    public static int buttonShape() {
+        if (buttonShape < 0) buttonShape = AvraConfig.prefs().getInt("buttonShape", BUTTON_TELEGRAM);
+        return buttonShape;
     }
 
-    /** Applies the geometry of a style; returns true if fonts changed (UI must be rebuilt). */
-    public static boolean apply(String styleName) {
-        return apply(spec(styleName));
-    }
-
-    public static void resetToTelegram() {
+    public static void setButtonShape(int shape) {
+        buttonShape = shape;
+        AvraConfig.prefs().edit().putInt("buttonShape", shape).apply();
         try {
-            apply(TELEGRAM);
+            ExteraConfig.setSquareFab(shape == BUTTON_SHARP || shape == BUTTON_TILE);
         } catch (Throwable ignore) {
         }
     }
 
-    private static boolean apply(Spec s) {
-        SharedConfig.bubbleRadius = s.bubble;
-        MessagesController.getGlobalMainSettings().edit().putInt("bubbleRadius", s.bubble).apply();
-        ExteraConfig.setAvatarCorners(s.avatar);
-        ExteraConfig.setDividerStyle(s.divider);
-        ExteraConfig.setCenterTitle(s.center);
-        ExteraConfig.setSquareFab(s.squareFab);
-        boolean fontChanged = ExteraConfig.getUseSystemFonts() != s.systemFont;
-        ExteraConfig.setUseSystemFonts(s.systemFont);
-        if (fontChanged) AndroidUtilities.clearTypefaceCache();
-        return fontChanged;
+    /** Corner radius (dp) for large buttons, given the radius the screen asked for. */
+    public static int buttonRadius(int defaultDp) {
+        switch (buttonShape()) {
+            case BUTTON_PILL: return Math.max(defaultDp, 28);
+            case BUTTON_ROUNDED: return 16;
+            case BUTTON_SHARP: return 4;
+            case BUTTON_TILE: return 20;
+            default: return defaultDp;
+        }
+    }
+
+    public static void setBubbleRadius(int r) {
+        SharedConfig.bubbleRadius = r;
+        MessagesController.getGlobalMainSettings().edit().putInt("bubbleRadius", r).apply();
+    }
+
+    public static int dividerStyle() {
+        try {
+            DividerStyle d = ExteraConfig.getDividerStyle();
+            return d == DividerStyle.HIDDEN ? DIVIDER_HIDDEN : d == DividerStyle.SEGMENTS ? DIVIDER_CARDS : DIVIDER_LINE;
+        } catch (Throwable e) {
+            return DIVIDER_LINE;
+        }
+    }
+
+    public static void setDividerStyle(int d) {
+        ExteraConfig.setDividerStyle(d == DIVIDER_HIDDEN ? DividerStyle.HIDDEN : d == DIVIDER_CARDS ? DividerStyle.SEGMENTS : DividerStyle.LINE);
+    }
+
+    /** Applies the full design of an Avragram style (by theme name); null = plain Telegram. Returns true if the font changed. */
+    public static boolean apply(String themeName) {
+        int i = AvraStyles.indexOfName(themeName);
+        if (i < 0) {
+            return apply("system", BUTTON_TELEGRAM, 17, 28f, DIVIDER_LINE, 20, false, false, false, true, true, false);
+        }
+        return apply(AvraStyles.FONT[i], AvraStyles.BUTTON[i], AvraStyles.BUBBLE[i], AvraStyles.AVATAR[i], AvraStyles.DIVIDER[i],
+                AvraStyles.SECTION[i], AvraStyles.CENTER[i], AvraStyles.SQUARE_FAB[i], AvraStyles.NEW_FAB[i],
+                AvraStyles.NEW_SWITCH[i], AvraStyles.NEW_SLIDER[i], AvraStyles.FLOAT_NAV[i]);
+    }
+
+    public static void resetToTelegram() {
+        try {
+            apply(null);
+        } catch (Throwable ignore) {
+        }
+    }
+
+    private static boolean apply(String font, int button, int bubble, float avatar, int divider, int section, boolean center,
+                                 boolean squareFab, boolean newFab, boolean newSwitch, boolean newSlider, boolean floatNav) {
+        setBubbleRadius(bubble);
+        setButtonShape(button);
+        ExteraConfig.setAvatarCorners(avatar);
+        setDividerStyle(divider);
+        ExteraConfig.setSectionRadius(section);
+        ExteraConfig.setCenterTitle(center);
+        ExteraConfig.setSquareFab(squareFab);
+        ExteraConfig.setNewFabStyle(newFab);
+        ExteraConfig.setNewSwitchStyle(newSwitch);
+        ExteraConfig.setNewSliderStyle(newSlider);
+        ExteraConfig.setNewNavigationBarStyle(floatNav);
+        return AvraFonts.set(font);
     }
 }

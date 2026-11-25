@@ -8085,6 +8085,7 @@ public class Theme {
 
         dialogs_countTextPaint.setTextSize(dp(12));
         dialogs_countTextPaint2.setTextSize(dp(13));
+            com.avragramm.AvraFonts.applyToTheme(); // Avragram fonts
     }
 
     public static void createDialogsResources(Context context) {
@@ -8197,6 +8198,7 @@ public class Theme {
         dialogs_tagTextPaint.setTextSize(dp(10));
         dialogs_searchNamePaint.setTextSize(dp(16));
         dialogs_searchNameEncryptedPaint.setTextSize(dp(16));
+            com.avragramm.AvraFonts.applyToTheme(); // Avragram fonts
     }
 
     public static void applyDialogsTheme() {
@@ -8450,6 +8452,7 @@ public class Theme {
             addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
             addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
         }
+            com.avragramm.AvraFonts.applyToTheme(); // Avragram fonts
     }
 
     public static void createChatResources(Context context, boolean fontsOnly) {
@@ -8725,6 +8728,7 @@ public class Theme {
             chat_commentTextPaint.setTextSize(dp(14));
             chat_commentTextPaint.setTypeface(AndroidUtilities.bold());
         }
+            com.avragramm.AvraFonts.applyToTheme(); // Avragram fonts
     }
 
     public static void applyChatTheme(boolean fontsOnly, boolean bg) {

@@ -402,7 +402,6 @@
     <string name="Plugins">Plugin</string>
     <string name="PluginsEngine">Pluginmotor</string>
     <string name="EnablePluginsEngine">Aktivera pluginmotor</string>
-    <string name="PluginsInfo">Du hittar plugins i @exteraPlugins.</string>
     <string name="PluginsNotFound">Inga plugins hittades.</string>
     <string name="InstallPlugin">Installera</string>
     <string name="UpdatePlugin">Uppdatera</string>

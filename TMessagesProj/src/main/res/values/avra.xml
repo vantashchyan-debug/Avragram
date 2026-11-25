@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Avragram UI strings (en / ru, follows the Telegram language) -->
+<resources>
+    <string name="AvraSectionAppearance">Appearance</string>
+    <string name="AvraSectionAppearanceInfo">Styles, fonts, buttons, shapes, icon</string>
+    <string name="AvraGeneral">General</string>
+    <string name="AvraGeneralInfo">Client behaviour and features</string>
+    <string name="AvraChats">Chats</string>
+    <string name="AvraChatsInfo">Messages, media, input</string>
+    <string name="AvraPlugins">Plugins</string>
+    <string name="AvraPluginsInfo">.plugin files and catalog</string>
+    <string name="AvraOther">Other</string>
+    <string name="AvraOtherInfo">Backups, reset, debugging</string>
+    <string name="AvraCreators">Creators</string>
+    <string name="AvraReport">Report a problem</string>
+    <string name="AvraBasedOn">Based on exteraGram</string>
+    <string name="AvraStyle">Style</string>
+    <string name="AvraStyleTelegram">Telegram</string>
+    <string name="AvraStyleDefault">default</string>
+    <string name="AvraStyleInfo">A style changes colours and the shape of the app: font, buttons, bubbles, avatars, cards, title and icons.</string>
+    <string name="AvraLight">light</string>
+    <string name="AvraDark">dark</string>
+    <string name="AvraFollowSystem">Light / dark like the system</string>
+    <string name="AvraFollowSystemOn">Daytime uses the chosen light style, night uses the chosen dark style.</string>
+    <string name="AvraFollowSystemOff">The chosen style is always used.</string>
+    <string name="AvraLightStyles">Light styles (day)</string>
+    <string name="AvraDarkStyles">Dark styles (night)</string>
+    <string name="AvraFont">Font</string>
+    <string name="AvraFontSystem">System</string>
+    <string name="AvraFontInfo">The font is applied everywhere after the app restarts.</string>
+    <string name="AvraRestart">Restart</string>
+    <string name="AvraRestartNeeded">Restart the app to apply the font everywhere</string>
+    <string name="AvraButtons">Buttons</string>
+    <string name="AvraButtonsTelegram">As in Telegram</string>
+    <string name="AvraButtonsPill">Pill</string>
+    <string name="AvraButtonsRounded">Rounded</string>
+    <string name="AvraButtonsSharp">Sharp</string>
+    <string name="AvraButtonsTile">Tiles</string>
+    <string name="AvraButtonsInfo">Shape of large buttons and the floating button.</string>
+    <string name="AvraBubbles">Message bubbles</string>
+    <string name="AvraBubblesInfo">Corner radius of message bubbles.</string>
+    <string name="AvraAvatars">Avatars</string>
+    <string name="AvraSections">Lists and cards</string>
+    <string name="AvraSectionRadius">Card radius</string>
+    <string name="AvraGlass">Glass</string>
+    <string name="AvraGlassLiquid">Liquid glass</string>
+    <string name="AvraGlassFrosted">Frosted blur</string>
+    <string name="AvraGlassOff">Off</string>
+    <string name="AvraGlassInfo">On Android 12 and older liquid glass works as frosted blur. Turn it off if the interface lags.</string>
+    <string name="AvraAppIcon">App icon</string>
+    <string name="AvraMore">More</string>
+    <string name="AvraMoreTelegram">Themes, colours, chat background, text size</string>
+    <string name="AvraMoreClient">Chat list, folders, navigation, icon packs</string>
+    <string name="AvraPrivacy">Privacy</string>
+    <string name="AvraShowDeleted">Show deleted messages</string>
+    <string name="AvraSaveViewOnce">Save view-once media, allow screenshots</string>
+    <string name="AvraPrivacyInfo">Voice changer and spam are in the ⋮ menu of any chat.</string>
+    <string name="AvraDeletedMark">deleted</string>
+    <string name="AvraSavedToGallery">Saved to gallery</string>
+    <string name="AvraVoiceChanger">Voice changer</string>
+    <string name="AvraVoiceTitle">Voice changer in this chat</string>
+    <string name="AvraVoicePitch">Pitch: %1$s semitones…</string>
+    <string name="AvraVoicePitchTitle">Pitch shift (semitones)</string>
+    <string name="AvraVoiceOff">Voice changer is off</string>
+    <string name="AvraVoiceOn">Effect “%1$s”: voice messages, video messages and calls in this chat</string>
+    <string name="AvraClose">Close</string>
+    <string name="AvraCancel">Cancel</string>
+    <string name="AvraSpam">Spam</string>
+    <string name="AvraSpamThis">Spam this message</string>
+    <string name="AvraSpamMessage">Message</string>
+    <string name="AvraSpamText">Message text</string>
+    <string name="AvraSpamCount">Count</string>
+    <string name="AvraSpamCountHint">How many times (1–%1$d)</string>
+    <string name="AvraSpamInterval">Interval, ms (1000 ms = 1 s)</string>
+    <string name="AvraSpamIntervalHint">Milliseconds (from %1$d)</string>
+    <string name="AvraSpamWarn">Telegram limits frequent messages (FLOOD_WAIT): below ~1000 ms messages are sent in batches with delays and the account may be limited for a while. Minimum %1$d ms. Stop: ⋮ → Spam.</string>
+    <string name="AvraSpamStart">Start</string>
+    <string name="AvraSpamEmpty">Empty message</string>
+    <string name="AvraSpamStarted">Spam started: %1$d × every %2$d ms</string>
+    <string name="AvraSpamDone">Spam finished: %1$d sent</string>
+    <string name="AvraSpamStopped">Spam stopped: %1$d of %2$d sent</string>
+    <string name="AvraTeam">Avragram team</string>
+    <string name="AvraOpen">open</string>
+    <string name="AvraCreatorsInfo">Tap to open the profile, hold to copy the username.</string>
+    <string name="AvraSupport">Support</string>
+    <string name="AvraReportInfo">Mention the version, theme and steps to reproduce. Never send chats, phone numbers, login codes or keys.</string>
+    <string name="AvraReportMessage">Describe the problem and send it to @%1$s. A template with the version, device and theme will be copied — paste it into the message.
+
+Do not attach chats, phone numbers, codes or keys.
+
+%2$s</string>
+    <string name="AvraReportCopyWrite">Copy and write</string>
+    <string name="AvraCopy">Copy</string>
+    <string name="AvraCopied">Copied: %1$s</string>
+    <string name="AvraReportTemplate">Problem in %1$s
+Device: %2$s
+Theme: %3$s
+
+Steps to reproduce:
+1. 
+2. 
+3. 
+
+Expected:
+
+Actual:
+
+(Do not attach chats, phone numbers, login codes or keys.)</string>
+    <string name="AvraFx0">No effect</string>
+    <string name="AvraFx1">Bass</string>
+    <string name="AvraFx2">Helium</string>
+    <string name="AvraFx3">Robot</string>
+    <string name="AvraFx4">Echo</string>
+    <string name="AvraFx5">Radio</string>
+    <string name="AvraFx6">Demon</string>
+    <string name="AvraFx7">Anonymous</string>
+    <string name="AvraFx8">Chipmunk</string>
+    <string name="AvraFx9">Giant</string>
+</resources>

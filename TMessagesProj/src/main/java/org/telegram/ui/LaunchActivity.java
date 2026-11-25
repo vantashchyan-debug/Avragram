@@ -6323,6 +6323,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     public void checkAppUpdate(boolean force, Browser.Progress progress) {
+        if (true) { // Avragram: the exteraGram updater would offer exteraGram builds — updates come from GitHub releases
+            if (progress != null) progress.end();
+            return;
+        }
         if (!force) {
             long now = System.currentTimeMillis();
             if (Math.abs(now - SharedConfig.lastUpdateCheckTime) < TimeUnit.MINUTES.toMillis(30)

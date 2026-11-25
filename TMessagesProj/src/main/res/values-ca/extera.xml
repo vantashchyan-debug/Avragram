@@ -404,7 +404,6 @@
     <string name="Plugins">Complements</string>
     <string name="PluginsEngine">Motor de complements</string>
     <string name="EnablePluginsEngine">Activa el motor de complements</string>
-    <string name="PluginsInfo">Pots trobar complements a @exteraPlugins.</string>
     <string name="PluginsNotFound">No s\'han trobat complements.</string>
     <string name="InstallPlugin">Instal·la</string>
     <string name="UpdatePlugin">Actualitza</string>

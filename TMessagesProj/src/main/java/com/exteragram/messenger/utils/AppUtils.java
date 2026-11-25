@@ -307,9 +307,6 @@ public class AppUtils {
             FileLog.e(e);
         }
 
-        if (AppUtils.isAppModified()) {
-            builder.append("\nbased on @exteraGram");
-        }
 
         return builder.toString();
     }

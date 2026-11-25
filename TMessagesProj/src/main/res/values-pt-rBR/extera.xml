@@ -471,7 +471,6 @@
     <string name="PluginsNotSupported">Instalação do plugin está disponível apenas na versão **Full** do **Avragram**.</string>
     <string name="PluginsEngine">Sistema de Plugins</string>
     <string name="EnablePluginsEngine">Habilitar Sistema de Plugins</string>
-    <string name="PluginsInfo">Você pode encontrar plugins em @exteraPlugins.</string>
     <string name="PluginsNotFound">Nenhum plugin encontrado.</string>
     <string name="InstallPlugin">Instalar</string>
     <string name="UpdatePlugin">Atualizar</string>

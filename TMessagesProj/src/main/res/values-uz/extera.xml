@@ -452,7 +452,6 @@
     <string name="Plugins">Plaginlar</string>
     <string name="PluginsEngine">Plagin dvigateli</string>
     <string name="EnablePluginsEngine">Plagin dvigatelini yoqish</string>
-    <string name="PluginsInfo">Plaginlarni @exteraPlugins da topishingiz mumkin.</string>
     <string name="PluginsNotFound">Plaginlar topilmadi.</string>
     <string name="InstallPlugin">Yuklab olish</string>
     <string name="UpdatePlugin">Yangilash</string>

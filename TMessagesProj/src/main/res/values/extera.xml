@@ -867,7 +867,7 @@
     <string name="SupporterCustomBadgeChoose">Choose Your Badge</string>
     <string name="SupporterCustomBadgeChooseInstantInfo">Right after payment, tap the badge in your profile to set any emoji and an optional caption.</string>
     <string name="DonationIssues">Payment Issues</string>
-    <string name="DonationIssuesInfo">If the badge didn\'t appear, message **@exteraOwner**.</string>
+    <string name="DonationIssuesInfo">If the badge didn\'t appear, restart the app.</string>
     <string name="SupporterBadgeEditTitle">Your Badge</string>
     <string name="SupporterBadgeEditInfo">Tap the badge to choose any emoji.</string>
     <string name="SupporterBadgeCaptionInfo">Everyone sees the caption when they tap your badge. {name} becomes your name; **bold**, [links](url) and @usernames are supported.</string>
@@ -917,10 +917,10 @@
     <string name="Plugins">Plugins</string>
     <string name="PluginsEngine">Plugins Engine</string>
     <string name="EnablePluginsEngine">Enable Plugins Engine</string>
-    <string name="PluginsInfo">You can find plugins in @exteraPlugins.</string>
+    <string name="PluginsInfo">Install plugins from .plugin files or the catalog.</string>
     <string name="PluginsNotFound">No plugins found.</string>
     <string name="PluginsEmptyTitle">No Plugins Yet</string>
-    <string name="PluginsEmptyInfo">Pick plugins in the catalog or find more in @exteraPlugins.</string>
+    <string name="PluginsEmptyInfo">Pick plugins in the catalog or install a .plugin file.</string>
     <string name="PluginCatalogOpen">Open Catalog</string>
     <string name="PluginCatalog">Plugin Catalog</string>
     <string name="PluginCatalogInfo">Browse plugins published in Telegram channels and Git repositories and install them in a tap.</string>

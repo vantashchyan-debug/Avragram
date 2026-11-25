@@ -488,7 +488,6 @@
     <string name="Plugins">תוספים</string>
     <string name="PluginsEngine">מנוע תוספים</string>
     <string name="EnablePluginsEngine">הפעלת מנוע תוספים</string>
-    <string name="PluginsInfo">ניתן למצוא תוספים ב- @exteraPlugins.</string>
     <string name="PluginsNotFound">לא נמצאו תוספים.</string>
     <string name="InstallPlugin">התקנה</string>
     <string name="UpdatePlugin">עדכן</string>

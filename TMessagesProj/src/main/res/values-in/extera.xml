@@ -399,7 +399,6 @@
     <string name="Plugins">Plugin</string>
     <string name="PluginsEngine">Mesin Plugin</string>
     <string name="EnablePluginsEngine">Aktifkan Mesin Plugin</string>
-    <string name="PluginsInfo">Anda dapat menemukan plugin di @exteraPlugins.</string>
     <string name="PluginsNotFound">Tidak ada plugin ditemukan.</string>
     <string name="InstallPlugin">Instal</string>
     <string name="UpdatePlugin">Perbarui</string>

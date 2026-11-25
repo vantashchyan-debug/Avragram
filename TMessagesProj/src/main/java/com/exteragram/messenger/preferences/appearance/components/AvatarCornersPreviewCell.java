@@ -84,7 +84,7 @@ public class AvatarCornersPreviewCell extends FrameLayout implements CustomPrefe
 
     public AvatarCornersPreviewCell(Context context, BaseFragment fragment, Theme.ResourcesProvider resourcesProvider, int mode) {
         super(context);
-        this.currentMode = Mode.values()[mode];
+        this.currentMode = Mode.MOCK; // Avragram: no third-party channel in the preview
         setWillNotDraw(false);
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 

@@ -395,7 +395,6 @@
     <string name="PluginsNotSupported">Plugin-installatie is alleen beschikbaar in de **Volledige** versie van **Avragram**.</string>
     <string name="PluginsEngine">Plugin-engine</string>
     <string name="EnablePluginsEngine">Plugin-engine inschakelen</string>
-    <string name="PluginsInfo">Je kunt plugins vinden op @exteraPlugins.</string>
     <string name="PluginsNotFound">Geen plugins gevonden.</string>
     <string name="InstallPlugin">Installeren</string>
     <string name="UpdatePlugin">Bijwerken</string>

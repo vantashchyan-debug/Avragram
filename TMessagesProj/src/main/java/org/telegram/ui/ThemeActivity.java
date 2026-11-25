@@ -791,16 +791,11 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             browseThemesRow = rowCount++;
             themeInfoRow = rowCount++;
 
-            bubbleRadiusHeaderRow = rowCount++;
-            bubbleRadiusRow = rowCount++;
-            bubbleRadiusInfoRow = rowCount++;
+            // Avragram: bubble radius and app icon live in Settings → Оформление (merged, no duplicates)
 
             chatListHeaderRow = rowCount++;
             chatListRow = rowCount++;
             chatListInfoRow = rowCount++;
-
-            appIconSelectorRow = rowCount++;
-            appIconShadowRow = rowCount++;
 
             swipeGestureHeaderRow = rowCount++;
             swipeGestureRow = rowCount++;

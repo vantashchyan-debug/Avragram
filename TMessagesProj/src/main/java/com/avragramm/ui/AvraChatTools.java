@@ -13,6 +13,10 @@ import com.avragramm.AvraSpam;
 import com.avragramm.AvraVoiceFx;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.R;
+
+import static org.telegram.messenger.LocaleController.formatString;
+import static org.telegram.messenger.LocaleController.getString;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
@@ -31,22 +35,22 @@ public final class AvraChatTools {
         if (ctx == null) return;
         int current = AvraConfig.voicePreset(dialogId);
         int pitch = AvraConfig.voicePitch(dialogId);
-        String[] items = new String[AvraVoiceFx.NAMES.length + 1];
-        for (int i = 0; i < AvraVoiceFx.NAMES.length; i++) {
-            items[i] = (i == current ? "● " : "○ ") + AvraVoiceFx.NAMES[i];
+        String[] items = new String[AvraVoiceFx.TITLES.length + 1];
+        for (int i = 0; i < AvraVoiceFx.TITLES.length; i++) {
+            items[i] = (i == current ? "● " : "○ ") + AvraVoiceFx.name(i);
         }
-        items[AvraVoiceFx.NAMES.length] = "Тон: " + (pitch > 0 ? "+" : "") + pitch + " полутонов…";
+        items[AvraVoiceFx.TITLES.length] = formatString(R.string.AvraVoicePitch, (pitch > 0 ? "+" : "") + pitch);
         AlertDialog.Builder b = new AlertDialog.Builder(ctx);
-        b.setTitle("Войсченджер в этом чате");
+        b.setTitle(getString(R.string.AvraVoiceTitle));
         b.setItems(items, (d, which) -> {
-            if (which == AvraVoiceFx.NAMES.length) {
+            if (which == AvraVoiceFx.TITLES.length) {
                 showPitch(fragment, dialogId);
             } else {
                 AvraConfig.setVoice(dialogId, which, AvraConfig.voicePitch(dialogId));
-                toast(which == 0 ? "Войсченджер выключен" : "Эффект «" + AvraVoiceFx.NAMES[which] + "»: голосовые, кружки и звонки в этом чате");
+                toast(which == 0 ? getString(R.string.AvraVoiceOff) : formatString(R.string.AvraVoiceOn, AvraVoiceFx.name(which)));
             }
         });
-        b.setNegativeButton("Закрыть", null);
+        b.setNegativeButton(getString(R.string.AvraClose), null);
         fragment.showDialog(b.create());
     }
 
@@ -58,7 +62,7 @@ public final class AvraChatTools {
             items[i] = (values[i] == pitch ? "● " : "○ ") + (values[i] > 0 ? "+" : "") + values[i];
         }
         AlertDialog.Builder b = new AlertDialog.Builder(fragment.getParentActivity());
-        b.setTitle("Сдвиг тона (полутоны)");
+        b.setTitle(getString(R.string.AvraVoicePitchTitle));
         b.setItems(items, (d, which) -> {
             AvraConfig.setVoice(dialogId, AvraConfig.voicePreset(dialogId), values[which]);
             showVoiceChanger(fragment, dialogId);
@@ -79,37 +83,37 @@ public final class AvraChatTools {
         ll.setOrientation(LinearLayout.VERTICAL);
         ll.setPadding(AndroidUtilities.dp(24), AndroidUtilities.dp(4), AndroidUtilities.dp(24), 0);
 
-        EditTextBoldCursor text = field(ctx, "Текст сообщения", InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        EditTextBoldCursor text = field(ctx, getString(R.string.AvraSpamText), InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         if (!TextUtils.isEmpty(presetText)) text.setText(presetText);
-        EditTextBoldCursor count = field(ctx, "Сколько раз (1–" + AvraSpam.MAX_COUNT + ")", InputType.TYPE_CLASS_NUMBER);
+        EditTextBoldCursor count = field(ctx, formatString(R.string.AvraSpamCountHint, AvraSpam.MAX_COUNT), InputType.TYPE_CLASS_NUMBER);
         count.setText("10");
-        EditTextBoldCursor interval = field(ctx, "Интервал, миллисекунд (от " + AvraSpam.MIN_INTERVAL_MS + ")", InputType.TYPE_CLASS_NUMBER);
+        EditTextBoldCursor interval = field(ctx, formatString(R.string.AvraSpamIntervalHint, AvraSpam.MIN_INTERVAL_MS), InputType.TYPE_CLASS_NUMBER);
         interval.setText("1000");
 
-        ll.addView(label(ctx, "Сообщение"));
+        ll.addView(label(ctx, getString(R.string.AvraSpamMessage)));
         ll.addView(text, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 12));
-        ll.addView(label(ctx, "Количество"));
+        ll.addView(label(ctx, getString(R.string.AvraSpamCount)));
         ll.addView(count, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 12));
-        ll.addView(label(ctx, "Интервал, мс (1000 мс = 1 с)"));
+        ll.addView(label(ctx, getString(R.string.AvraSpamInterval)));
         ll.addView(interval, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 8));
-        TextView warn = label(ctx, "Telegram ограничивает частые сообщения (FLOOD_WAIT): при интервале меньше ~1000 мс сообщения будут уходить пачками с задержкой, аккаунт могут временно ограничить. Минимум " + AvraSpam.MIN_INTERVAL_MS + " мс. Остановить: ⋮ → «Остановить спам».");
+        TextView warn = label(ctx, formatString(R.string.AvraSpamWarn, AvraSpam.MIN_INTERVAL_MS));
         warn.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
         ll.addView(warn);
 
         AlertDialog.Builder b = new AlertDialog.Builder(ctx);
-        b.setTitle("Спам");
+        b.setTitle(getString(R.string.AvraSpam));
         b.setView(ll);
-        b.setPositiveButton("Запустить", (d, w) -> {
+        b.setPositiveButton(getString(R.string.AvraSpamStart), (d, w) -> {
             String msg = text.getText() == null ? "" : text.getText().toString().trim();
             if (msg.isEmpty()) {
-                toast("Пустое сообщение");
+                toast(getString(R.string.AvraSpamEmpty));
                 return;
             }
             int n = parseInt(count.getText() == null ? "" : count.getText().toString(), 10);
             double ms = parseDouble(interval.getText() == null ? "" : interval.getText().toString(), 1000);
             AvraSpam.start(account, dialogId, msg, n, (long) Math.ceil(ms));
         });
-        b.setNegativeButton("Отмена", null);
+        b.setNegativeButton(getString(R.string.AvraCancel), null);
         fragment.showDialog(b.create());
     }
 

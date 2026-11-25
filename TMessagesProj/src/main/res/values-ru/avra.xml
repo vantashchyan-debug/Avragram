@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Avragram UI strings (en / ru, follows the Telegram language) -->
+<resources>
+    <string name="AvraSectionAppearance">Оформление</string>
+    <string name="AvraSectionAppearanceInfo">Стили, шрифты, кнопки, формы, иконка</string>
+    <string name="AvraGeneral">Основные</string>
+    <string name="AvraGeneralInfo">Поведение и функции клиента</string>
+    <string name="AvraChats">Чаты</string>
+    <string name="AvraChatsInfo">Сообщения, медиа, ввод</string>
+    <string name="AvraPlugins">Плагины</string>
+    <string name="AvraPluginsInfo">.plugin-файлы и каталог</string>
+    <string name="AvraOther">Другое</string>
+    <string name="AvraOtherInfo">Резервные копии, сброс, отладка</string>
+    <string name="AvraCreators">Создатели</string>
+    <string name="AvraReport">Сообщить о проблеме</string>
+    <string name="AvraBasedOn">Основано на exteraGram</string>
+    <string name="AvraStyle">Стиль</string>
+    <string name="AvraStyleTelegram">Обычный Telegram</string>
+    <string name="AvraStyleDefault">по умолчанию</string>
+    <string name="AvraStyleInfo">Стиль меняет цвета и форму приложения: шрифт, кнопки, пузыри, аватары, карточки, заголовок и значки.</string>
+    <string name="AvraLight">светлый</string>
+    <string name="AvraDark">тёмный</string>
+    <string name="AvraFollowSystem">Светлый / тёмный как в системе</string>
+    <string name="AvraFollowSystemOn">Днём — выбранный светлый стиль, ночью — выбранный тёмный.</string>
+    <string name="AvraFollowSystemOff">Выбранный стиль применяется всегда.</string>
+    <string name="AvraLightStyles">Светлые стили (днём)</string>
+    <string name="AvraDarkStyles">Тёмные стили (ночью)</string>
+    <string name="AvraFont">Шрифт</string>
+    <string name="AvraFontSystem">Системный</string>
+    <string name="AvraFontInfo">Шрифт применяется везде после перезапуска приложения.</string>
+    <string name="AvraRestart">Перезапустить</string>
+    <string name="AvraRestartNeeded">Перезапустите приложение, чтобы шрифт применился везде</string>
+    <string name="AvraButtons">Кнопки</string>
+    <string name="AvraButtonsTelegram">Как в Telegram</string>
+    <string name="AvraButtonsPill">Таблетка</string>
+    <string name="AvraButtonsRounded">Скруглённые</string>
+    <string name="AvraButtonsSharp">Острые</string>
+    <string name="AvraButtonsTile">Плитки</string>
+    <string name="AvraButtonsInfo">Форма больших кнопок и плавающей кнопки.</string>
+    <string name="AvraBubbles">Пузыри сообщений</string>
+    <string name="AvraBubblesInfo">Скругление углов пузырей сообщений.</string>
+    <string name="AvraAvatars">Аватары</string>
+    <string name="AvraSections">Списки и карточки</string>
+    <string name="AvraSectionRadius">Скругление карточек</string>
+    <string name="AvraGlass">Стекло</string>
+    <string name="AvraGlassLiquid">Жидкое стекло</string>
+    <string name="AvraGlassFrosted">Матовое размытие</string>
+    <string name="AvraGlassOff">Выключено</string>
+    <string name="AvraGlassInfo">На Android 12 и ниже жидкое стекло работает как матовое размытие. Если интерфейс тормозит — выключите.</string>
+    <string name="AvraAppIcon">Иконка приложения</string>
+    <string name="AvraMore">Ещё</string>
+    <string name="AvraMoreTelegram">Темы, цвета, фон чата, размер текста</string>
+    <string name="AvraMoreClient">Список чатов, папки, навигация, наборы значков</string>
+    <string name="AvraPrivacy">Приватность</string>
+    <string name="AvraShowDeleted">Показывать удалённые сообщения</string>
+    <string name="AvraSaveViewOnce">Сохранять «один просмотр», разрешить скриншоты</string>
+    <string name="AvraPrivacyInfo">Войсченджер и спам — в меню ⋮ внутри любого чата.</string>
+    <string name="AvraDeletedMark">удалено</string>
+    <string name="AvraSavedToGallery">Сохранено в галерею</string>
+    <string name="AvraVoiceChanger">Войсченджер</string>
+    <string name="AvraVoiceTitle">Войсченджер в этом чате</string>
+    <string name="AvraVoicePitch">Тон: %1$s полутонов…</string>
+    <string name="AvraVoicePitchTitle">Сдвиг тона (полутоны)</string>
+    <string name="AvraVoiceOff">Войсченджер выключен</string>
+    <string name="AvraVoiceOn">Эффект «%1$s»: голосовые, кружки и звонки в этом чате</string>
+    <string name="AvraClose">Закрыть</string>
+    <string name="AvraCancel">Отмена</string>
+    <string name="AvraSpam">Спам</string>
+    <string name="AvraSpamThis">Спам этим сообщением</string>
+    <string name="AvraSpamMessage">Сообщение</string>
+    <string name="AvraSpamText">Текст сообщения</string>
+    <string name="AvraSpamCount">Количество</string>
+    <string name="AvraSpamCountHint">Сколько раз (1–%1$d)</string>
+    <string name="AvraSpamInterval">Интервал, мс (1000 мс = 1 с)</string>
+    <string name="AvraSpamIntervalHint">Миллисекунд (от %1$d)</string>
+    <string name="AvraSpamWarn">Telegram ограничивает частые сообщения (FLOOD_WAIT): при интервале меньше ~1000 мс сообщения уходят пачками с задержкой, аккаунт могут временно ограничить. Минимум %1$d мс. Остановить: ⋮ → «Спам».</string>
+    <string name="AvraSpamStart">Запустить</string>
+    <string name="AvraSpamEmpty">Пустое сообщение</string>
+    <string name="AvraSpamStarted">Спам запущен: %1$d × каждые %2$d мс</string>
+    <string name="AvraSpamDone">Спам завершён: отправлено %1$d</string>
+    <string name="AvraSpamStopped">Спам остановлен: отправлено %1$d из %2$d</string>
+    <string name="AvraTeam">Команда Avragram</string>
+    <string name="AvraOpen">открыть</string>
+    <string name="AvraCreatorsInfo">Нажмите, чтобы открыть профиль, удерживайте — чтобы скопировать юзернейм.</string>
+    <string name="AvraSupport">Поддержка</string>
+    <string name="AvraReportInfo">Укажите версию, тему и шаги воспроизведения. Не отправляйте переписки, номера, коды входа и ключи.</string>
+    <string name="AvraReportMessage">Опишите проблему и отправьте её @%1$s. Шаблон с версией, устройством и темой будет скопирован — вставьте его в сообщение.
+
+Не прикладывайте переписки, номера телефонов, коды и ключи.
+
+%2$s</string>
+    <string name="AvraReportCopyWrite">Скопировать и написать</string>
+    <string name="AvraCopy">Скопировать</string>
+    <string name="AvraCopied">Скопировано: %1$s</string>
+    <string name="AvraReportTemplate">Проблема в %1$s
+Устройство: %2$s
+Тема: %3$s
+
+Шаги воспроизведения:
+1. 
+2. 
+3. 
+
+Что ожидалось:
+
+Что произошло:
+
+(Не прикладывайте переписки, номера телефонов, коды входа и ключи.)</string>
+    <string name="AvraFx0">Без эффекта</string>
+    <string name="AvraFx1">Бас</string>
+    <string name="AvraFx2">Хелий</string>
+    <string name="AvraFx3">Робот</string>
+    <string name="AvraFx4">Эхо</string>
+    <string name="AvraFx5">Рация</string>
+    <string name="AvraFx6">Демон</string>
+    <string name="AvraFx7">Аноним</string>
+    <string name="AvraFx8">Бурундук</string>
+    <string name="AvraFx9">Великан</string>
+</resources>

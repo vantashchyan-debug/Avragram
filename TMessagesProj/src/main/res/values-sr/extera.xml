@@ -405,7 +405,6 @@
     <string name="Plugins">Dodaci</string>
     <string name="PluginsEngine">Pogon dodataka</string>
     <string name="EnablePluginsEngine">Omogući pogon dodataka</string>
-    <string name="PluginsInfo">Dodatke možete pronaći na @exteraPlugins.</string>
     <string name="PluginsNotFound">Nema pronađenih dodataka.</string>
     <string name="InstallPlugin">Instaliraj</string>
     <string name="UpdatePlugin">Ажурирање</string>

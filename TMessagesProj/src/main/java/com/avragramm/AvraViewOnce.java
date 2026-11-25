@@ -57,7 +57,7 @@ public final class AvraViewOnce {
             }
             MediaController.saveFile(toSave.getAbsolutePath(), app, video ? 1 : 0, null, null, uri -> AndroidUtilities.runOnUIThread(() -> {
                 try {
-                    BulletinFactory.global().createSimpleBulletin(org.telegram.messenger.R.raw.ic_download, "Сохранено в галерею (Avragram)").show();
+                    BulletinFactory.global().createSimpleBulletin(org.telegram.messenger.R.raw.ic_download, org.telegram.messenger.LocaleController.getString(org.telegram.messenger.R.string.AvraSavedToGallery)).show();
                 } catch (Throwable ignore) {
                 }
             }), false);

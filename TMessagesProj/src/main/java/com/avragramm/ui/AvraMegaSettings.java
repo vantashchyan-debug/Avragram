@@ -6,12 +6,10 @@ import android.widget.ImageView;
 import com.avragramm.AvraBrand;
 import com.exteragram.messenger.appicons.AppIconController;
 import com.exteragram.messenger.appicons.AppIconPreviewDrawable;
-import com.exteragram.messenger.appicons.ui.AppIconsActivity;
 import com.exteragram.messenger.plugins.PluginsController;
 import com.exteragram.messenger.plugins.ui.PluginsActivity;
 import com.exteragram.messenger.preferences.GeneralPreferencesActivity;
 import com.exteragram.messenger.preferences.OtherPreferencesActivity;
-import com.exteragram.messenger.preferences.appearance.AppearancePreferencesActivity;
 import com.exteragram.messenger.preferences.chats.ChatsPreferencesActivity;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -21,6 +19,8 @@ import org.telegram.ui.Components.UItem;
 import org.telegram.ui.SettingsActivity;
 
 import java.util.ArrayList;
+
+import static org.telegram.messenger.LocaleController.getString;
 
 /**
  * The single "mega" settings tab: Avragram + client (ex-exteraGram) categories + plugins are listed
@@ -35,23 +35,21 @@ public final class AvraMegaSettings {
 
     public static void fillTop(ArrayList<UItem> items) {
         items.add(UItem.asHeader(AvraBrand.NAME));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_AVRA, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_theme, "Стили и оформление", "Темы, B Glass, стекло, приватность"));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_ICON, 0xFF3FB8F0, 0xFF1C8ADB, R.drawable.msg_photos, "Иконка приложения", AppIconController.getSelectedIcon().getTitle()));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_GENERAL, 0xFF8E8E93, 0xFF6D6D72, R.drawable.msg_media, "Основные", "Клиент: поведение и функции"));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_APPEARANCE, 0xFFF5A623, 0xFFE07B12, R.drawable.msg_palette, "Внешний вид", "Аватары, шрифты, иконки, анимации"));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_CHATS, 0xFF34C759, 0xFF1FA544, R.drawable.msg_discussion, "Чаты клиента", "Сообщения, медиа, ввод"));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_AVRA, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_theme, getString(R.string.AvraSectionAppearance), getString(R.string.AvraSectionAppearanceInfo)));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_GENERAL, 0xFF8E8E93, 0xFF6D6D72, R.drawable.msg_media, getString(R.string.AvraGeneral), getString(R.string.AvraGeneralInfo)));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_CHATS, 0xFF34C759, 0xFF1FA544, R.drawable.msg_discussion, getString(R.string.AvraChats), getString(R.string.AvraChatsInfo)));
         if (PluginsController.isPluginEngineSupported()) {
-            items.add(SettingsActivity.SettingCell.Factory.of(ID_PLUGINS, 0xFFAF52DE, 0xFF8A35C0, R.drawable.msg_plugins, "Поддержка плагинов из exteraGram", "Плагины .plugin"));
+            items.add(SettingsActivity.SettingCell.Factory.of(ID_PLUGINS, 0xFFAF52DE, 0xFF8A35C0, R.drawable.msg_plugins, getString(R.string.AvraPlugins), getString(R.string.AvraPluginsInfo)));
         }
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_OTHER, 0xFFFF6482, 0xFFE5405E, R.drawable.msg_fave, "Другое", "Резервные копии, сброс, отладка"));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_OTHER, 0xFFFF6482, 0xFFE5405E, R.drawable.msg_fave, getString(R.string.AvraOther), getString(R.string.AvraOtherInfo)));
         items.add(UItem.asShadow(null));
     }
 
     public static void fillBottom(ArrayList<UItem> items) {
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(AvraBrand.NAME));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_CREATORS, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_contacts, "Создатели", "@" + AvraBrand.AUTHORS[0] + " · @" + AvraBrand.AUTHORS[1]));
-        items.add(SettingsActivity.SettingCell.Factory.of(ID_REPORT, 0xFFFF9500, 0xFFE07B12, R.drawable.msg_report, "Сообщить о проблеме"));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_CREATORS, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_contacts, getString(R.string.AvraCreators), "@" + AvraBrand.AUTHORS[0] + " · @" + AvraBrand.AUTHORS[1]));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_REPORT, 0xFFFF9500, 0xFFE07B12, R.drawable.msg_report, getString(R.string.AvraReport)));
     }
 
     /** Selected launcher icon shown in the "Иконка приложения" row, kept in sync with the icon screen. */
@@ -75,9 +73,7 @@ public final class AvraMegaSettings {
         BaseFragment next;
         switch (id) {
             case ID_AVRA: next = new AvraSettingsActivity(); break;
-            case ID_ICON: next = new AppIconsActivity(); break;
             case ID_GENERAL: next = new GeneralPreferencesActivity(); break;
-            case ID_APPEARANCE: next = new AppearancePreferencesActivity(); break;
             case ID_CHATS: next = new ChatsPreferencesActivity(); break;
             case ID_PLUGINS: next = new PluginsActivity(); break;
             case ID_OTHER: next = new OtherPreferencesActivity(); break;

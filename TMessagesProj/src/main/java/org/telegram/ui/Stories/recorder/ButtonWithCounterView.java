@@ -42,7 +42,7 @@ public class ButtonWithCounterView extends FrameLayout implements Loadable, Them
 
     private Theme.ResourcesProvider resourcesProvider;
 
-    protected int radiusDp = 8;
+    protected int radiusDp = com.avragramm.AvraDesign.buttonRadius(8); // Avragram button shape
 
     private final Paint paint;
     public final AnimatedTextView.AnimatedTextDrawable text;
@@ -82,7 +82,7 @@ public class ButtonWithCounterView extends FrameLayout implements Loadable, Them
     }
 
     public void setRoundRadius(int radiusDp) {
-        this.radiusDp = radiusDp;
+        this.radiusDp = com.avragramm.AvraDesign.buttonRadius(radiusDp); // Avragram button shape
         if (filled) {
             setFilledBackground();
         } else {

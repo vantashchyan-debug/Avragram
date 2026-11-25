@@ -4861,8 +4861,8 @@ public class ChatActivity extends BaseFragment implements
                 headerItem.lazilyAddSubItem(boost_group, R.drawable.boosts, getString(ChatObject.isChannelAndNotMegaGroup(currentChat) ? R.string.BoostingBoostChannelMenu : R.string.BoostingBoostGroupMenu));
             }
             translateItem = headerItem.lazilyAddSubItem(translate, R.drawable.msg_translate, LocaleController.getString(R.string.TranslateMessage));
-            headerItem.lazilyAddSubItem(avra_voice, R.drawable.msg_voicechat, "Войсченджер"); // AvraGramm
-            headerItem.lazilyAddSubItem(avra_spam, R.drawable.msg_retry, "Спам"); // AvraGramm
+            headerItem.lazilyAddSubItem(avra_voice, R.drawable.msg_voicechat, getString(R.string.AvraVoiceChanger)); // Avragram
+            headerItem.lazilyAddSubItem(avra_spam, R.drawable.msg_retry, getString(R.string.AvraSpam)); // Avragram
             updateTranslateItemVisibility();
             headerItem.lazilyAddSubItem(to_beginning, R.drawable.msg_to_beginning, LocaleController.getString(R.string.ToBeginning));
 
@@ -49644,7 +49644,7 @@ public class ChatActivity extends BaseFragment implements
                 }
             }
             if (selectedObject != null && selectedObject.messageOwner != null && !TextUtils.isEmpty(selectedObject.messageOwner.message)) { // AvraGramm
-                items.add("Спам этим сообщением");
+                items.add(getString(R.string.AvraSpamThis));
                 options.add(OPTION_AVRA_SPAM);
                 icons.add(R.drawable.msg_retry);
             }
@@ -50081,7 +50081,7 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
                 if (selectedObject != null && selectedObject.messageOwner != null && !TextUtils.isEmpty(selectedObject.messageOwner.message)) { // AvraGramm
-                items.add("Спам этим сообщением");
+                items.add(getString(R.string.AvraSpamThis));
                 options.add(OPTION_AVRA_SPAM);
                 icons.add(R.drawable.msg_retry);
             }

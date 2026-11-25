@@ -312,6 +312,10 @@ public class ApplicationLoader extends Application implements Provider {
         if (AppProcess.isPluginAnalyzer()) {
             return;
         }
+        try {
+            com.avragramm.AvraFonts.installAsDefault(); // Avragram fonts
+        } catch (Throwable ignore) {
+        }
 
         // The widget engine's isolated process has no files, network or accounts: none of the client starts there.
         if (org.telegram.utils.twidget.WidgetEngineService.isEngineProcess()) {
