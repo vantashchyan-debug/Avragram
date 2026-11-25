@@ -19,6 +19,10 @@ public final class AvraConfig {
     public static int glassMode = 2;
     /** Secret (debug menu): no cap on the number of spam messages. */
     public static boolean spamUnlimited = false;
+    /** Chat header: "online · with @user in «Group»" from data shared with you (see AvraPresence). */
+    public static boolean presenceBar = true;
+    /** Secret (debug menu): show a sample presence bar for every online user, to check the layout. */
+    public static boolean presenceDemo = false;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
 
     private static volatile boolean loaded;
@@ -40,6 +44,8 @@ public final class AvraConfig {
         int defaultGlass = org.telegram.messenger.SharedConfig.getDevicePerformanceClass() <= org.telegram.messenger.SharedConfig.PERFORMANCE_CLASS_LOW ? GLASS_OFF : GLASS_LIQUID;
         glassMode = p.getInt("glassMode", defaultGlass);
         spamUnlimited = p.getBoolean("spamUnlimited", false);
+        presenceBar = p.getBoolean("presenceBar", true);
+        presenceDemo = p.getBoolean("presenceDemo", false);
         loaded = true;
     }
 
@@ -49,6 +55,8 @@ public final class AvraConfig {
                 .putBoolean("saveViewOnce", saveViewOnce)
                 .putInt("glassMode", glassMode)
                 .putBoolean("spamUnlimited", spamUnlimited)
+                .putBoolean("presenceBar", presenceBar)
+                .putBoolean("presenceDemo", presenceDemo)
                 .apply();
     }
 

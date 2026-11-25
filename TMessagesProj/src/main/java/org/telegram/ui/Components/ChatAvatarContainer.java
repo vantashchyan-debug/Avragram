@@ -1212,6 +1212,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
 
     private boolean subtitleIsThinkingBot;
 
+    /** Avragram: re-checks the presence bar while the user stays online (recent-activity window expires). */
+    private final Runnable avraPresenceRefresh = () -> {
+        if (isAttachedToWindow()) updateSubtitle(true);
+    };
+
     private boolean showingSavedMessagesHint;
 
     public void updateSubtitle(boolean animated) {
@@ -1374,6 +1379,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                     isOnline[0] = false;
                     newStatus = LocaleController.formatUserStatus(currentAccount, user, isOnline, allowShorterStatus ? statusMadeShorter : null, new boolean[1]);
                     useOnlineColor = isOnline[0];
+                    // Avragram: "online · with @user in «Group»" instead of the plain "online" (replaces, never appends)
+                    removeCallbacks(avraPresenceRefresh);
+                    if (isOnline[0]) {
+                        CharSequence presence = com.avragramm.AvraPresence.onlineSubtitle(currentAccount, user);
+                        if (presence != null) {
+                            newStatus = presence;
+                            postDelayed(avraPresenceRefresh, com.avragramm.AvraPresence.REFRESH_MS);
+                        }
+                    }
                 }
                 newSubtitle = newStatus;
             } else {
@@ -1688,6 +1702,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        removeCallbacks(avraPresenceRefresh);
         if (parentFragment != null) {
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.didUpdateConnectionState);
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);

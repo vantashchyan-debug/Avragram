@@ -229,4 +229,15 @@
     <string name="AvraSndDing">Дзынь</string>
     <string name="AvraSndBoing">Пружинка</string>
     <string name="AvraSndApplause">Аплодисменты</string>
+    <string name="AvraPresenceTitle">С кем в сети</string>
+    <string name="AvraPresenceSwitch">Показывать, где собеседник в сети</string>
+    <string name="AvraPresenceInfo">Вместо «в сети» в шапке чата видно общую группу, где собеседник сейчас печатает или только что писал, и кому он ответил (@username). Telegram никому не сообщает, что человек делает в других чатах и в личке, поэтому тогда в шапке написано, что это скрыто.</string>
+    <string name="AvraPresenceTyping">%1$s · пишет в %2$s</string>
+    <string name="AvraPresenceIn">%1$s · в %2$s</string>
+    <string name="AvraPresenceWithIn">%1$s · с %2$s в %3$s</string>
+    <string name="AvraPresenceHidden">%1$s · с кем — скрыто</string>
+    <string name="AvraPresenceSomeChat">общем чате</string>
+    <string name="AvraPresenceDemoChat">«Тестовый чат»</string>
+    <string name="AvraPresenceDemo">Тест плашки «с кем в сети»</string>
+    <string name="AvraPresenceDemoInfo">У всех собеседников в сети в шапке появится пример с @avragram_demo, чтобы проверить вёрстку.</string>
 </resources>

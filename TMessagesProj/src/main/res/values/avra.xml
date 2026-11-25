@@ -229,4 +229,15 @@ Actual:
     <string name="AvraSndDing">Ding</string>
     <string name="AvraSndBoing">Boing</string>
     <string name="AvraSndApplause">Applause</string>
+    <string name="AvraPresenceTitle">Who they are with</string>
+    <string name="AvraPresenceSwitch">Show where an online contact is</string>
+    <string name="AvraPresenceInfo">Instead of “online” the chat header shows the shared group where the contact is typing or has just written, and whom they replied to (@username). Telegram does not tell anyone what a person does in other chats or private conversations, so in that case the header says it is hidden.</string>
+    <string name="AvraPresenceTyping">%1$s · typing in %2$s</string>
+    <string name="AvraPresenceIn">%1$s · in %2$s</string>
+    <string name="AvraPresenceWithIn">%1$s · with %2$s in %3$s</string>
+    <string name="AvraPresenceHidden">%1$s · whom they chat with is hidden</string>
+    <string name="AvraPresenceSomeChat">a shared chat</string>
+    <string name="AvraPresenceDemoChat">«Test chat»</string>
+    <string name="AvraPresenceDemo">Presence bar test</string>
+    <string name="AvraPresenceDemoInfo">Every online contact gets a sample bar with @avragram_demo, to check the chat header layout.</string>
 </resources>

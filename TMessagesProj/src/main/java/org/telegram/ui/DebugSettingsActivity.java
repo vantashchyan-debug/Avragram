@@ -135,7 +135,7 @@ public class DebugSettingsActivity extends UniversalFragment {
         return getString(R.string.DebugMenu);
     }
 
-    private static final int ID_AVRA_SPAM_UNLIMITED = 9001;
+    private static final int ID_AVRA_SPAM_UNLIMITED = 9001, ID_AVRA_PRESENCE_DEMO = 9002;
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
@@ -143,6 +143,8 @@ public class DebugSettingsActivity extends UniversalFragment {
         items.add(UItem.asHeader("Avragram"));
         items.add(UItem.asCheck(ID_AVRA_SPAM_UNLIMITED, getString(R.string.AvraSpamUnlimited)).setChecked(com.avragramm.AvraConfig.spamUnlimited));
         items.add(UItem.asShadow(getString(R.string.AvraSpamUnlimitedInfo)));
+        items.add(UItem.asCheck(ID_AVRA_PRESENCE_DEMO, getString(R.string.AvraPresenceDemo)).setChecked(com.avragramm.AvraConfig.presenceDemo));
+        items.add(UItem.asShadow(getString(R.string.AvraPresenceDemoInfo)));
         items.add(UItem.asHeader("Contacts and chats"));
         items.add(UItem.asButton(ID_IMPORT_CONTACTS, getString(R.string.DebugMenuImportContacts)));
         items.add(UItem.asButton(ID_RELOAD_CONTACTS, getString(R.string.DebugMenuReloadContacts)));
@@ -250,6 +252,12 @@ public class DebugSettingsActivity extends UniversalFragment {
     protected void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == ID_AVRA_SPAM_UNLIMITED) {
             com.avragramm.AvraConfig.spamUnlimited = !com.avragramm.AvraConfig.spamUnlimited;
+            com.avragramm.AvraConfig.save();
+            listView.adapter.update(true);
+            return;
+        }
+        if (item.id == ID_AVRA_PRESENCE_DEMO) {
+            com.avragramm.AvraConfig.presenceDemo = !com.avragramm.AvraConfig.presenceDemo;
             com.avragramm.AvraConfig.save();
             listView.adapter.update(true);
             return;

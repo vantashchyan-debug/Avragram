@@ -16,7 +16,7 @@ import static org.telegram.messenger.LocaleController.getString;
 /** Avragram privacy features: keep deleted messages, keep view-once media and allow screenshots. */
 public class AvraPrivacyActivity extends UniversalFragment {
 
-    private static final int ID_SAVE_DELETED = 10, ID_SAVE_VIEW_ONCE = 11;
+    private static final int ID_SAVE_DELETED = 10, ID_SAVE_VIEW_ONCE = 11, ID_PRESENCE = 12;
 
     @Override
     protected CharSequence getTitle() {
@@ -30,6 +30,9 @@ public class AvraPrivacyActivity extends UniversalFragment {
         items.add(UItem.asSwitchNoIcon(ID_SAVE_DELETED, getString(R.string.AvraShowDeleted)).setChecked(AvraConfig.saveDeleted));
         items.add(UItem.asSwitchNoIcon(ID_SAVE_VIEW_ONCE, getString(R.string.AvraSaveViewOnce)).setChecked(AvraConfig.saveViewOnce));
         items.add(UItem.asShadow(getString(R.string.AvraPrivacyInfo)));
+        items.add(UItem.asHeader(getString(R.string.AvraPresenceTitle)));
+        items.add(UItem.asSwitchNoIcon(ID_PRESENCE, getString(R.string.AvraPresenceSwitch)).setChecked(AvraConfig.presenceBar));
+        items.add(UItem.asShadow(getString(R.string.AvraPresenceInfo)));
     }
 
     @Override
@@ -38,6 +41,8 @@ public class AvraPrivacyActivity extends UniversalFragment {
             AvraConfig.saveDeleted = !AvraConfig.saveDeleted;
         } else if (item.id == ID_SAVE_VIEW_ONCE) {
             AvraConfig.saveViewOnce = !AvraConfig.saveViewOnce;
+        } else if (item.id == ID_PRESENCE) {
+            AvraConfig.presenceBar = !AvraConfig.presenceBar;
         } else {
             return;
         }
