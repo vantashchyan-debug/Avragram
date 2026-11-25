@@ -14,13 +14,14 @@ import org.telegram.ui.ActionBar.Theme;
  * Two-layer geometry model of Avragram.
  *
  * <ol>
- *   <li><b>Base layer</b> — the geometry of the active theme: one of the 32 Avragram styles
- *       ({@link AvraStyles}) or, for any other theme (Telegram, accents, custom files), plain Telegram geometry.</li>
+ *   <li><b>Base layer</b> — the layout preset ("style"): the geometry of one of the Avragram styles
+ *       ({@link AvraStyles}) or plain Telegram geometry. Chosen on its own ({@link #setLayout}); a palette
+ *       (colour theme) switch never changes it.</li>
  *   <li><b>Override layer</b> — values the user changed explicitly. Stored as {@code ov.<field>} in the
  *       "avragramm" preferences and never touched by a theme switch.</li>
  * </ol>
  *
- * Effective value = override if present, otherwise base. Every time a theme is applied
+ * Effective value = override if present, otherwise base. Every time a theme or layout is applied
  * ({@link #onThemeApplied}) the effective values are recomputed and written into the places the UI
  * reads them from ({@link SharedConfig#bubbleRadius}, {@link ExteraConfig}, {@link AvraFonts}). Nothing
  * else in the app writes those values any more: the old controls were moved to Avragram → Appearance
@@ -215,15 +216,69 @@ public final class AvraDesign {
     public static void onThemeApplied(Theme.ThemeInfo theme, boolean preview) {
         if (preview || theme == null) return;
         try {
-            String base = AvraStyles.isAvra(theme.assetName) ? theme.name : TELEGRAM;
-            ensureMigrated(base);
-            if (!base.equals(baseStyle())) {
-                prefs().edit().putString(KEY_BASE, base).apply();
+            // Since 1.4 the theme (palette) no longer decides the layout: the style is chosen on its own
+            // (Themes and styles → Styles, or a whole ready-made theme). Only the very first run of a
+            // pre-1.3 install takes the layout from the active theme, so the look does not jump.
+            if (!prefs().getBoolean(KEY_MIGRATED, false)) {
+                ensureMigrated(AvraStyles.isAvra(theme.assetName) ? theme.name : TELEGRAM);
             }
             if (sync()) fontChangedByTheme = true;
         } catch (Throwable e) {
             FileLog.e(e);
         }
+    }
+
+    // ------------------------------------------------------------------------------------ layout presets
+
+    /**
+     * Switches the layout preset (the base layer: buttons, bubbles, avatars, lists, title, FAB, font)
+     * without touching colours. {@code styleName} is an Avragram style name, "" or unknown = Telegram.
+     * User overrides stay on top. Returns true if the effective font changed.
+     */
+    public static boolean setLayout(String styleName) {
+        ensureMigrated(baseStyle());
+        String base = styleIndex(styleName) >= 0 ? styleName : TELEGRAM;
+        if (!base.equals(baseStyle())) prefs().edit().putString(KEY_BASE, base).apply();
+        return sync();
+    }
+
+    /** Index of the active layout preset in {@link AvraStyles}, -1 for Telegram. */
+    public static int layoutIndex() {
+        return styleIndex(baseStyle());
+    }
+
+    /** True if two styles have identical geometry (e.g. the light and dark variant of a concept). */
+    public static boolean sameLayout(int a, int b) {
+        if (a == b) return true;
+        if (a < 0 || b < 0) return false;
+        return AvraStyles.FONT[a].equals(AvraStyles.FONT[b]) && AvraStyles.BUTTON[a] == AvraStyles.BUTTON[b]
+                && AvraStyles.BUBBLE[a] == AvraStyles.BUBBLE[b] && AvraStyles.AVATAR[a] == AvraStyles.AVATAR[b]
+                && AvraStyles.DIVIDER[a] == AvraStyles.DIVIDER[b] && AvraStyles.SECTION[a] == AvraStyles.SECTION[b]
+                && AvraStyles.CENTER[a] == AvraStyles.CENTER[b] && AvraStyles.SQUARE_FAB[a] == AvraStyles.SQUARE_FAB[b];
+    }
+
+    /** True if the active layout is the one of style {@code i} (-1 = Telegram). */
+    public static boolean isLayout(int i) {
+        return sameLayout(layoutIndex(), i);
+    }
+
+    private static int[] layouts;
+
+    /** Distinct layout presets: the first style of every group with identical geometry. */
+    public static int[] layouts() {
+        int[] l = layouts;
+        if (l == null) {
+            int[] tmp = new int[AvraStyles.NAMES.length];
+            int n = 0;
+            outer:
+            for (int i = 0; i < AvraStyles.NAMES.length; i++) {
+                for (int k = 0; k < n; k++) if (sameLayout(tmp[k], i)) continue outer;
+                tmp[n++] = i;
+            }
+            l = java.util.Arrays.copyOf(tmp, n);
+            layouts = l;
+        }
+        return l;
     }
 
     /**

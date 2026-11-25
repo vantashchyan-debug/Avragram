@@ -117,7 +117,7 @@ Actual:
     <string name="AvraFx8">Chipmunk</string>
     <string name="AvraFx9">Giant</string>
     <string name="AvraTabThemes">Themes and styles</string>
-    <string name="AvraTabThemesInfo">32 styles, Telegram themes, night mode</string>
+    <string name="AvraTabThemesInfo">Ready-made themes, styles, palettes, night mode</string>
     <string name="AvraTabText">Font and text</string>
     <string name="AvraTabTextInfo">Font, message text size</string>
     <string name="AvraTabBubbles">Bubbles and messages</string>
@@ -150,4 +150,27 @@ Actual:
     <string name="AvraCenterTitle">Centred title</string>
     <string name="AvraFab">Floating button</string>
     <string name="AvraPrivacyInfoShort">Deleted messages, view once</string>
+    <string name="AvraLayouts">Styles</string>
+    <string name="AvraLayoutsSub">%1$s · buttons, bubbles, corners, font</string>
+    <string name="AvraLayoutDesc">%1$s · buttons: %2$s · bubbles %3$d dp</string>
+    <string name="AvraLayoutInfo">A style changes buttons, bubbles, avatars, lists, the title and the font. Colours stay as they are.</string>
+    <string name="AvraPalettes">Palettes</string>
+    <string name="AvraPalettesSub">%1$s · colours only</string>
+    <string name="AvraPalette">Palette</string>
+    <string name="AvraPaletteInfo">A palette changes only colours. Buttons, bubbles, corners and the font stay as they are.</string>
+    <string name="AvraMixOwn">Mix your own</string>
+    <string name="AvraMixInfo">A style is the shape, a palette is the colours. Any style works with any palette.</string>
+    <string name="AvraReadyThemes">Ready-made themes</string>
+    <string name="AvraReadyThemesInfo">A theme is a palette, a style and a font together. Tap a theme to apply it whole; the gear lets you apply only a part or change the font and palette.</string>
+    <string name="AvraThemeSetup">Theme settings</string>
+    <string name="AvraThemeApply">Apply</string>
+    <string name="AvraApplyWhole">Whole theme</string>
+    <string name="AvraApplyWholeInfo">Palette + style + font</string>
+    <string name="AvraApplyPalette">Only the palette</string>
+    <string name="AvraApplyPaletteInfo">Colours; your buttons, bubbles and font stay</string>
+    <string name="AvraApplyLayout">Only the style</string>
+    <string name="AvraApplyLayoutInfo">Buttons, bubbles, corners, font; colours stay</string>
+    <string name="AvraThemeParts">What it is made of</string>
+    <string name="AvraThemePartsInfo">These are the theme\'s own values. Tap one to choose your own: it stays on top of any theme and survives restarts.</string>
+    <string name="AvraThemeApplied">Applied: %1$s</string>
 </resources>

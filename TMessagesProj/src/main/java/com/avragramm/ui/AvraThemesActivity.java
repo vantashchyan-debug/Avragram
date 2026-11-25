@@ -1,12 +1,12 @@
 package com.avragramm.ui;
 
+import android.content.Context;
 import android.view.View;
 
 import com.avragramm.AvraDesign;
-import com.avragramm.AvraFonts;
 import com.avragramm.AvraStyles;
 
-import org.telegram.messenger.NotificationCenter;
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.UItem;
@@ -15,17 +15,32 @@ import org.telegram.ui.ThemeActivity;
 
 import java.util.ArrayList;
 
+import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
 
 /**
- * Themes and styles: plain Telegram + the 32 Avragram styles, day and night. Picking a style only
- * switches the theme — the user's geometry overrides are never touched (see {@link AvraDesign}).
+ * Themes and styles. Three separate things:
+ *
+ * <ul>
+ *   <li><b>Styles</b> — layout presets: buttons, bubbles, corners, lists, font. No colours.</li>
+ *   <li><b>Palettes</b> — colours only.</li>
+ *   <li><b>Ready-made themes</b> — a palette, a style and a font together. A row applies the whole
+ *       theme; its gear opens {@link AvraThemeSetupActivity} (apply a part, pick font / palette).</li>
+ * </ul>
+ * The user's own changes (override layer) stay on top of all of them.
  */
 public class AvraThemesActivity extends AvraDesignFragment {
 
-    private static final int ID_NIGHT_MODE = 10;
-    private static final int ID_TELEGRAM_DAY = 11, ID_TELEGRAM_NIGHT = 12;
-    private static final int ID_DAY_BASE = 1000, ID_NIGHT_BASE = 2000;
+    private static final int ID_NIGHT_MODE = 10, ID_LAYOUTS = 11, ID_PALETTES = 12;
+    private static final int ID_TELEGRAM = 99, ID_THEME_BASE = 1000;
+    private static final int PAD = 64, HEIGHT = 60;
+
+    private AvraPresetRow telegramRow;
+    private AvraPresetRow[] rows;
+
+    private final Runnable refreshLater = () -> {
+        if (listView != null && listView.adapter != null) listView.adapter.update(true);
+    };
 
     @Override
     protected CharSequence getTitle() {
@@ -37,96 +52,75 @@ public class AvraThemesActivity extends AvraDesignFragment {
         return new AvraDesign.Field[0];
     }
 
-    private static boolean autoNight() {
-        return Theme.selectedAutoNightType != Theme.AUTO_NIGHT_TYPE_NONE;
+    @Override
+    public View createView(Context context) {
+        telegramRow = row(context, -1);
+        rows = new AvraPresetRow[AvraStyles.NAMES.length];
+        for (int i = 0; i < rows.length; i++) rows[i] = row(context, i);
+        return super.createView(context);
     }
 
-    private static Theme.ThemeInfo telegramNight() {
-        Theme.ThemeInfo n = Theme.getTheme("Night");
-        return n != null ? n : Theme.getTheme("Dark Blue");
+    private AvraPresetRow row(Context context, int style) {
+        AvraPresetRow r = new AvraPresetRow(context, false, true, false);
+        r.setOnClickListener(v -> {
+            boolean font = AvraThemeSetupActivity.applyWhole(style);
+            Theme.applyCommonTheme();
+            changed(font);
+            AndroidUtilities.cancelRunOnUIThread(refreshLater);
+            AndroidUtilities.runOnUIThread(refreshLater, 450);
+        });
+        r.setOnGearClick(v -> presentFragment(new AvraThemeSetupActivity(style)));
+        return r;
     }
 
-    private static String subtitle(int i) {
-        String font = AvraFonts.FONTS[AvraFonts.indexOf(AvraStyles.FONT[i])][1];
-        return (font == null ? getString(R.string.AvraFontSystem) : font) + " · " + getString(AvraStyles.DARK[i] ? R.string.AvraDark : R.string.AvraLight);
+    /** A ready-made theme is "on" when both its palette and its layout are active. */
+    private static boolean isActive(int style, Theme.ThemeInfo active) {
+        if (!AvraDesign.isLayout(style)) return false;
+        if (style < 0) return active == null || !AvraStyles.isAvra(active.assetName);
+        return active != null && AvraStyles.NAMES[style].equals(active.name);
     }
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        final boolean auto = autoNight();
-        final Theme.ThemeInfo active = Theme.getActiveTheme();
-        final Theme.ThemeInfo day = Theme.getCurrentTheme();
-        final Theme.ThemeInfo night = Theme.getCurrentNightTheme();
+        if (rows == null) return;
+        Theme.ThemeInfo active = Theme.getActiveTheme();
 
         items.add(UItem.asButton(ID_NIGHT_MODE, R.drawable.menu_night_mode_24, getString(R.string.AvraNightMode), getString(R.string.AvraNightModeInfo)));
         items.add(UItem.asShadow(null));
 
-        // With auto night: the day theme can be any style, the night theme only a dark one.
-        items.add(UItem.asHeader(getString(auto ? R.string.AvraDayStyles : R.string.AvraStyle)));
-        Theme.ThemeInfo dayTarget = auto ? day : active;
-        boolean telegramDay = dayTarget == null || !AvraStyles.isAvra(dayTarget.assetName);
-        items.add(UItem.asRadio(ID_TELEGRAM_DAY, getString(R.string.AvraStyleTelegram), getString(R.string.AvraStyleDefault)).setChecked(telegramDay));
-        for (int i = 0; i < AvraStyles.NAMES.length; i++) {
-            Theme.ThemeInfo t = Theme.getTheme(AvraStyles.NAMES[i]);
-            if (t == null) continue;
-            items.add(UItem.asRadio(ID_DAY_BASE + i, getString(AvraStyles.TITLES[i]), subtitle(i)).setChecked(t == dayTarget));
-        }
+        items.add(UItem.asHeader(getString(R.string.AvraMixOwn)));
+        items.add(UItem.asButtonWithSubtext(ID_LAYOUTS, R.drawable.msg_customize, getString(R.string.AvraLayouts),
+                formatString(R.string.AvraLayoutsSub, AvraLayoutsActivity.activeTitle()), PAD, HEIGHT));
+        items.add(UItem.asButtonWithSubtext(ID_PALETTES, R.drawable.msg_palette, getString(R.string.AvraPalettes),
+                formatString(R.string.AvraPalettesSub, AvraPalettesActivity.activeTitle()), PAD, HEIGHT));
+        items.add(UItem.asShadow(getString(R.string.AvraMixInfo)));
 
-        if (auto) {
-            items.add(UItem.asShadow(null));
-            items.add(UItem.asHeader(getString(R.string.AvraNightStyles)));
-            boolean telegramNightChecked = night == null || !AvraStyles.isAvra(night.assetName);
-            items.add(UItem.asRadio(ID_TELEGRAM_NIGHT, getString(R.string.AvraStyleTelegramNight)).setChecked(telegramNightChecked));
-            for (int i = 0; i < AvraStyles.NAMES.length; i++) {
-                if (!AvraStyles.DARK[i]) continue;
-                Theme.ThemeInfo t = Theme.getTheme(AvraStyles.NAMES[i]);
-                if (t == null) continue;
-                items.add(UItem.asRadio(ID_NIGHT_BASE + i, getString(AvraStyles.TITLES[i]), subtitle(i)).setChecked(t == night));
-            }
+        items.add(UItem.asHeader(getString(R.string.AvraReadyThemes)));
+        telegramRow.updateColors();
+        telegramRow.setTitle(getString(R.string.AvraStyleTelegram)).setChecked(isActive(-1, active), true);
+        items.add(UItem.asCustom(ID_TELEGRAM, telegramRow));
+        for (int i = 0; i < rows.length; i++) {
+            if (Theme.getTheme(AvraStyles.NAMES[i]) == null) continue;
+            rows[i].updateColors();
+            rows[i].setTitle(getString(AvraStyles.TITLES[i])).setChecked(isActive(i, active), true);
+            items.add(UItem.asCustom(ID_THEME_BASE + i, rows[i]));
         }
-        items.add(UItem.asShadow(getString(R.string.AvraStyleInfo)));
+        items.add(UItem.asShadow(getString(R.string.AvraReadyThemesInfo)));
     }
 
     @Override
     protected void onClick(UItem item, View view, int position, float x, float y) {
-        int id = item.id;
-        if (id == ID_NIGHT_MODE) {
-            presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT));
-            return;
+        switch (item.id) {
+            case ID_NIGHT_MODE: presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT)); break;
+            case ID_LAYOUTS: presentFragment(new AvraLayoutsActivity()); break;
+            case ID_PALETTES: presentFragment(new AvraPalettesActivity()); break;
+            default: super.onClick(item, view, position, x, y);
         }
-        if (id == ID_TELEGRAM_DAY) {
-            applyDay(Theme.getTheme("Blue"));
-        } else if (id == ID_TELEGRAM_NIGHT) {
-            applyNight(telegramNight());
-        } else if (id >= ID_DAY_BASE && id < ID_DAY_BASE + AvraStyles.NAMES.length) {
-            applyDay(Theme.getTheme(AvraStyles.NAMES[id - ID_DAY_BASE]));
-        } else if (id >= ID_NIGHT_BASE && id < ID_NIGHT_BASE + AvraStyles.NAMES.length) {
-            applyNight(Theme.getTheme(AvraStyles.NAMES[id - ID_NIGHT_BASE]));
-        } else {
-            super.onClick(item, view, position, x, y);
-            return;
-        }
-        listView.adapter.update(true);
     }
 
-    /** Day theme (or the only theme without auto night). Geometry overrides stay as they are. */
-    private void applyDay(Theme.ThemeInfo theme) {
-        if (theme == null) return;
-        if (autoNight() && Theme.isCurrentThemeNight()) {
-            // Night is on screen: remember the day theme, Telegram switches to it when day comes.
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, theme, false, null, -1);
-            Theme.checkAutoNightThemeConditions(true);
-            return;
-        }
-        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, theme, false, null, -1);
-    }
-
-    private void applyNight(Theme.ThemeInfo theme) {
-        if (theme == null) return;
-        Theme.setCurrentNightTheme(theme);
-        Theme.saveAutoNightThemeConfig();
-        if (Theme.isCurrentThemeNight()) {
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, theme, true, null, -1);
-        }
+    @Override
+    public void onFragmentDestroy() {
+        AndroidUtilities.cancelRunOnUIThread(refreshLater);
+        super.onFragmentDestroy();
     }
 }

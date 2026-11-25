@@ -117,7 +117,7 @@
     <string name="AvraFx8">Бурундук</string>
     <string name="AvraFx9">Великан</string>
     <string name="AvraTabThemes">Темы и стили</string>
-    <string name="AvraTabThemesInfo">32 стиля, темы Telegram, ночной режим</string>
+    <string name="AvraTabThemesInfo">Готовые темы, стили, палитры, ночной режим</string>
     <string name="AvraTabText">Шрифт и текст</string>
     <string name="AvraTabTextInfo">Шрифт, размер текста сообщений</string>
     <string name="AvraTabBubbles">Баблы и сообщения</string>
@@ -150,4 +150,27 @@
     <string name="AvraCenterTitle">Заголовок по центру</string>
     <string name="AvraFab">Плавающая кнопка</string>
     <string name="AvraPrivacyInfoShort">Удалённые сообщения, один просмотр</string>
+    <string name="AvraLayouts">Стили</string>
+    <string name="AvraLayoutsSub">%1$s · кнопки, баблы, скругления, шрифт</string>
+    <string name="AvraLayoutDesc">%1$s · кнопки: %2$s · баблы %3$d dp</string>
+    <string name="AvraLayoutInfo">Стиль меняет кнопки, баблы, аватары, списки, заголовок и шрифт. Цвета не меняются.</string>
+    <string name="AvraPalettes">Палитры</string>
+    <string name="AvraPalettesSub">%1$s · только цвета</string>
+    <string name="AvraPalette">Палитра</string>
+    <string name="AvraPaletteInfo">Палитра меняет только цвета. Кнопки, баблы, скругления и шрифт остаются как есть.</string>
+    <string name="AvraMixOwn">Собрать своё</string>
+    <string name="AvraMixInfo">Стиль — это форма, палитра — это цвета. Любой стиль сочетается с любой палитрой.</string>
+    <string name="AvraReadyThemes">Готовые темы</string>
+    <string name="AvraReadyThemesInfo">Тема — это палитра, стиль и шрифт вместе. Нажми на тему, чтобы применить её целиком; шестерёнка — применить только часть или поменять шрифт и палитру.</string>
+    <string name="AvraThemeSetup">Настройки темы</string>
+    <string name="AvraThemeApply">Применить</string>
+    <string name="AvraApplyWhole">Тема целиком</string>
+    <string name="AvraApplyWholeInfo">Палитра + стиль + шрифт</string>
+    <string name="AvraApplyPalette">Только палитра</string>
+    <string name="AvraApplyPaletteInfo">Цвета; твои кнопки, баблы и шрифт остаются</string>
+    <string name="AvraApplyLayout">Только стиль</string>
+    <string name="AvraApplyLayoutInfo">Кнопки, баблы, скругления, шрифт; цвета остаются</string>
+    <string name="AvraThemeParts">Из чего состоит</string>
+    <string name="AvraThemePartsInfo">Это значения самой темы. Нажми, чтобы выбрать своё: оно останется поверх любой темы и после перезапуска.</string>
+    <string name="AvraThemeApplied">Применено: %1$s</string>
 </resources>
