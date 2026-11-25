@@ -163,4 +163,37 @@ public final class AvraChatTools {
         } catch (Throwable ignore) {
         }
     }
+
+    /**
+     * Mute / unmute a person in a private chat. Muting asks first: from now on every message they
+     * send is deleted for both sides on arrival and never shown here. Unmuting is immediate.
+     */
+    public static void showMute(BaseFragment fragment, int account, org.telegram.tgnet.TLRPC.User user, Runnable onChanged) {
+        Context ctx = fragment.getParentActivity();
+        if (ctx == null || user == null) return;
+        String name = com.avragramm.AvraPresence.at(org.telegram.messenger.UserObject.getPublicUsername(user));
+        if (name == null) name = org.telegram.messenger.UserObject.getUserName(user);
+        final String who = TextUtils.isEmpty(name) ? getString(R.string.AvraMuteThisPerson) : name;
+        if (com.avragramm.AvraMute.isMuted(account, user.id)) {
+            com.avragramm.AvraMute.toggle(account, user.id);
+            if (onChanged != null) onChanged.run();
+            org.telegram.ui.Components.BulletinFactory.of(fragment).createSimpleBulletin(R.raw.contact_check,
+                    formatString(R.string.AvraUnmuted, who)).show();
+            return;
+        }
+        AlertDialog d = new AlertDialog.Builder(ctx, fragment.getResourceProvider())
+                .setTitle(formatString(R.string.AvraMuteTitle, who))
+                .setMessage(AndroidUtilities.replaceTags(getString(R.string.AvraMuteText)))
+                .setPositiveButton(getString(R.string.AvraMuteUser), (dialog, which) -> {
+                    if (!com.avragramm.AvraMute.isMuted(account, user.id)) com.avragramm.AvraMute.toggle(account, user.id);
+                    if (onChanged != null) onChanged.run();
+                    org.telegram.ui.Components.BulletinFactory.of(fragment).createSimpleBulletin(R.raw.ic_ban,
+                            formatString(R.string.AvraMuted, who)).show();
+                })
+                .setNegativeButton(getString(R.string.Cancel), null)
+                .create();
+        fragment.showDialog(d);
+        android.widget.TextView button = (android.widget.TextView) d.getButton(android.content.DialogInterface.BUTTON_POSITIVE);
+        if (button != null) button.setTextColor(Theme.getColor(Theme.key_text_RedBold, fragment.getResourceProvider()));
+    }
 }

@@ -17231,6 +17231,10 @@ public class MessagesController extends BaseController implements NotificationCe
                                     }
                                 }
 
+                                // Avragram: drop (and delete for both) messages of muted people
+                                for (java.util.Iterator<TLRPC.Message> it = res.new_messages.iterator(); it.hasNext(); ) {
+                                    if (com.avragramm.AvraMute.intercept(currentAccount, it.next())) it.remove();
+                                }
                                 ImageLoader.saveMessagesThumbs(res.new_messages);
 
                                 ArrayList<MessageObject> pushMessages = new ArrayList<>();
@@ -18296,6 +18300,8 @@ public class MessagesController extends BaseController implements NotificationCe
                     }
 
                     getMessagesStorage().setLastPtsValue(updates.pts);
+                    // Avragram: a muted person's message is deleted for both and never processed
+                    if (!com.avragramm.AvraMute.intercept(currentAccount, message)) {
                     boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                     MessageObject obj = new MessageObject(currentAccount, message, isDialogCreated, isDialogCreated);
                     ArrayList<MessageObject> objArr = new ArrayList<>();
@@ -18333,6 +18339,7 @@ public class MessagesController extends BaseController implements NotificationCe
                         getMessagesStorage().getStorageQueue().postRunnable(() -> AndroidUtilities.runOnUIThread(() -> getNotificationsController().processNewMessages(objArr, true, false, null)));
                     }
                     getMessagesStorage().putMessages(arr, false, true, false, 0, 0, 0);
+                    } // Avragram: end of mute check
                 } else if (getMessagesStorage().getLastPtsValue() != updates.pts) {
                     if (BuildVars.LOGS_ENABLED) {
                         FileLog.d("need get diff short message, pts: " + getMessagesStorage().getLastPtsValue() + " " + updates.pts + " count = " + updates.pts_count);
@@ -18799,6 +18806,9 @@ public class MessagesController extends BaseController implements NotificationCe
                 }
                 if (message instanceof TLRPC.TL_messageEmpty) {
                     continue;
+                }
+                if (baseUpdate instanceof TL_update.TL_updateNewMessage && com.avragramm.AvraMute.intercept(currentAccount, message)) {
+                    continue; // Avragram: muted person — deleted for both, never shown
                 }
                 if (newMessageCallback != null && newMessageCallback.onMessageReceived(message)) {
                     newMessageCallback = null;

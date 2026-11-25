@@ -240,4 +240,11 @@
     <string name="AvraPresenceDemoChat">«Тестовый чат»</string>
     <string name="AvraPresenceDemo">Тест плашки «с кем в сети»</string>
     <string name="AvraPresenceDemoInfo">У всех собеседников в сети в шапке появится пример с @avragram_demo, чтобы проверить вёрстку.</string>
+    <string name="AvraMuteUser">Замутить</string>
+    <string name="AvraUnmuteUser">Размутить</string>
+    <string name="AvraMuteThisPerson">этого человека</string>
+    <string name="AvraMuteTitle">Замутить %1$s?</string>
+    <string name="AvraMuteText">Каждое новое сообщение этого человека будет **удаляться у вас обоих** сразу, как придёт. Ты его не увидишь: ни в чате, ни в уведомлениях. Старые сообщения останутся.\n\nРаботает в этой личке, пока не размутишь.</string>
+    <string name="AvraMuted">%1$s в муте: новые сообщения удаляются у обоих</string>
+    <string name="AvraUnmuted">%1$s больше не в муте</string>
 </resources>

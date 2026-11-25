@@ -485,6 +485,10 @@ public class PushListenerController {
                             if (loc_key.startsWith("REACT_") || loc_key.startsWith("CHAT_REACT_")) {
                                 processNotification = true;
                             }
+                            // Avragram: nothing from a muted person (their messages are deleted for both on arrival)
+                            if (dialogId > 0 && com.avragramm.AvraMute.isMuted(currentAccount, dialogId)) {
+                                processNotification = false;
+                            }
 
                             int story_id = -1;
                             if (loc_key.equals("STORY_NOTEXT") || loc_key.equals("STORY_LIVE") || loc_key.equals("STORY_HIDDEN_AUTHOR")) {

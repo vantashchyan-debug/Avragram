@@ -240,4 +240,11 @@ Actual:
     <string name="AvraPresenceDemoChat">«Test chat»</string>
     <string name="AvraPresenceDemo">Presence bar test</string>
     <string name="AvraPresenceDemoInfo">Every online contact gets a sample bar with @avragram_demo, to check the chat header layout.</string>
+    <string name="AvraMuteUser">Mute</string>
+    <string name="AvraUnmuteUser">Unmute</string>
+    <string name="AvraMuteThisPerson">this person</string>
+    <string name="AvraMuteTitle">Mute %1$s?</string>
+    <string name="AvraMuteText">Every new message from this person will be **deleted for both of you** as soon as it arrives. You will not see it: no chat, no notification. Earlier messages stay.\n\nWorks in this private chat until you unmute.</string>
+    <string name="AvraMuted">%1$s is muted: new messages are deleted for both</string>
+    <string name="AvraUnmuted">%1$s is unmuted</string>
 </resources>

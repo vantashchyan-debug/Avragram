@@ -1913,6 +1913,7 @@ public class ChatActivity extends BaseFragment implements
     private final static int report = 21;
     private final static int avra_voice = 7701; // AvraGramm
     private final static int avra_spam = 7702; // AvraGramm
+    private final static int avra_mute = 7703, avra_unmute = 7704; // Avragram: delete-for-both mute
     private final static int star = 22;
     private final static int edit = 23;
     private final static int add_shortcut = 24;
@@ -4385,6 +4386,8 @@ public class ChatActivity extends BaseFragment implements
                     com.avragramm.ui.AvraChatTools.showVoiceChanger(ChatActivity.this, dialog_id);
                 } else if (id == avra_spam) {
                     com.avragramm.ui.AvraChatTools.showSpam(ChatActivity.this, currentAccount, dialog_id, null);
+                } else if (id == avra_mute || id == avra_unmute) {
+                    com.avragramm.ui.AvraChatTools.showMute(ChatActivity.this, currentAccount, currentUser, ChatActivity.this::avraUpdateMuteItems);
                 } else if (id == report) {
                     ReportBottomSheet.openChat(ChatActivity.this);
                 } else if (id == star) {
@@ -4863,6 +4866,11 @@ public class ChatActivity extends BaseFragment implements
             translateItem = headerItem.lazilyAddSubItem(translate, R.drawable.msg_translate, LocaleController.getString(R.string.TranslateMessage));
             headerItem.lazilyAddSubItem(avra_voice, R.drawable.msg_voicechat, getString(R.string.AvraVoiceChanger)); // Avragram
             headerItem.lazilyAddSubItem(avra_spam, R.drawable.msg_retry, getString(R.string.AvraSpam)); // Avragram
+            if (com.avragramm.AvraMute.canMute(currentAccount, currentUser, currentEncryptedChat != null) && chatMode == MODE_DEFAULT) { // Avragram
+                headerItem.lazilyAddSubItem(avra_mute, R.drawable.msg_block2, getString(R.string.AvraMuteUser));
+                headerItem.lazilyAddSubItem(avra_unmute, R.drawable.msg_unmute, getString(R.string.AvraUnmuteUser));
+                avraUpdateMuteItems();
+            }
             updateTranslateItemVisibility();
             headerItem.lazilyAddSubItem(to_beginning, R.drawable.msg_to_beginning, LocaleController.getString(R.string.ToBeginning));
 
@@ -12339,6 +12347,14 @@ public class ChatActivity extends BaseFragment implements
         searchItem.setSearchFieldHint(null);
         searchItem.clearSearchText();
         getMediaDataController().searchMessagesInChat(searchingQuery = "", dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages, searchingReaction, searchFilterUiHelper.getFilter());
+    }
+
+    /** Avragram: shows "Mute" or "Unmute" in the ⋮ menu of a private chat. */
+    private void avraUpdateMuteItems() {
+        if (headerItem == null || currentUser == null) return;
+        boolean muted = com.avragramm.AvraMute.isMuted(currentAccount, currentUser.id);
+        headerItem.setSubItemShown(avra_mute, !muted);
+        headerItem.setSubItemShown(avra_unmute, muted);
     }
 
     private void updateTranslateItemVisibility() {
