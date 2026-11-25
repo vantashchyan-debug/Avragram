@@ -256,6 +256,19 @@ public abstract class AvraGameView extends View {
 
     // ---- input ------------------------------------------------------------------------------
 
+    /**
+     * The game owns every touch that starts on it: without this, a horizontal drag (moving a piece,
+     * steering) is taken by the parent — e.g. the swipe-back gesture of the screen — and the game
+     * only gets ACTION_CANCEL, so pieces snap back and taps near the left edge do nothing.
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent e) {
+        if (e.getActionMasked() == MotionEvent.ACTION_DOWN && getParent() != null) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+        return super.dispatchTouchEvent(e);
+    }
+
     /** Default input: swipe (4 directions) and tap. Games with dragging override onTouchEvent. */
     @SuppressLint("ClickableViewAccessibility")
     @Override

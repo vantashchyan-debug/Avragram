@@ -373,6 +373,12 @@ public class AvraGameActivity extends BaseFragment implements NotificationCenter
         pauseGame();
     }
 
+    /** No swipe-back here: dragging pieces / steering sideways must stay in the game (back arrow and system back still work). */
+    @Override
+    public boolean isSwipeBackEnabled(android.view.MotionEvent event) {
+        return false;
+    }
+
     @Override
     public boolean onBackPressed(boolean invoked) {
         if (state == STATE_PLAYING) {
