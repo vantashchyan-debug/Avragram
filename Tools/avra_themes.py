@@ -250,7 +250,7 @@ def main():
         f.write("    public static final String[] FONT = {%s};\n" % j('"%s"' % d[0] for d in D))
         for name, k in (("BUTTON", 1), ("BUBBLE", 2), ("AVATAR", 3), ("DIVIDER", 4), ("SECTION", 5)):
             f.write("    public static final int[] %s = {%s};\n" % (name, j(str(d[k]) for d in D)))
-        for name, k in (("CENTER", 6), ("SQUARE_FAB", 7), ("NEW_FAB", 8), ("NEW_SWITCH", 9), ("NEW_SLIDER", 10), ("FLOAT_NAV", 11)):
+        for name, k in (("CENTER", 6), ("SQUARE_FAB", 7)):
             f.write("    public static final boolean[] %s = {%s};\n" % (name, j(b(d[k]) for d in D)))
         f.write('\n    public static boolean isAvra(String assetName) {\n        return assetName != null && assetName.startsWith("avra_");\n    }\n')
         f.write("\n    public static int indexOfAsset(String assetName) {\n        if (assetName != null) for (int i = 0; i < ASSETS.length; i++) if (ASSETS[i].equals(assetName)) return i;\n        return -1;\n    }\n")

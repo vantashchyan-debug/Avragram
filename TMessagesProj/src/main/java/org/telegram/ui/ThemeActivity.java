@@ -742,6 +742,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
         darkThemes.clear();
         for (int a = 0, N = Theme.themes.size(); a < N; a++) {
             Theme.ThemeInfo themeInfo = Theme.themes.get(a);
+            if (com.avragramm.AvraStyles.isAvra(themeInfo.assetName)) {
+                continue; // Avragram styles are chosen in Avragram → Appearance, not twice
+            }
             if (currentType != THEME_TYPE_BASIC && currentType != THEME_TYPE_THEMES_BROWSER) {
                 if (themeInfo.isLight() || themeInfo.info != null && themeInfo.info.document == null) {
                     continue;
@@ -780,9 +783,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             createNewThemeRow = rowCount++;
             lastShadowRow = rowCount++;
         } else if (currentType == THEME_TYPE_BASIC) {
-            textSizeHeaderRow = rowCount++;
-            textSizeRow = rowCount++;
-            backgroundRow = rowCount++;
+            // Avragram: text size and chat background live in Avragram → Appearance (merged, live preview kept)
             changeUserColor = rowCount++;
             newThemeInfoRow = rowCount++;
             themeHeaderRow = rowCount++;
@@ -801,7 +802,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             swipeGestureRow = rowCount++;
             swipeGestureInfoRow = rowCount++;
 
-            nightThemeRow = rowCount++;
+            // Avragram: night theme lives in Avragram → Appearance → Themes and styles
             browserRow = rowCount++;
             liteModeRow = rowCount++;
             stickersRow = rowCount++;

@@ -382,7 +382,6 @@ class ChatsPreferencesActivity : BasePreferencesActivity() {
 
         items.add(UItem.asHeader(getString(R.string.MessagesChartTitle)))
         items.add(UItem.asCustom(ChatsItem.MESSAGES_PREVIEW.id, messagesPreviewCell))
-        items.add(uCheck(ChatsItem.REMOVE_MESSAGE_TAIL, getString(R.string.RemoveMessageTail), removeMessageTail, linkAlias = "removeMessageTail"))
         items.add(uCheck(ChatsItem.REPLACE_EDITED_WITH_ICON, LocaleController.formatString(R.string.ReplaceEditedWithIcon, getString(R.string.EditedMessage)), replaceEditedWithIcon, linkAlias = "replaceEditedWithIcon"))
         items.add(uCheck(ChatsItem.SHOW_ONLINE_STATUS, getString(R.string.ShowOnlineStatus), showOnlineStatus, linkAlias = "showOnlineStatus"))
         items.add(uCheck(ChatsItem.SHOW_FORWARDS_COUNT, getString(R.string.ShowForwardsCount), showForwardsCount, linkAlias = "showForwardsCount"))

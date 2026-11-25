@@ -29,13 +29,14 @@ import static org.telegram.messenger.LocaleController.getString;
 public final class AvraMegaSettings {
 
     public static final int ID_AVRA = -101, ID_ICON = -102, ID_GENERAL = -103, ID_APPEARANCE = -104,
-            ID_CHATS = -105, ID_PLUGINS = -106, ID_OTHER = -107, ID_CREATORS = -110, ID_REPORT = -111;
+            ID_CHATS = -105, ID_PLUGINS = -106, ID_OTHER = -107, ID_PRIVACY = -108, ID_CREATORS = -110, ID_REPORT = -111;
 
     private AvraMegaSettings() {}
 
     public static void fillTop(ArrayList<UItem> items) {
         items.add(UItem.asHeader(AvraBrand.NAME));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_AVRA, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_theme, getString(R.string.AvraSectionAppearance), getString(R.string.AvraSectionAppearanceInfo)));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_PRIVACY, 0xFF34AADC, 0xFF1C82C9, R.drawable.msg_secret, getString(R.string.AvraPrivacy), getString(R.string.AvraPrivacyInfoShort)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_GENERAL, 0xFF8E8E93, 0xFF6D6D72, R.drawable.msg_media, getString(R.string.AvraGeneral), getString(R.string.AvraGeneralInfo)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_CHATS, 0xFF34C759, 0xFF1FA544, R.drawable.msg_discussion, getString(R.string.AvraChats), getString(R.string.AvraChatsInfo)));
         if (PluginsController.isPluginEngineSupported()) {
@@ -73,6 +74,7 @@ public final class AvraMegaSettings {
         BaseFragment next;
         switch (id) {
             case ID_AVRA: next = new AvraSettingsActivity(); break;
+            case ID_PRIVACY: next = new AvraPrivacyActivity(); break;
             case ID_GENERAL: next = new GeneralPreferencesActivity(); break;
             case ID_CHATS: next = new ChatsPreferencesActivity(); break;
             case ID_PLUGINS: next = new PluginsActivity(); break;

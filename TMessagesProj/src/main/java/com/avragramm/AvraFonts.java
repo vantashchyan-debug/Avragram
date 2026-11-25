@@ -48,9 +48,11 @@ public final class AvraFonts {
 
     private AvraFonts() {}
 
+    /** The font in effect now (cached; persisted under "font" for cold starts). */
     public static String current() {
         if (current == null) {
-            current = AvraConfig.prefs().getString("font", "system");
+            String v = AvraConfig.prefs().getString("font", "system");
+            current = isKnown(v) ? v : "system";
         }
         return current;
     }
@@ -64,19 +66,34 @@ public final class AvraFonts {
         return indexOf(current()) >= 2;
     }
 
-    /** Stores the font; system/roboto map onto the client's "use system fonts" option. Returns true if it changed. */
-    public static boolean set(String id) {
-        if (id == null) id = "system";
+    public static boolean isKnown(String id) {
+        if (id == null) return false;
+        for (String[] f : FONTS) if (f[0].equals(id)) return true;
+        return false;
+    }
+
+    /**
+     * Applies the effective font chosen by {@link AvraDesign} (override or style base) and remembers
+     * it under "font" so the next cold start can install it before any theme is loaded.
+     * "system" / "roboto" drive the client's "use system fonts" option. Returns true if it changed.
+     */
+    static boolean applyEffective(String id) {
+        if (!isKnown(id)) id = "system";
         boolean changed = !id.equals(current());
-        current = id;
-        regular = bold = null;
-        AvraConfig.prefs().edit().putString("font", id).apply();
+        if (changed) {
+            current = id;
+            regular = bold = null;
+            AvraConfig.prefs().edit().putString("font", id).apply();
+        }
         try {
-            if ("system".equals(id)) com.exteragram.messenger.ExteraConfig.setUseSystemFonts(true);
-            else if ("roboto".equals(id)) com.exteragram.messenger.ExteraConfig.setUseSystemFonts(false);
+            boolean useSystem = !"roboto".equals(id);
+            if (("system".equals(id) || "roboto".equals(id)) && com.exteragram.messenger.ExteraConfig.getUseSystemFonts() != useSystem) {
+                com.exteragram.messenger.ExteraConfig.setUseSystemFonts(useSystem);
+                changed = true;
+            }
         } catch (Throwable ignore) {
         }
-        AndroidUtilities.clearTypefaceCache();
+        if (changed) AndroidUtilities.clearTypefaceCache();
         return changed;
     }
 

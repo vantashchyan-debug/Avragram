@@ -23,10 +23,6 @@ public final class AvraStyles {
     public static final int[] SECTION = {24, 24, 20, 20, 26, 26, 4, 24, 20, 26, 18, 0, 12, 6, 18, 8, 22, 22, 28, 24, 14, 6, 0, 0, 2, 0, 26, 18, 10, 14, 28, 18};
     public static final boolean[] CENTER = {false, false, false, false, true, true, false, false, true, true, false, true, false, false, false, false, false, false, true, false, false, true, false, true, false, true, false, false, false, true, false, false};
     public static final boolean[] SQUARE_FAB = {false, false, false, false, false, false, true, true, false, false, false, true, false, true, false, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false};
-    public static final boolean[] NEW_FAB = {true, true, false, false, true, true, false, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, true, false, false, false, true, false};
-    public static final boolean[] NEW_SWITCH = {true, true, true, true, true, true, false, true, true, true, true, false, true, false, true, false, true, true, true, true, true, false, false, false, false, true, true, true, true, true, true, true};
-    public static final boolean[] NEW_SLIDER = {true, true, true, true, true, true, false, true, true, true, true, false, true, true, true, false, true, true, true, true, true, false, false, false, true, true, true, true, true, true, true, true};
-    public static final boolean[] FLOAT_NAV = {true, true, false, false, true, true, false, false, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, true, true, false, false, true, false};
 
     public static boolean isAvra(String assetName) {
         return assetName != null && assetName.startsWith("avra_");

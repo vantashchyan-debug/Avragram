@@ -632,13 +632,13 @@ public class MessageDrawable extends Drawable {
             nearRad = overrideRoundRadius;
         } else if (overrideRounding > 0) {
             rad = AndroidUtilities.lerp(dp(SharedConfig.bubbleRadius), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
-            nearRad = AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
+            nearRad = AndroidUtilities.lerp(dp(com.avragramm.AvraDesign.nearRadius()), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
         } else if (currentType == TYPE_PREVIEW) {
             rad = dp(6);
             nearRad = dp(6);
         } else {
             rad = dp(SharedConfig.bubbleRadius);
-            nearRad = dp(Math.min(6, SharedConfig.bubbleRadius));
+            nearRad = dp(com.avragramm.AvraDesign.nearRadius());
         }
         int smallRad = dp(6);
 
@@ -706,13 +706,13 @@ public class MessageDrawable extends Drawable {
             nearRad = overrideRoundRadius;
         } else if (overrideRounding > 0) {
             rad = AndroidUtilities.lerp(dp(SharedConfig.bubbleRadius), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
-            nearRad = AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
+            nearRad = AndroidUtilities.lerp(dp(com.avragramm.AvraDesign.nearRadius()), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
         } else if (currentType == TYPE_PREVIEW) {
             rad = dp(6);
             nearRad = dp(6);
         } else {
             rad = dp(SharedConfig.bubbleRadius);
-            nearRad = dp(Math.min(6, SharedConfig.bubbleRadius));
+            nearRad = dp(com.avragramm.AvraDesign.nearRadius());
         }
         int smallRad = dp(6);
         int top = Math.max(bounds.top, 0);

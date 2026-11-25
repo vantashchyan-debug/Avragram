@@ -4254,7 +4254,6 @@ public class Theme {
                     preferences.edit().remove("nighttheme").apply();
                 }
                 themeConfig.edit().putBoolean("avra_tg_default_v2", true).apply();
-                com.avragramm.AvraDesign.resetToTelegram();
             }
 
             if (currentNightTheme != null && !themeConfig.contains("lastDarkTheme")) {
@@ -5968,6 +5967,7 @@ public class Theme {
             }
             currentTheme = themeInfo;
             refreshThemeColors();
+            com.avragramm.AvraDesign.onThemeApplied(themeInfo, previousTheme != null); // Avragram: override layer on top of the theme
         } catch (Exception e) {
             FileLog.e(e);
         }
@@ -6077,6 +6077,7 @@ public class Theme {
                         }
                         currentTheme = themeInfo;
                         refreshThemeColors();
+                        com.avragramm.AvraDesign.onThemeApplied(themeInfo, previousTheme != null); // Avragram: override layer on top of the theme
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
@@ -6130,6 +6131,7 @@ public class Theme {
             }
             currentTheme = themeInfo;
             refreshThemeColors();
+            com.avragramm.AvraDesign.onThemeApplied(themeInfo, previousTheme != null); // Avragram: override layer on top of the theme
         } catch (Exception e) {
             FileLog.e(e);
         }

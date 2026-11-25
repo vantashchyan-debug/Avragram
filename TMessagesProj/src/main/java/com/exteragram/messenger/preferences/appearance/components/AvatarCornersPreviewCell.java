@@ -111,7 +111,7 @@ public class AvatarCornersPreviewCell extends FrameLayout implements CustomPrefe
 
         int startCornersSize = 0, endCornersSize = 28;
         seekBar = new AltSeekbar(context, (float p) -> {
-            ExteraConfig.setAvatarCorners(p);
+            com.avragramm.AvraDesign.setOverride(com.avragramm.AvraDesign.Field.AVATAR, Math.round(p)); // Avragram: user value on top of the theme
             invalidate();
             preview.invalidate();
             if (dialogCell != null) {

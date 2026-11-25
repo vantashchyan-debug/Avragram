@@ -180,7 +180,6 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
         items.add(UItem.asCustom(AppearanceItem.CHAT_LIST_PREVIEW.id, chatListPreviewCell))
         items.add(uCheck(AppearanceItem.FORCE_SNOW, getString(R.string.ForceSnow), forceSnow, subtext = getString(R.string.ForceSnowInfo), linkAlias = "forceSnow"))
         items.addIf(userConfig.isPremium, uCheck(AppearanceItem.HIDE_ACTION_BAR_STATUS, getString(R.string.HideActionBarStatus), hideActionBarStatus, linkAlias = "hideActionBarStatus"))
-        items.add(uCheck(AppearanceItem.CENTER_TITLE, getString(R.string.CenterTitle), centerTitle, linkAlias = "centerTitle"))
         items.add(uCheck(AppearanceItem.HIDE_STORIES, getString(R.string.HideStories), hideStories, linkAlias = "hideStories"))
         items.add(uCheck(AppearanceItem.HIDE_FLOATING_BUTTON, getString(R.string.HideFloatingButton), hideFloatingButton, linkAlias = "hideFloatingButton"))
         items.add(uCheck(AppearanceItem.HIDE_DIALOGS_SEARCH_BAR, getString(R.string.HideDialogsSearchBar), hideDialogsSearchBar, linkAlias = "hideDialogsSearchBar"))
@@ -201,7 +200,6 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
         items.add(UItem.asShadow())
 
         items.add(UItem.asHeader(getString(R.string.Appearance)))
-        items.add(UItem.asCustom(AppearanceItem.FAB_SHAPE.id, fabShapeCell).setLinkAlias("fabShape", this))
         items.add(uCheck(AppearanceItem.USE_SYSTEM_EMOJI, getString(R.string.UseSystemEmoji), SharedConfig.useSystemEmoji, linkAlias = "useSystemEmoji"))
         md3Styles.fill(items)
         items.add(uCheck(AppearanceItem.GOOEY_AVATAR_ANIMATION, getString(R.string.GooeyAvatarAnimation), gooeyAvatarAnimation, linkAlias = "gooeyAvatarAnimation"))

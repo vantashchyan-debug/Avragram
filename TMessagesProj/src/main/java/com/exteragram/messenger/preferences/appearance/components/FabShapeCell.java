@@ -64,7 +64,7 @@ public class FabShapeCell extends LinearLayout implements CustomPreferenceCell {
                 for (int b = 0; b < 2; b++) {
                     fabShape[b].setSelected(v == fabShape[b], true);
                 }
-                ExteraConfig.setSquareFab(square);
+                com.avragramm.AvraDesign.setOverride(com.avragramm.AvraDesign.Field.SQUARE_FAB, square); // Avragram: user value on top of the theme
                 rebuildFragments();
             });
         }
