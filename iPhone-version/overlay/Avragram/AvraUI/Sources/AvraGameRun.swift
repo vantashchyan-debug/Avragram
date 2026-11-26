@@ -65,9 +65,9 @@ final class AvraRunModel: ObservableObject {
 }
 
 struct AvraRunScreen: View {
-    @StateObject private var m = AvraRunModel()
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgIsVisible) private var visible
+    @StateObject var m = AvraRunModel()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgIsVisible) var visible
 
     var body: some View {
         AvraGameShell(kind: .run, phase: $m.phase, difficulty: $m.difficulty, score: m.score,

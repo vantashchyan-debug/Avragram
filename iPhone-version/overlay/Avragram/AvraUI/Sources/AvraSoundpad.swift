@@ -96,10 +96,10 @@ final class AvraSoundpadModel: NSObject, ObservableObject, AVAudioPlayerDelegate
 }
 
 struct AvraSoundpadScreen: View {
-    @StateObject private var model = AvraSoundpadModel()
-    @Environment(\.sgTheme) private var theme
-    @State private var importing = false
-    @State private var message: String? = nil
+    @StateObject var model = AvraSoundpadModel()
+    @Environment(\.sgTheme) var theme
+    @State var importing = false
+    @State var message: String? = nil
 
     var body: some View {
         ScrollView {

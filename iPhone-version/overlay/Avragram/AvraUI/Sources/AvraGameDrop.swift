@@ -103,9 +103,9 @@ final class AvraDropModel: ObservableObject {
 }
 
 struct AvraDropScreen: View {
-    @StateObject private var m = AvraDropModel()
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgIsVisible) private var visible
+    @StateObject var m = AvraDropModel()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgIsVisible) var visible
 
     var body: some View {
         AvraGameShell(kind: .drop, phase: $m.phase, difficulty: $m.difficulty, score: m.score,

@@ -158,13 +158,13 @@ final class AvraIntroView: UIView {
 
 /// Avragram → Launch video.
 struct AvraIntroSettingsScreen: View {
-    @Environment(\.sgTheme) private var theme
-    @State private var enabled = AvraIntro.enabled
-    @State private var shuffle = AvraIntro.shuffle
-    @State private var type = AvraIntro.type
-    @State private var seconds = Double(AvraIntro.photoSeconds)
-    @State private var picking: Int? = nil
-    @State private var message: String? = nil
+    @Environment(\.sgTheme) var theme
+    @State var enabled = AvraIntro.enabled
+    @State var shuffle = AvraIntro.shuffle
+    @State var type = AvraIntro.type
+    @State var seconds = Double(AvraIntro.photoSeconds)
+    @State var picking: Int? = nil
+    @State var message: String? = nil
 
     var body: some View {
         Form {

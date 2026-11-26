@@ -12,9 +12,9 @@ public let avragramIOSVersion = "1.0.0"
 
 struct AvraHubView: View {
     let context: AccountContext
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
-    @StateObject private var updater = AvraIOSUpdater()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
+    @StateObject var updater = AvraIOSUpdater()
 
     var body: some View {
         ScrollView {

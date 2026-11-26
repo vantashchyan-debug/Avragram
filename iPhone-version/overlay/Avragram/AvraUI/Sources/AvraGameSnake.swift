@@ -71,9 +71,9 @@ final class AvraSnakeModel: ObservableObject {
 }
 
 struct AvraSnakeScreen: View {
-    @StateObject private var m = AvraSnakeModel()
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgIsVisible) private var visible
+    @StateObject var m = AvraSnakeModel()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgIsVisible) var visible
 
     var body: some View {
         AvraGameShell(kind: .snake, phase: $m.phase, difficulty: $m.difficulty, score: m.score,

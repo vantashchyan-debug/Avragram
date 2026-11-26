@@ -49,9 +49,9 @@ final class AvraSpamRunner: ObservableObject {
 
 struct AvraSpamScreen: View {
     let context: AccountContext
-    @StateObject private var runner = AvraSpamRunner()
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
+    @StateObject var runner = AvraSpamRunner()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
 
     var body: some View {
         Form {

@@ -9,9 +9,9 @@ import AccountContext
 /// sides the moment they arrive and never show up here; a local copy goes to "Said behind your back".
 struct AvraMuteScreen: View {
     let context: AccountContext
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
-    @State private var muted: [EnginePeer] = []
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
+    @State var muted: [EnginePeer] = []
 
     var body: some View {
         Form {
@@ -69,7 +69,7 @@ struct AvraMuteScreen: View {
 
 struct AvraBehindScreen: View {
     let peerId: PeerId
-    @Environment(\.sgTheme) private var theme
+    @Environment(\.sgTheme) var theme
 
     var body: some View {
         let items = AvraMute.behind(peerId)

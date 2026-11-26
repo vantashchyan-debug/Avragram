@@ -278,8 +278,8 @@ enum AvraHaptics {
 
 struct AvraChessBoardView: View {
     @ObservedObject var game: AvraChessGame
-    @State private var dragId: Int? = nil
-    @State private var dragOffset: CGSize = .zero
+    @State var dragId: Int? = nil
+    @State var dragOffset: CGSize = .zero
 
     private var light: Color { AvraChessStyle.color(AvraChessStyle.boards[AvraChessStyle.board].0) }
     private var dark: Color { AvraChessStyle.color(AvraChessStyle.boards[AvraChessStyle.board].1) }
@@ -406,9 +406,9 @@ struct AvraPieceView: View {
 }
 
 struct AvraChessScreen: View {
-    @StateObject private var game: AvraChessGame
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
+    @StateObject var game: AvraChessGame
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
 
     init(level: Int) {
         _game = StateObject(wrappedValue: AvraChessGame(level: level))

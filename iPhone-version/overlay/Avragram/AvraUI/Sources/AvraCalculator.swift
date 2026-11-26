@@ -4,12 +4,12 @@ import SGSwiftUI
 import AvraCore
 
 struct AvraCalculatorScreen: View {
-    @Environment(\.sgTheme) private var theme
-    @State private var input = ""
-    @State private var memory = 0.0
-    @State private var history: [String] = UserDefaults.standard.stringArray(forKey: "avra.calc.history") ?? []
-    @State private var inverse = false
-    @State private var degrees = true
+    @Environment(\.sgTheme) var theme
+    @State var input = ""
+    @State var memory = 0.0
+    @State var history: [String] = UserDefaults.standard.stringArray(forKey: "avra.calc.history") ?? []
+    @State var inverse = false
+    @State var degrees = true
 
     private var preview: String {
         AvraCalc.degrees = degrees

@@ -6,9 +6,9 @@ import AvraCore
 
 /// Avragram → Privacy: keep messages that others delete.
 struct AvraPrivacyScreen: View {
-    @Environment(\.sgTheme) private var theme
-    @State private var keep = AvraKeepDeleted.enabled
-    @State private var badge = AvraBadge.enabled
+    @Environment(\.sgTheme) var theme
+    @State var keep = AvraKeepDeleted.enabled
+    @State var badge = AvraBadge.enabled
 
     var body: some View {
         Form {

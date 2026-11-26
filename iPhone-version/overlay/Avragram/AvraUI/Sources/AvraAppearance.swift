@@ -60,11 +60,11 @@ enum AvraAppearance {
 
 struct AvraAppearanceScreen: View {
     let context: AccountContext
-    @Environment(\.sgTheme) private var theme
-    @State private var selected: String? = UserDefaults.standard.string(forKey: AvraAppearance.styleKey)
-    @State private var font: String? = AvraAppearance.currentFont
-    @State private var radius: Double = 16
-    @State private var restartNeeded = false
+    @Environment(\.sgTheme) var theme
+    @State var selected: String? = UserDefaults.standard.string(forKey: AvraAppearance.styleKey)
+    @State var font: String? = AvraAppearance.currentFont
+    @State var radius: Double = 16
+    @State var restartNeeded = false
 
     var body: some View {
         ScrollView {
@@ -133,7 +133,7 @@ struct AvraAppearanceScreen: View {
             AvraHaptics.tap()
         }) {
             HStack {
-                Text(title).font(family.map { .custom($0, size: 17) } ?? .body).foregroundColor(theme.primaryTextColor)
+                Text(title).font(family.map { SwiftUI.Font.custom($0, size: 17) } ?? SwiftUI.Font.body).foregroundColor(theme.primaryTextColor)
                 Spacer()
                 if font == family { Image(systemName: "checkmark").foregroundColor(theme.accentColor) }
             }

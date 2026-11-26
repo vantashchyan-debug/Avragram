@@ -89,8 +89,8 @@ final class Avra2048Model: ObservableObject {
 }
 
 struct Avra2048Screen: View {
-    @StateObject private var m = Avra2048Model()
-    @Environment(\.sgTheme) private var theme
+    @StateObject var m = Avra2048Model()
+    @Environment(\.sgTheme) var theme
 
     var body: some View {
         AvraGameShell(kind: .g2048, phase: $m.phase, difficulty: $m.difficulty, score: m.score,

@@ -7,11 +7,11 @@ import AccountContext
 
 /// AvraChess online lobby: challenge a friend (time control, color), your games, ratings.
 struct AvraChessOnlineScreen: View {
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
-    @State private var games = AvraChessNet.list()
-    @State private var tc = 2
-    @State private var color = 0
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
+    @State var games = AvraChessNet.list()
+    @State var tc = 2
+    @State var color = 0
 
     var body: some View {
         Form {
@@ -89,11 +89,11 @@ struct AvraChessOnlineScreen: View {
 struct AvraChessOnlineGameScreen: View {
     let gameId: String
     let cardKind: String
-    @StateObject private var game: AvraChessGame
-    @State private var tick = Date()
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
-    private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+    @StateObject var game: AvraChessGame
+    @State var tick = Date()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
+    let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     init(gameId: String, cardKind: String) {
         self.gameId = gameId

@@ -281,8 +281,8 @@ struct AvraSeaGrid: View {
     var onCell: ((Int) -> Void)? = nil
     var onShipTap: ((Int) -> Void)? = nil
     var onShipDrop: ((Int, Int, Int) -> Bool)? = nil
-    @State private var dragIndex: Int? = nil
-    @State private var dragOffset: CGSize = .zero
+    @State var dragIndex: Int? = nil
+    @State var dragOffset: CGSize = .zero
 
     private static let letters = Array("АБВГДЕЖЗИК")
 
@@ -405,8 +405,8 @@ struct AvraSeaGrid: View {
 }
 
 struct AvraSeaScreen: View {
-    @StateObject private var game: AvraSeaGame
-    @Environment(\.sgTheme) private var theme
+    @StateObject var game: AvraSeaGame
+    @Environment(\.sgTheme) var theme
 
     init(level: Int) { _game = StateObject(wrappedValue: AvraSeaGame(level: level)) }
 

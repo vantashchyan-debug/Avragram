@@ -5,9 +5,9 @@ import AvraCore
 
 /// Voice changer settings: applied to every voice message you record.
 struct AvraVoiceScreen: View {
-    @Environment(\.sgTheme) private var theme
-    @State private var preset = AvraVoiceFx.preset
-    @State private var pitch = Double(AvraVoiceFx.pitch)
+    @Environment(\.sgTheme) var theme
+    @State var preset = AvraVoiceFx.preset
+    @State var pitch = Double(AvraVoiceFx.pitch)
 
     var body: some View {
         Form {

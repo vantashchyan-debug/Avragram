@@ -65,10 +65,10 @@ enum AvraChessStyle {
 }
 
 struct AvraChessSettingsScreen: View {
-    @Environment(\.sgTheme) private var theme
-    @State private var board = AvraChessStyle.board
-    @State private var pieces = AvraChessStyle.pieceSet
-    @State private var sound = AvraChessStyle.sound
+    @Environment(\.sgTheme) var theme
+    @State var board = AvraChessStyle.board
+    @State var pieces = AvraChessStyle.pieceSet
+    @State var sound = AvraChessStyle.sound
 
     var body: some View {
         Form {

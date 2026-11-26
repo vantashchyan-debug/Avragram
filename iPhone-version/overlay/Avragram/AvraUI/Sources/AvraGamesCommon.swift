@@ -65,10 +65,10 @@ struct AvraGameShell<Game: View>: View {
     let onPause: () -> Void
     let onResume: () -> Void
     @ViewBuilder let game: () -> Game
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
-    @State private var choosing = false
-    @State private var record = false
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
+    @State var choosing = false
+    @State var record = false
 
     var body: some View {
         ZStack {

@@ -324,9 +324,9 @@ enum AvraSeaNet {
 /// One online sea battle: place the fleet (for a challenge you got), then shoot.
 struct AvraSeaOnlineScreen: View {
     let gameId: String
-    @State private var fleet = AvraSeaBoard.random()
-    @State private var refresh = 0
-    @Environment(\.sgTheme) private var theme
+    @State var fleet = AvraSeaBoard.random()
+    @State var refresh = 0
+    @Environment(\.sgTheme) var theme
 
     var body: some View {
         ScrollView {
@@ -403,9 +403,9 @@ struct AvraSeaOnlineScreen: View {
 
 /// Lobby: challenge a friend to a sea battle and your battles.
 struct AvraSeaOnlineLobby: View {
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgNavigation) private var navigation
-    @State private var games = AvraSeaNet.list()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgNavigation) var navigation
+    @State var games = AvraSeaNet.list()
 
     var body: some View {
         Form {

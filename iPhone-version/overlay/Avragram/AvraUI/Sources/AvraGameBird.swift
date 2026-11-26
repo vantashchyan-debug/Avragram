@@ -59,9 +59,9 @@ final class AvraBirdModel: ObservableObject {
 }
 
 struct AvraBirdScreen: View {
-    @StateObject private var m = AvraBirdModel()
-    @Environment(\.sgTheme) private var theme
-    @Environment(\.sgIsVisible) private var visible
+    @StateObject var m = AvraBirdModel()
+    @Environment(\.sgTheme) var theme
+    @Environment(\.sgIsVisible) var visible
 
     var body: some View {
         AvraGameShell(kind: .bird, phase: $m.phase, difficulty: $m.difficulty, score: m.score,

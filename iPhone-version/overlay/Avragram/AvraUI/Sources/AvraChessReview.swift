@@ -193,9 +193,9 @@ final class AvraReviewModel: ObservableObject {
 }
 
 struct AvraChessReviewScreen: View {
-    @StateObject private var model: AvraReviewModel
-    @StateObject private var boardModel: AvraChessGame
-    @Environment(\.sgTheme) private var theme
+    @StateObject var model: AvraReviewModel
+    @StateObject var boardModel: AvraChessGame
+    @Environment(\.sgTheme) var theme
 
     init(moves: [String]) {
         _model = StateObject(wrappedValue: AvraReviewModel(moves: moves))

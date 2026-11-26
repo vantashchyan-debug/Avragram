@@ -89,11 +89,11 @@ final class AvraBlastModel: ObservableObject {
 }
 
 struct AvraBlastScreen: View {
-    @StateObject private var m = AvraBlastModel()
-    @Environment(\.sgTheme) private var theme
-    @State private var dragging: Int? = nil
-    @State private var dragPoint: CGPoint = .zero
-    @State private var boardFrame: CGRect = .zero
+    @StateObject var m = AvraBlastModel()
+    @Environment(\.sgTheme) var theme
+    @State var dragging: Int? = nil
+    @State var dragPoint: CGPoint = .zero
+    @State var boardFrame: CGRect = .zero
 
     var body: some View {
         AvraGameShell(kind: .blast, phase: $m.phase, difficulty: $m.difficulty, score: m.score,
