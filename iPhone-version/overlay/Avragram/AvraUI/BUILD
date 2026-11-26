@@ -8,7 +8,6 @@ swift_library(
         "Sources/**/*.swift",
     ]),
     deps = [
-        "//Avragram/AvraCore:AvraCore",
         "//Swiftgram/SGSwiftUI:SGSwiftUI",
         "//Swiftgram/SGSettingsUI:SGSettingsUI",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",

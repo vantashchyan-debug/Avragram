@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import SGSwiftUI
-import AvraCore
+import TelegramCore
 
 /// Voice changer settings: applied to every voice message you record.
 struct AvraVoiceScreen: View {

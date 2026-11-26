@@ -4,10 +4,8 @@ import Foundation
 /// trigonometry in degrees or radians; the result is shown before "=", history of 30 calculations.
 /// Also used by /calc"…" in messages. Only a small own parser: nothing is ever evaluated as code.
 public enum AvraCalc {
-    public static var degrees = true
-
-    public static func evaluate(_ input: String) -> Double? {
-        var p = Parser(Array(normalize(input)))
+    public static func evaluate(_ input: String, degrees: Bool = true) -> Double? {
+        var p = Parser(Array(normalize(input)), degrees: degrees)
         guard let v = p.expression(), p.done, v.isFinite else { return nil }
         return v
     }
@@ -30,11 +28,15 @@ public enum AvraCalc {
 
     private struct Parser {
         let c: [Character]
+        let degrees: Bool
         var i = 0
-        init(_ c: [Character]) { self.c = c }
+        init(_ c: [Character], degrees: Bool) {
+            self.c = c
+            self.degrees = degrees
+        }
         var done: Bool { i >= c.count }
 
-        mutating func peek() -> Character? { i < c.count ? c[i] : nil }
+        func peek() -> Character? { i < c.count ? c[i] : nil }
 
         mutating func expression() -> Double? {
             guard var v = term() else { return nil }
@@ -111,14 +113,15 @@ public enum AvraCalc {
                 while let l = peek(), l.isLetter { name.append(l); i += 1 }
                 if name == "e" && peek() != "(" { return M_E }
                 guard let arg = primary() else { return nil }
-                let r = AvraCalc.degrees ? arg * Double.pi / 180 : arg
+                let r = degrees ? arg * Double.pi / 180 : arg
+                let toDegrees = degrees ? 180 / Double.pi : 1
                 switch name {
                 case "sin": return sin(r)
                 case "cos": return cos(r)
                 case "tan": return tan(r)
-                case "asin": return asin(arg).degIfNeeded
-                case "acos": return acos(arg).degIfNeeded
-                case "atan": return atan(arg).degIfNeeded
+                case "asin": return asin(arg) * toDegrees
+                case "acos": return acos(arg) * toDegrees
+                case "atan": return atan(arg) * toDegrees
                 case "ln": return arg > 0 ? log(arg) : nil
                 case "lg", "log": return arg > 0 ? log10(arg) : nil
                 case "exp": return exp(arg)
@@ -146,8 +149,6 @@ public enum AvraCalc {
     }
 }
 
-extension Double {
-    fileprivate var degIfNeeded: Double { AvraCalc.degrees ? self * 180 / Double.pi : self }
 }
 
 

@@ -7,7 +7,6 @@ import TelegramCore
 import Display
 import AccountContext
 import SGSwiftUI
-import AvraCore
 
 /// Online games and mute for iPhone, wire-compatible with Avragram for Android:
 ///  - AvraChess: hidden "#avrachess v=1 g=… t=… w=… b=… m=… c=… s=…" messages (same fields, same

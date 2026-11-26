@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import SGSwiftUI
-import AvraCore
+import TelegramCore
 
 struct AvraCalculatorScreen: View {
     @Environment(\.sgTheme) var theme
@@ -12,8 +12,7 @@ struct AvraCalculatorScreen: View {
     @State var degrees = true
 
     private var preview: String {
-        AvraCalc.degrees = degrees
-        return AvraCalc.evaluate(input).map { "= " + AvraCalc.format($0) } ?? " "
+        return AvraCalc.evaluate(input, degrees: degrees).map { "= " + AvraCalc.format($0) } ?? " "
     }
 
     var body: some View {
@@ -59,13 +58,12 @@ struct AvraCalculatorScreen: View {
     }
 
     private func press(_ k: String) {
-        AvraCalc.degrees = degrees
         switch k {
         case "DEG", "RAD": degrees.toggle()
         case "Inv": inverse.toggle()
         case "MC": memory = 0
-        case "M+": memory += AvraCalc.evaluate(input) ?? 0
-        case "M−": memory -= AvraCalc.evaluate(input) ?? 0
+        case "M+": memory += AvraCalc.evaluate(input, degrees: degrees) ?? 0
+        case "M−": memory -= AvraCalc.evaluate(input, degrees: degrees) ?? 0
         case "MR": input += AvraCalc.format(memory).replacingOccurrences(of: ",", with: ".")
         case "C": input = ""
         case "⌫": if !input.isEmpty { input.removeLast() }
@@ -79,7 +77,7 @@ struct AvraCalculatorScreen: View {
         case "±": input = input.hasPrefix("-") ? String(input.dropFirst()) : "-" + input
         case "sin", "cos", "tan", "asin", "acos", "atan", "ln", "lg": input += k + "("
         case "=":
-            if let v = AvraCalc.evaluate(input) {
+            if let v = AvraCalc.evaluate(input, degrees: degrees) {
                 history.append(input + " = " + AvraCalc.format(v))
                 history = Array(history.suffix(30))
                 UserDefaults.standard.set(history, forKey: "avra.calc.history")

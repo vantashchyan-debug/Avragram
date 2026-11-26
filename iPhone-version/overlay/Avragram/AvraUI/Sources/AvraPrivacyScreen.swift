@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 import SGSwiftUI
 import TelegramCore
-import AvraCore
 
 /// Avragram → Privacy: keep messages that others delete.
 struct AvraPrivacyScreen: View {

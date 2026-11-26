@@ -3,7 +3,6 @@ import Postbox
 import SwiftSignalKit
 internal import TelegramApi
 import MtProtoKit
-import AvraCore
 
 /// Avragram: hidden service messages of the online games (AvraChess "#avrachess", AvraSea "#avrasea"),
 /// the same protocol as the Android app, and the mute feature.
