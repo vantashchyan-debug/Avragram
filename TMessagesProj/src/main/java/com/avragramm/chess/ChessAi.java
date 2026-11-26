@@ -133,6 +133,48 @@ public final class ChessAi {
         return best;
     }
 
+    /**
+     * Game review: exact scores of every legal move for the side to move (centipawns from its point of
+     * view, mate = ±(MATE - plies)), best first. The deepest fully searched depth within the time wins.
+     */
+    public ArrayList<int[]> analyse(ChessBoard src, int maxDepth, long ms) {
+        ChessBoard b = src.copy();
+        ArrayList<Integer> moves = b.legal();
+        ArrayList<int[]> result = new ArrayList<>();
+        if (moves.isEmpty()) return result;
+        order(b, moves);
+        long until = System.currentTimeMillis() + ms;
+        for (int depth = 1; depth <= maxDepth; depth++) {
+            deadline = depth == 1 ? Long.MAX_VALUE : until;
+            stopped = false;
+            ArrayList<int[]> scored = new ArrayList<>();
+            for (int m : moves) {
+                b.make(m);
+                int score = -search(b, depth - 1, -INF, INF, 1);
+                b.unmake();
+                if (stopped) break;
+                scored.add(new int[]{m, score});
+            }
+            if (stopped) break;
+            Collections.sort(scored, (x, y) -> Integer.compare(y[1], x[1]));
+            result = scored;
+            moves.clear();
+            for (int[] x : scored) moves.add(x[0]);
+            if (scored.get(0)[1] > MATE - 1000 || System.currentTimeMillis() > until) break;
+        }
+        return result;
+    }
+
+    public static boolean isMate(int score) {
+        return Math.abs(score) > MATE - 1000;
+    }
+
+    /** Moves to mate from a mate score (positive: you mate). */
+    public static int mateIn(int score) {
+        int plies = MATE - Math.abs(score);
+        return (plies + 1) / 2 * (score > 0 ? 1 : -1);
+    }
+
     private int search(ChessBoard b, int depth, int alpha, int beta, int ply) {
         if ((++nodes & 1023) == 0 && System.currentTimeMillis() > deadline) stopped = true;
         if (stopped) return 0;

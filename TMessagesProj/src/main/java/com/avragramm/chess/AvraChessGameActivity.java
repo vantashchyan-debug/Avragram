@@ -66,7 +66,7 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
     private static DispatchQueue aiQueue;
     private final ChessAi ai = new ChessAi();
     private int lowTimeBeeped;
-    private boolean userFlip;
+    private boolean userFlip, flipAnimated;
     private TextView[] barViews;
 
     private final Runnable ticker = new Runnable() {
@@ -152,11 +152,39 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
         }
     }
 
+    /** The review screen for a finished online game. */
+    public static BaseFragment review(ChessNet.Game g) {
+        String me = getString(R.string.AvraChessYou);
+        TLRPC.User u = MessagesController.getInstance(g.account).getUser(g.peer);
+        String opp = u != null ? UserObject.getUserName(u) : g.oppName;
+        if (TextUtils.isEmpty(opp)) opp = getString(g.myColor == 1 ? R.string.AvraChessBlack : R.string.AvraChessWhite);
+        String res = g.state == ChessNet.FINISHED ? ChessNet.resultText(g) : getString(R.string.AvraChessReview);
+        return new AvraChessReviewActivity(g.moves, g.myColor == 1 ? me : opp, g.myColor == 1 ? opp : me, res, g.myColor);
+    }
+
+    private void openReview() {
+        ChessNet.Game g = game();
+        if (g != null) {
+            presentFragment(review(g));
+            return;
+        }
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < board.moveCount(); i++) list.add(ChessBoard.uci(board.moveAt(i)));
+        presentFragment(new AvraChessReviewActivity(list, nameOf(ChessBoard.WHITE), nameOf(ChessBoard.BLACK), statusText(),
+                mode == MODE_BOT ? humanColor : ChessBoard.WHITE));
+    }
+
+    @Override
+    public boolean isSwipeBackEnabled(android.view.MotionEvent event) {
+        return false; // the board takes every drag
+    }
+
     // ---- lifecycle -------------------------------------------------------------------------------
 
     @Override
     public boolean onFragmentCreate() {
         ChessNet.addListener(this);
+        ChessSound.preload();
         if (mode == MODE_ONLINE) {
             ChessNet.Game g = ChessNet.get(gameId);
             if (g == null) return false;
@@ -178,6 +206,7 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
     public void onResume() {
         super.onResume();
         localTick = System.currentTimeMillis();
+        if (mode == MODE_ONLINE) ChessNet.openGameId = gameId;
         AndroidUtilities.cancelRunOnUIThread(ticker);
         AndroidUtilities.runOnUIThread(ticker);
         applyColors();
@@ -187,6 +216,7 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
     @Override
     public void onPause() {
         super.onPause();
+        if (gameId != null && gameId.equals(ChessNet.openGameId)) ChessNet.openGameId = null;
         AndroidUtilities.cancelRunOnUIThread(ticker);
         saveLocal();
     }
@@ -210,7 +240,9 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
                     finishFragment();
                 } else if (id == MENU_FLIP) {
                     userFlip = !userFlip;
+                    flipAnimated = true;
                     refresh(false);
+                    flipAnimated = false;
                 } else if (id == MENU_SETTINGS) {
                     presentFragment(new AvraChessSettingsActivity());
                 }
@@ -374,7 +406,7 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
         } else {
             bottomColor = myColor();
         }
-        boardView.setFlipped((bottomColor == ChessBoard.BLACK) != userFlip);
+        boardView.setFlipped((bottomColor == ChessBoard.BLACK) != userFlip, flipAnimated);
         boardView.setBoard(board, animate);
         boolean over = isOver();
         if (over) boardView.setControls(2);
@@ -535,6 +567,9 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
                     ChessNet.Game n = ChessNet.invite(currentAccount, g.peer, g.tc, -g.myColor);
                     presentFragment(new AvraChessGameActivity(n.id), true);
                 }));
+                if (g.state == ChessNet.FINISHED && !g.moves.isEmpty()) {
+                    addButton(buttons, button(getString(R.string.AvraChessBtnReview), false, v -> openReview()));
+                }
             }
             return;
         }
@@ -560,7 +595,8 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
                 refresh(false);
                 if (mode == MODE_BOT && board.side != humanColor) AndroidUtilities.runOnUIThread(this::botMove, 400);
             }));
-            addButton(buttons, button(getString(R.string.AvraChessUndo), false, v -> undo()));
+            if (board.moveCount() > 0) addButton(buttons, button(getString(R.string.AvraChessBtnReview), false, v -> openReview()));
+            else addButton(buttons, button(getString(R.string.AvraChessUndo), false, v -> undo()));
         }
     }
 
@@ -755,6 +791,12 @@ public class AvraChessGameActivity extends BaseFragment implements ChessNet.List
     @Override
     public void onChessUpdate(ChessNet.Game g, boolean incoming) {
         if (mode != MODE_ONLINE || g == null || !g.id.equals(gameId)) return;
-        refresh(incoming);
+        if (incoming && g.moves.size() > board.moveCount()) {
+            // the opponent's move: the same sounds as your own
+            ChessBoard before = g.board();
+            before.unmake();
+            playSound(before, before.parseUci(g.moves.get(g.moves.size() - 1)));
+        }
+        refresh(true);
     }
 }

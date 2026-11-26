@@ -10,7 +10,6 @@ import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
@@ -31,8 +30,8 @@ import java.util.regex.Pattern;
  * AvraChess online: games with friends played through ordinary private-chat messages, Elo ratings
  * and the shared leaderboard. Avragram has no server, so:
  *
- *  - every move is a normal message (readable in any Telegram app) whose last line carries the
- *    full game state: "#avrachess g=id t=tc w=uid b=uid m=e2e4.e7e5 c=ms,ms s=mv r=ratings n=name lb=…".
+ *  - every move is a hidden message (sent silently, never shown in Avragram and deleted by the
+ *    opponent's Avragram once read) whose last line carries the full game state: "#avrachess g=id t=tc w=uid b=uid m=e2e4.e7e5 c=ms,ms s=mv r=ratings n=name lb=…".
  *    Any Avragram rebuilds the game from the newest message, so a lost message is never a problem;
  *  - clocks use the message dates (server time);
  *  - ratings are classic Elo, kept by each player; both sides compute the same result;
@@ -91,6 +90,11 @@ public final class ChessNet {
         public boolean drawOfferIn, drawOfferOut;
         public long created;
         public int myRatingBefore, ratingDelta;
+        /** You sent the challenge: you post the result card at the end. */
+        public boolean starter;
+        public boolean cardSent;
+        /** Hidden protocol messages: received ones (deleted once read) and your own. */
+        public final ArrayList<Integer> inIds = new ArrayList<>(), outIds = new ArrayList<>();
 
         public ChessBoard board() {
             ChessBoard b = new ChessBoard();
@@ -128,7 +132,8 @@ public final class ChessNet {
                     .put("m", TextUtils.join(".", moves)).put("w", wms).put("b", bms).put("l", lastMs)
                     .put("s", state).put("r", result).put("why", reason).put("ap", applied)
                     .put("on", oppName).put("or", oppRating).put("di", drawOfferIn).put("do", drawOfferOut)
-                    .put("cr", created).put("rb", myRatingBefore).put("rd", ratingDelta);
+                    .put("cr", created).put("rb", myRatingBefore).put("rd", ratingDelta)
+                    .put("st", starter).put("cs", cardSent).put("ii", ids(inIds)).put("oi", ids(outIds));
             return o;
         }
 
@@ -155,8 +160,22 @@ public final class ChessNet {
             g.created = o.optLong("cr");
             g.myRatingBefore = o.optInt("rb");
             g.ratingDelta = o.optInt("rd");
+            g.starter = o.optBoolean("st");
+            g.cardSent = o.optBoolean("cs");
+            readIds(o.optJSONArray("ii"), g.inIds);
+            readIds(o.optJSONArray("oi"), g.outIds);
             return g;
         }
+    }
+
+    private static JSONArray ids(ArrayList<Integer> list) {
+        JSONArray a = new JSONArray();
+        for (int i = Math.max(0, list.size() - 40); i < list.size(); i++) a.put(list.get(i));
+        return a;
+    }
+
+    private static void readIds(JSONArray a, ArrayList<Integer> out) {
+        for (int i = 0; a != null && i < a.length(); i++) out.add(a.optInt(i));
     }
 
     public interface Listener {
@@ -165,6 +184,9 @@ public final class ChessNet {
 
     private static final CopyOnWriteArrayList<Listener> listeners = new CopyOnWriteArrayList<>();
     private static HashMap<String, Game> games;
+
+    /** The game on screen right now (it plays its own move sounds). */
+    public static String openGameId;
 
     public static void addListener(Listener l) {
         listeners.add(l);
@@ -505,6 +527,7 @@ public final class ChessNet {
         g.wms = g.bms = TC[tc][0] * 1000L;
         g.state = INVITE_OUT;
         g.created = System.currentTimeMillis();
+        g.starter = true;
         TLRPC.User u = MessagesController.getInstance(account).getUser(peer);
         if (u != null) g.oppName = UserObject.getUserName(u);
         Player p = players().get(peer);
@@ -513,6 +536,7 @@ public final class ChessNet {
         save();
         send(g, "inv", LocaleController.formatString(R.string.AvraChessMsgInvite,
                 LocaleController.getString(g.myColor == 1 ? R.string.AvraChessMsgYouBlack : R.string.AvraChessMsgYouWhite)));
+        ChessCards.sendInvite(g);
         notifyListeners(g, false);
         return g;
     }
@@ -533,6 +557,7 @@ public final class ChessNet {
         g.state = DECLINED;
         save();
         send(g, "dec", LocaleController.getString(wasIn ? R.string.AvraChessMsgDeclined : R.string.AvraChessMsgCancelled));
+        if (g.starter) ChessCards.deleteCards(g, true);
         notifyListeners(g, false);
     }
 
@@ -628,19 +653,108 @@ public final class ChessNet {
         String lb = gossip(g.account);
         if (!lb.isEmpty()) b.append(" lb=").append(lb);
         String text = b.toString();
-        AndroidUtilities.runOnUIThread(() -> SendMessagesHelper.getInstance(g.account).sendMessage(SendMessagesHelper.SendMessageParams.of(text, g.peer)));
+        AndroidUtilities.runOnUIThread(() -> sendHidden(g, text));
+    }
+
+    /**
+     * Sends a protocol message without adding it to the chat here: a raw messages.sendMessage whose
+     * result only moves the update state on. The echo (other devices, difference) is dropped by
+     * {@link #onMessage}; the opponent's Avragram reads it, then deletes it for both sides.
+     */
+    private static void sendHidden(Game g, String text) {
+        MessagesController mc = MessagesController.getInstance(g.account);
+        TLRPC.InputPeer ip = mc.getInputPeer(g.peer);
+        if (ip == null) return;
+        TLRPC.TL_messages_sendMessage req = new TLRPC.TL_messages_sendMessage();
+        req.peer = ip;
+        req.message = text;
+        req.random_id = org.telegram.messenger.Utilities.random.nextLong();
+        req.no_webpage = true;
+        req.silent = true;
+        ConnectionsManager.getInstance(g.account).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+            int id = 0;
+            if (response instanceof TLRPC.TL_updateShortSentMessage) {
+                TLRPC.TL_updateShortSentMessage r = (TLRPC.TL_updateShortSentMessage) response;
+                id = r.id;
+                mc.processNewDifferenceParams(-1, r.pts, r.date, r.pts_count);
+            } else if (response instanceof TLRPC.Updates) {
+                TLRPC.Updates u = (TLRPC.Updates) response;
+                for (TLRPC.Update up : u.updates) {
+                    if (up instanceof org.telegram.tgnet.tl.TL_update.TL_updateMessageID && ((org.telegram.tgnet.tl.TL_update.TL_updateMessageID) up).random_id == req.random_id) {
+                        id = ((org.telegram.tgnet.tl.TL_update.TL_updateMessageID) up).id;
+                    }
+                }
+                mc.processUpdates(u, false);
+            } else if (error != null) {
+                FileLog.e("AvraChess send: " + error.text);
+            }
+            if (id > 0) {
+                g.outIds.add(id);
+                save();
+            }
+        }));
+    }
+
+    /** Deletes messages for both sides without touching this client's chat (they were never shown). */
+    static void deleteRemote(int account, ArrayList<Integer> ids) {
+        if (ids == null || ids.isEmpty()) return;
+        TLRPC.TL_messages_deleteMessages req = new TLRPC.TL_messages_deleteMessages();
+        req.revoke = true;
+        req.id.addAll(ids);
+        ConnectionsManager.getInstance(account).sendRequest(req, (response, error) -> {
+            if (response instanceof TLRPC.TL_messages_affectedMessages) {
+                TLRPC.TL_messages_affectedMessages r = (TLRPC.TL_messages_affectedMessages) response;
+                AndroidUtilities.runOnUIThread(() -> MessagesController.getInstance(account).processNewDifferenceParams(-1, r.pts, -1, r.pts_count));
+            }
+        });
+    }
+
+    /** First line of every hidden protocol message (also what a push notification starts with). */
+    public static boolean isProtocolText(String text) {
+        return text != null && (text.startsWith("♟ AvraChess") || text.contains(TAG + " v="));
+    }
+
+    /** History loads: drops the hidden protocol messages (keeps the page if nothing else is left). */
+    public static void filterLoaded(ArrayList<TLRPC.Message> list) {
+        if (list == null || list.isEmpty()) return;
+        int keep = 0;
+        for (TLRPC.Message m : list) if (m == null || !isProtocolText(m.message) || m.peer_id == null || m.peer_id.user_id == 0) keep++;
+        if (keep == 0 || keep == list.size()) return;
+        for (int i = list.size() - 1; i >= 0; i--) {
+            TLRPC.Message m = list.get(i);
+            if (m != null && m.peer_id != null && m.peer_id.user_id != 0 && isProtocolText(m.message)) list.remove(i);
+        }
     }
 
     // ---- protocol: receiving --------------------------------------------------------------------
 
-    /** Called for every new incoming private message (any thread). */
-    public static void onMessage(int account, TLRPC.Message message) {
-        if (message == null || message.message == null || message.out || message.peer_id == null) return;
-        if (message.peer_id.user_id == 0 || !message.message.contains(TAG)) return;
-        final long from = message.peer_id.user_id;
+    /**
+     * Called for every new message (any thread) before it is stored. Returns true for a hidden AvraChess
+     * protocol message: it is dropped (never shown, no notification), applied, and — if it came from the
+     * opponent — deleted for both sides.
+     */
+    public static boolean onMessage(int account, TLRPC.Message message) {
+        if (message == null || message.message == null || message.peer_id == null) return false;
+        if (message.peer_id.user_id == 0 || !message.message.contains(TAG)) return false;
+        final long peer = message.peer_id.user_id;
+        final boolean out = message.out;
         final String text = message.message;
         final long date = message.date * 1000L;
-        AndroidUtilities.runOnUIThread(() -> process(account, from, text, date, true));
+        final int id = message.id;
+        AndroidUtilities.runOnUIThread(() -> {
+            long self = UserConfig.getInstance(account).getClientUserId();
+            Game g = process(account, out ? self : peer, text, date, !out);
+            if (!out && id > 0) {
+                ArrayList<Integer> ids = new ArrayList<>(1);
+                ids.add(id);
+                deleteRemote(account, ids);
+                if (g != null && !g.inIds.contains(id)) {
+                    g.inIds.add(id);
+                    save();
+                }
+            }
+        });
+        return true;
     }
 
     /** Re-reads the last AvraChess messages with a person (after a reinstall or missed updates). */
@@ -660,14 +774,22 @@ public final class ChessNet {
                 ArrayList<TLRPC.Message> list = new ArrayList<>(((TLRPC.messages_Messages) response).messages);
                 Collections.sort(list, (x, y) -> Integer.compare(x.date, y.date));
                 long self = UserConfig.getInstance(account).getClientUserId();
+                ArrayList<Integer> read = new ArrayList<>();
                 for (TLRPC.Message m : list) {
                     if (m.message == null) continue;
                     long sender = m.out ? self : peer;
-                    process(account, sender, m.message, m.date * 1000L, !m.out);
+                    Game g = process(account, sender, m.message, m.date * 1000L, !m.out);
+                    if (!m.out) read.add(m.id);
+                    else if (g != null && g.state == FINISHED && !isLatestOut(g, m.id)) read.add(m.id);
                 }
+                deleteRemote(account, read);
             }
             if (done != null) done.run();
         }));
+    }
+
+    private static boolean isLatestOut(Game g, int id) {
+        return !g.outIds.isEmpty() && g.outIds.get(g.outIds.size() - 1) == id;
     }
 
     private static HashMap<String, String> fields(String text) {
@@ -681,22 +803,22 @@ public final class ChessNet {
         return f;
     }
 
-    private static void process(int account, long sender, String text, long dateMs, boolean incoming) {
+    private static Game process(int account, long sender, String text, long dateMs, boolean incoming) {
         try {
             HashMap<String, String> f = fields(text);
-            if (f == null || !f.containsKey("g")) return;
+            if (f == null || !f.containsKey("g")) return null;
             long self = UserConfig.getInstance(account).getClientUserId();
             long white = Long.parseLong(f.get("w")), black = Long.parseLong(f.get("b"));
-            if (white != self && black != self) return;
+            if (white != self && black != self) return null;
             long peer = white == self ? black : white;
-            if (incoming && sender != peer) return;
+            if (incoming && sender != peer) return null;
             int tc = Integer.parseInt(f.get("t"));
-            if (tc < 0 || tc >= TC.length) return;
+            if (tc < 0 || tc >= TC.length) return null;
             String id = f.get("g"), status = f.get("s");
             Game g = map().get(id);
             boolean isNew = false;
             if (g == null) {
-                if (!"inv".equals(status) && !incoming) return;
+                if (!"inv".equals(status) && !incoming) return null;
                 g = new Game();
                 g.id = id;
                 g.account = account;
@@ -707,10 +829,11 @@ public final class ChessNet {
                 g.state = incoming ? INVITE_IN : INVITE_OUT;
                 g.created = dateMs;
                 if (!"inv".equals(status)) g.state = ACTIVE;
+                g.starter = !incoming && "inv".equals(status);
                 map().put(id, g);
                 isNew = true;
             }
-            if (g.account != account) return;
+            if (g.account != account) return null;
 
             if (incoming) {
                 // what the opponent says about themselves
@@ -766,7 +889,10 @@ public final class ChessNet {
                     }
                     break;
                 case "dec":
-                    if (g.state == INVITE_OUT || g.state == INVITE_IN) g.state = DECLINED;
+                    if (g.state == INVITE_OUT || g.state == INVITE_IN) {
+                        g.state = DECLINED;
+                        if (g.starter && incoming) ChessCards.deleteCards(g, true);
+                    }
                     break;
                 case "res":
                     if (g.state == ACTIVE) finish(g, incoming ? g.myColor : -g.myColor, "resign");
@@ -796,13 +922,15 @@ public final class ChessNet {
             if (g.state == ACTIVE) checkEnd(g);
             save();
             if (incoming) {
-                if (moved) ChessSound.play(ChessSound.NOTIFY);
+                if (moved && !id.equals(openGameId)) ChessSound.play(ChessSound.NOTIFY);
                 notifyListeners(g, true);
             } else {
                 notifyListeners(g, false);
             }
+            return g;
         } catch (Exception e) {
             FileLog.e(e);
+            return null;
         }
     }
 
@@ -839,6 +967,18 @@ public final class ChessNet {
         applyRating(g);
         save();
         ChessSound.play(ChessSound.END);
+        final Game fg = g;
+        // after the final protocol message went out: the result card from whoever started the game
+        AndroidUtilities.runOnUIThread(() -> {
+            if (fg.starter && !fg.cardSent) {
+                fg.cardSent = true;
+                save();
+                ChessCards.sendResult(fg);
+                ChessCards.deleteCards(fg, true);
+            }
+            // received protocol messages are gone already; repeat in case a delete failed
+            deleteRemote(fg.account, new ArrayList<>(fg.inIds));
+        }, 1500);
     }
 
     public static String resultText(Game g) {
@@ -862,6 +1002,7 @@ public final class ChessNet {
     }
 
     private static void notifyListeners(Game g, boolean incoming) {
+        ChessCards.refresh(g);
         for (Listener l : listeners) {
             try {
                 l.onChessUpdate(g, incoming);

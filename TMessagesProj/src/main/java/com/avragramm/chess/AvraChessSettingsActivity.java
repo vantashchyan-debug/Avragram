@@ -71,8 +71,10 @@ public class AvraChessSettingsActivity extends UniversalFragment {
         for (int i = 0; i < ChessStyle.SET_NAMES.length; i++) {
             items.add(UItem.asRadio(ID_SET + i, getString(ChessStyle.SET_NAMES[i])).setChecked(ChessStyle.pieceSet() == i));
         }
-        items.add(UItem.asButton(ID_WHITE, R.drawable.msg_colors, getString(R.string.AvraChessWhiteColor), hex(ChessStyle.whiteColor())));
-        items.add(UItem.asButton(ID_BLACK, R.drawable.msg_colors, getString(R.string.AvraChessBlackColor), hex(ChessStyle.blackColor())));
+        if (ChessStyle.pieceSet() == ChessStyle.SET_TINT) {
+            items.add(UItem.asButton(ID_WHITE, R.drawable.msg_colors, getString(R.string.AvraChessWhiteColor), hex(ChessStyle.whiteColor())));
+            items.add(UItem.asButton(ID_BLACK, R.drawable.msg_colors, getString(R.string.AvraChessBlackColor), hex(ChessStyle.blackColor())));
+        }
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(getString(R.string.AvraChessScreen)));

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 /**
- * Synthesised AvraChess sounds (no audio files in the APK): wood, click, 8-bit, soft and cringe sets
+ * AvraChess sounds: wood, marble and marimba are pre-rendered samples (res/raw); 8-bit and cringe are synthesised
  * for move, capture, check, castle, game end, low time and "opponent moved".
  */
 public final class ChessSound {
@@ -30,8 +30,88 @@ public final class ChessSound {
         play(ChessStyle.sound(), event);
     }
 
+    // ---- recorded-quality samples (res/raw/chess_<set>_<event>.ogg) for wood, marble, marimba ----
+
+    private static final String[] EVENT_FILES = {"move", "capture", "check", "castle", "end", "lowtime", "notify", "start"};
+    private static android.media.SoundPool pool;
+    private static final HashMap<Integer, Integer> sampleIds = new HashMap<>();
+    private static final java.util.HashSet<Integer> ready = new java.util.HashSet<>();
+
+    private static String sampleSet(int style) {
+        switch (style) {
+            case WOOD: return "wood";
+            case CLICK: return "marble";
+            case SOFT: return "marimba";
+            default: return null;
+        }
+    }
+
+    private static synchronized android.media.SoundPool pool() {
+        if (pool == null) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                pool = new android.media.SoundPool.Builder().setMaxStreams(4).setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()).build();
+            } else {
+                pool = new android.media.SoundPool(4, android.media.AudioManager.STREAM_MUSIC, 0);
+            }
+            pool.setOnLoadCompleteListener((sp, id, status) -> {
+                synchronized (ChessSound.class) {
+                    if (status == 0) ready.add(id);
+                    Runnable r = pendingPlay.remove(id);
+                    if (r != null && status == 0) r.run();
+                }
+            });
+        }
+        return pool;
+    }
+
+    private static final HashMap<Integer, Runnable> pendingPlay = new HashMap<>();
+
+    private static synchronized int sample(int style, int event) {
+        String set = sampleSet(style);
+        if (set == null) return 0;
+        int key = style * 16 + event;
+        Integer id = sampleIds.get(key);
+        if (id == null) {
+            android.content.Context ctx = org.telegram.messenger.ApplicationLoader.applicationContext;
+            int res = ctx.getResources().getIdentifier("chess_" + set + "_" + EVENT_FILES[event], "raw", ctx.getPackageName());
+            id = res == 0 ? 0 : pool().load(ctx, res, 1);
+            sampleIds.put(key, id);
+        }
+        return id;
+    }
+
+    /** Loads the samples of the chosen set in advance so the first move is not silent. */
+    public static void preload() {
+        int style = ChessStyle.sound();
+        if (sampleSet(style) == null) return;
+        Utilities.globalQueue.postRunnable(() -> {
+            try {
+                for (int e = 0; e < EVENT_FILES.length; e++) sample(style, e);
+            } catch (Throwable t) {
+                FileLog.e(t);
+            }
+        });
+    }
+
     public static void play(int style, int event) {
         if (style == OFF) return;
+        if (sampleSet(style) != null) {
+            Utilities.globalQueue.postRunnable(() -> {
+                try {
+                    synchronized (ChessSound.class) {
+                        int id = sample(style, event);
+                        if (id == 0) return;
+                        float vol = event == LOW_TIME ? 0.7f : 1f;
+                        if (ready.contains(id)) pool().play(id, vol, vol, 1, 0, 1f);
+                        else pendingPlay.put(id, () -> pool().play(id, vol, vol, 1, 0, 1f));
+                    }
+                } catch (Throwable t) {
+                    FileLog.e(t);
+                }
+            });
+            return;
+        }
         Utilities.globalQueue.postRunnable(() -> {
             try {
                 short[] pcm;

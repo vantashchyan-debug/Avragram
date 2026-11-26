@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;
@@ -33,9 +32,14 @@ public final class ChessStyle {
 
     // ---- pieces ---------------------------------------------------------------------------------
 
-    public static final int SET_CLASSIC = 0, SET_OUTLINE = 1, SET_NEON = 2, SET_LETTERS = 3, SET_PIXEL = 4, SET_EMOJI = 5, SET_BOLD = 6;
-    public static final int[] SET_NAMES = {R.string.AvraChessSetClassic, R.string.AvraChessSetOutline, R.string.AvraChessSetNeon,
-            R.string.AvraChessSetLetters, R.string.AvraChessSetPixel, R.string.AvraChessSetEmoji, R.string.AvraChessSetBold};
+    /** Piece sets, drawn from res/drawable-nodpi/chess_<file>_<w|b><p|n|b|r|q|k>.webp (see Tools/chess-art). */
+    public static final String[] SET_FILES = {"classic", "merida", "chessnut", "fantasy", "spatial", "celtic", "papercut",
+            "candy", "minimal", "neon", "gold", "tint"};
+    public static final int SET_CLASSIC = 0, SET_NEON = 9, SET_GOLD = 10, SET_TINT = 11;
+    public static final int[] SET_NAMES = {R.string.AvraChessSetClassic, R.string.AvraChessSetMerida, R.string.AvraChessSetChessnut,
+            R.string.AvraChessSetFantasy, R.string.AvraChessSetSpatial, R.string.AvraChessSetCeltic, R.string.AvraChessSetPapercut,
+            R.string.AvraChessSetCandy, R.string.AvraChessSetMinimal, R.string.AvraChessSetNeon, R.string.AvraChessSetGold,
+            R.string.AvraChessSetTint};
 
     /** Swatches for piece, board and highlight colors. */
     public static final int[] SWATCHES = {0xFFFFFFFF, 0xFFF5F0E1, 0xFFFFD54F, 0xFFFF8A65, 0xFFE53935, 0xFFEC407A, 0xFFAB47BC,
@@ -165,114 +169,77 @@ public final class ChessStyle {
 
     // ---- piece drawing --------------------------------------------------------------------------
 
-    private static final String SOLID = " ♟♞♝♜♛♚";
-    private static final String HOLLOW = " ♙♘♗♖♕♔";
-    private static final String LETTERS = " PNBRQK";
-    private static final String[] EMOJI = {"", "🪖", "🐴", "🧙", "🏰", "💃", "👑"};
-    private static final String VS15 = "︎"; // text presentation, never the color emoji pawn
-
-    private static Typeface pixel;
-    private static final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private static final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private static final Paint disc = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private static final String LETTERS = "?pnbrqk";
+    private static int loadedSet = -1;
+    private static final android.graphics.Bitmap[] bitmaps = new android.graphics.Bitmap[13];
+    private static final Paint bmp = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
     private static final RectF rect = new RectF();
-
-    private static Typeface pixelFont() {
-        if (pixel == null) {
-            try {
-                pixel = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/avra/pressstart2p.ttf");
-            } catch (Exception e) {
-                pixel = Typeface.MONOSPACE;
-            }
-        }
-        return pixel;
-    }
+    private static int tintW, tintB;
+    private static android.graphics.ColorFilter filterW, filterB;
 
     private static int contrast(int color) {
         int r = (color >> 16) & 0xFF, g = (color >> 8) & 0xFF, b = color & 0xFF;
-        return (r * 299 + g * 587 + b * 114) / 1000 > 140 ? 0xFF111111 : 0xFFFFFFFF;
+        return (r * 299 + g * 587 + b * 114) / 1000 > 140 ? 0xFF111111 : 0xFFF5F5F5;
+    }
+
+    private static android.graphics.Bitmap bitmap(int set, int piece) {
+        if (set < 0 || set >= SET_FILES.length) set = SET_CLASSIC;
+        if (set != loadedSet) {
+            java.util.Arrays.fill(bitmaps, null);
+            loadedSet = set;
+        }
+        int idx = (piece > 0 ? 0 : 6) + Math.abs(piece);
+        android.graphics.Bitmap b = bitmaps[idx];
+        if (b == null) {
+            try {
+                Context ctx = ApplicationLoader.applicationContext;
+                String name = "chess_" + SET_FILES[set] + "_" + (piece > 0 ? "w" : "b") + LETTERS.charAt(Math.abs(piece));
+                int res = ctx.getResources().getIdentifier(name, "drawable", ctx.getPackageName());
+                android.graphics.BitmapFactory.Options o = new android.graphics.BitmapFactory.Options();
+                o.inScaled = false;
+                b = android.graphics.BitmapFactory.decodeResource(ctx.getResources(), res, o);
+                bitmaps[idx] = b;
+            } catch (Throwable e) {
+                org.telegram.messenger.FileLog.e(e);
+            }
+        }
+        return b;
+    }
+
+    /** "Own colors": the white artwork's fill becomes the color, its lines a contrasting tone. */
+    private static android.graphics.ColorFilter tint(boolean white) {
+        int color = white ? whiteColor() : blackColor();
+        if (white ? (filterW == null || tintW != color) : (filterB == null || tintB != color)) {
+            int line = contrast(color);
+            float[] m = new float[20];
+            int[] sh = {16, 8, 0};
+            for (int i = 0; i < 3; i++) {
+                int f = (color >> sh[i]) & 0xFF, l = (line >> sh[i]) & 0xFF;
+                m[i * 5] = (f - l) / 255f;
+                m[i * 5 + 4] = l;
+            }
+            m[18] = 1;
+            android.graphics.ColorFilter cf = new android.graphics.ColorMatrixColorFilter(m);
+            if (white) {
+                filterW = cf;
+                tintW = color;
+            } else {
+                filterB = cf;
+                tintB = color;
+            }
+        }
+        return white ? filterW : filterB;
     }
 
     /** Draws a piece centred at (cx, cy) inside a square of the given size. */
     public static void drawPiece(Canvas c, int piece, float cx, float cy, float size, int set, float alpha) {
-        if (piece == 0) return;
-        int t = Math.abs(piece);
-        boolean white = piece > 0;
-        int color = white ? whiteColor() : blackColor();
-        int edge = contrast(color);
-        int a = (int) (255 * alpha);
-        fill.setTypeface(Typeface.DEFAULT);
-        fill.setTextAlign(Paint.Align.CENTER);
-        fill.setShadowLayer(0, 0, 0, 0);
-        stroke.setTypeface(Typeface.DEFAULT);
-        stroke.setTextAlign(Paint.Align.CENTER);
-        stroke.setStyle(Paint.Style.STROKE);
-        stroke.setStrokeJoin(Paint.Join.ROUND);
-        switch (set) {
-            case SET_LETTERS:
-            case SET_PIXEL:
-            case SET_EMOJI: {
-                float r = size * 0.38f;
-                disc.setColor(color);
-                disc.setAlpha(a);
-                if (set == SET_PIXEL) {
-                    rect.set(cx - r, cy - r, cx + r, cy + r);
-                    c.drawRect(rect, disc);
-                } else {
-                    c.drawCircle(cx, cy, r, disc);
-                }
-                stroke.setColor(edge);
-                stroke.setAlpha(a);
-                stroke.setStrokeWidth(size * 0.035f);
-                if (set == SET_PIXEL) c.drawRect(rect, stroke);
-                else c.drawCircle(cx, cy, r, stroke);
-                String s = set == SET_EMOJI ? EMOJI[t] : String.valueOf(LETTERS.charAt(t));
-                fill.setColor(edge);
-                fill.setAlpha(a);
-                if (set == SET_PIXEL) fill.setTypeface(pixelFont());
-                else if (set == SET_LETTERS) fill.setTypeface(Typeface.DEFAULT_BOLD);
-                fill.setTextSize(set == SET_PIXEL ? size * 0.34f : set == SET_EMOJI ? size * 0.42f : size * 0.46f);
-                Paint.FontMetrics fm = fill.getFontMetrics();
-                c.drawText(s, cx, cy - (fm.ascent + fm.descent) / 2f, fill);
-                return;
-            }
-            default:
-                break;
-        }
-        float ts = size * (set == SET_BOLD ? 0.92f : 0.82f);
-        fill.setTextSize(ts);
-        stroke.setTextSize(ts);
-        Paint.FontMetrics fm = fill.getFontMetrics();
-        float y = cy - (fm.ascent + fm.descent) / 2f;
-        String solid = SOLID.charAt(t) + VS15, hollow = HOLLOW.charAt(t) + VS15;
-        if (set == SET_OUTLINE) {
-            fill.setColor(color);
-            fill.setAlpha(a);
-            fill.setShadowLayer(size * 0.04f, 0, 0, edge);
-            c.drawText(hollow, cx, y, fill);
-            return;
-        }
-        if (set == SET_NEON) {
-            fill.setColor(0xFF0A0A14);
-            fill.setAlpha(a);
-            c.drawText(solid, cx, y, fill);
-            fill.setColor(color);
-            fill.setAlpha(a);
-            fill.setShadowLayer(size * 0.12f, 0, 0, color);
-            c.drawText(hollow, cx, y, fill);
-            fill.setShadowLayer(0, 0, 0, 0);
-            return;
-        }
-        // classic / bold: solid body in the piece color, outline glyph on top
-        stroke.setColor(edge);
-        stroke.setAlpha(a);
-        stroke.setStrokeWidth(size * (set == SET_BOLD ? 0.06f : 0.035f));
-        c.drawText(solid, cx, y, stroke);
-        fill.setColor(color);
-        fill.setAlpha(a);
-        c.drawText(solid, cx, y, fill);
-        fill.setColor(edge);
-        fill.setAlpha(a);
-        c.drawText(hollow, cx, y, fill);
+        if (piece == 0 || alpha <= 0) return;
+        android.graphics.Bitmap b = bitmap(set, piece);
+        if (b == null) return;
+        bmp.setAlpha((int) (255 * Math.min(1f, alpha)));
+        bmp.setColorFilter(set == SET_TINT ? tint(piece > 0) : null);
+        float h = size / 2f;
+        rect.set(cx - h, cy - h, cx + h, cy + h);
+        c.drawBitmap(b, null, rect, bmp);
     }
 }

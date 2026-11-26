@@ -4717,6 +4717,7 @@ public class MessageObject {
             builder.addSeparator();
             builder.addSuggestionKeyboard();
         }
+        com.avragramm.chess.ChessCards.addButtons(this, builder); // Avragram: AvraChess challenge / result cards
         if (builder.isNotEmpty()) {
             inlineKeyboardSource = builder.build();
         }

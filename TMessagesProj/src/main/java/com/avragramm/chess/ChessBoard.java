@@ -64,6 +64,12 @@ public final class ChessBoard {
         b.key = key;
         b.ply = ply;
         System.arraycopy(history, 0, b.history, 0, ply + 1);
+        // move history too, so lastMove(), moveAt() and unmake() work on the copy
+        System.arraycopy(undoCaptured, 0, b.undoCaptured, 0, ply);
+        System.arraycopy(undoCastling, 0, b.undoCastling, 0, ply);
+        System.arraycopy(undoEp, 0, b.undoEp, 0, ply);
+        System.arraycopy(undoHalf, 0, b.undoHalf, 0, ply);
+        System.arraycopy(undoMove, 0, b.undoMove, 0, ply);
         return b;
     }
 

@@ -43795,6 +43795,7 @@ public class ChatActivity extends BaseFragment implements
 
         @Override
         public void didPressCustomBotButton(ChatMessageCell cell, BotInlineKeyboard.ButtonCustom button) {
+            if (com.avragramm.chess.ChessCards.onButton(ChatActivity.this, cell.getMessageObject(), button.id)) return; // Avragram
             final MessageObject messageObject = cell.getMessageObject();
             if (messageObject == null) {
                 return;

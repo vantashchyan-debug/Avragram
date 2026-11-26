@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id 'com.android.application'
-    id 'com.chaquo.python'
+    id 'com.chaquo.python' apply false
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.devtools.ksp'
     id 'com.google.gms.google-services'
@@ -98,7 +98,7 @@ android {
     defaultConfig {
         applicationId = APP_PACKAGE
         versionCode = Integer.parseInt(APP_VERSION_CODE)
-        minSdkVersion 24
+        minSdkVersion((project.findProperty("avraMinSdk") ?: "24") as int)
         targetSdkVersion 36
         versionName = APP_VERSION_NAME
 
@@ -303,7 +303,11 @@ androidComponents {
     }
 }
 
-apply from: "$projectDir/gradle/extera-python.gradle"
+// Avragram: the Android 6 build (-PavraMinSdk=23, lite flavor) has no Python plugins: Chaquopy needs API 24
+if (((project.findProperty("avraMinSdk") ?: "24") as int) >= 24) {
+    apply plugin: 'com.chaquo.python'
+    apply from: "$projectDir/gradle/extera-python.gradle"
+}
 
 repositories {
     maven {

@@ -12081,6 +12081,7 @@ public class MessagesController extends BaseController implements NotificationCe
             FileLog.d("processLoadedMessages size " + messagesRes.messages.size() + " in chat " + dialogId + " topic_id " + threadMessageId + " count " + count + " max_id " + max_id + " cache " + isCache + " guid " + classGuid + " load_type " + load_type + " last_message_id " + last_message_id + " index " + loadIndex + " firstUnread " + first_unread + " unread_count " + unread_count + " last_date " + last_date + " queryFromServer " + queryFromServer + " isTopic " + isTopic + " mode " + mode);
         }
         Timer.Task t1 = Timer.start(loaderLogger, "processLoadedMessages");
+        if (dialogId > 0 && messagesRes.messages != null) com.avragramm.chess.ChessNet.filterLoaded(messagesRes.messages); // Avragram: hidden AvraChess moves
         if (mode == 0 && messagesRes.messages != null) {
             checkDialogRepliedMessages(dialogId, messagesRes.messages);
         }

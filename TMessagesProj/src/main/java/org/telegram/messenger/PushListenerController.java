@@ -1450,6 +1450,11 @@ public class PushListenerController {
                                 if (BuildVars.LOGS_ENABLED) {
                                     FileLog.d(tag + " received message notification " + loc_key + " for dialogId = " + dialogId + " mid = " + msg_id);
                                 }
+                                if (messageText != null && com.avragramm.chess.ChessNet.isProtocolText(message1)) {
+                                    // Avragram: a hidden AvraChess move — a short notice instead of the raw protocol text
+                                    message1 = LocaleController.getString(R.string.AvraChessPushMove);
+                                    messageText = LocaleController.formatString("NotificationMessageText", R.string.NotificationMessageText, args != null && args.length > 0 ? args[0] : "", message1);
+                                }
                                 if (messageText != null) {
                                     boolean isStoryReaction = loc_key.equals("REACT_STORY") || loc_key.equals("REACT_STORY_HIDDEN");
                                     TLRPC.TL_message messageOwner = new TLRPC.TL_message();

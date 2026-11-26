@@ -202,6 +202,11 @@ public class BotInlineKeyboard {
             }
         }
 
+        /** Avragram: a row of client-side buttons (AvraChess cards). */
+        public void addRow(Button... row) {
+            if (row != null && row.length > 0) buttons.add(row);
+        }
+
         public void addSeparator() {
             if (!buttons.isEmpty()) {
                 separators |= (1 << (buttons.size() - 1));
