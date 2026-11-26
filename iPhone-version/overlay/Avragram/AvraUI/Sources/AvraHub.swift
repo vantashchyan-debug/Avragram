@@ -32,6 +32,27 @@ struct AvraHubView: View {
                     row("🚢", "Морской бой", "Против бота: Юнга, Боцман, Адмирал") {
                         navigation?.push(title: "Морской бой") { AvraSeaScreen(level: 1) }
                     }
+                    ForEach(AvraGameKind.allCases) { g in
+                        let best = AvraScores.bestAny(g)
+                        row(g.emoji, g.title, (best > 0 ? "Рекорд \(best) · " : "") + g.info) {
+                            navigation?.push(title: g.title) { AvraGameScreenFor(kind: g) }
+                        }
+                    }
+                    row("🧮", "Калькулятор", "Инженерный: скобки, память, x!, √, sin, ln") {
+                        navigation?.push(title: "Калькулятор") { AvraCalculatorScreen() }
+                    }
+                    row("📨", "Спам", "Отправить сообщение несколько раз в выбранный чат") {
+                        navigation?.push(title: "Спам") { AvraSpamScreen(context: context) }
+                    }
+                }
+
+                section("Оформление") {
+                    row("🎨", "Темы, шрифты, скругления", "35 тем Avragram, 20 шрифтов, форма пузырей") {
+                        navigation?.push(title: "Оформление") { AvraAppearanceScreen(context: context) }
+                    }
+                    row("🎬", "Видео при запуске", "Видео Avragram вперемешку, своё видео или фото") {
+                        navigation?.push(title: "Видео при запуске") { AvraIntroSettingsScreen() }
+                    }
                 }
 
                 section("Настройки") {
@@ -88,5 +109,19 @@ public func avragramSettingsController(context: AccountContext) -> ViewControlle
         presentationDataSignal: context.sharedContext.presentationData
     ) {
         AvraHubView(context: context)
+    }
+}
+
+struct AvraGameScreenFor: View {
+    let kind: AvraGameKind
+    var body: some View {
+        switch kind {
+        case .blast: AvraBlastScreen()
+        case .snake: AvraSnakeScreen()
+        case .drop: AvraDropScreen()
+        case .run: AvraRunScreen()
+        case .bird: AvraBirdScreen()
+        case .g2048: Avra2048Screen()
+        }
     }
 }
