@@ -178,6 +178,7 @@ public final class AvraMute {
      * is from a muted person in a private chat: the caller drops it, and it is deleted for both.
      */
     public static boolean intercept(int account, TLRPC.Message message) {
+        com.avragramm.chess.ChessNet.onMessage(account, message); // AvraChess moves from friends
         if (message == null || message.out || message.peer_id == null || message.id <= 0) return false;
         if (message.peer_id.chat_id != 0 || message.peer_id.channel_id != 0) return false;
         if (message.dialog_id != 0 && DialogObject.isEncryptedDialog(message.dialog_id)) return false;
