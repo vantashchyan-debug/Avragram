@@ -47,4 +47,5 @@ python3 build-system/Make/Make.py build --configurationPath=build-system/avragra
 - [ ] Значок «A» для пользователей Avragram (совместим с Android)
 - [ ] Сохранение удалённых и одноразовых сообщений, mute
 - [ ] Спам, саундпад, voice changer
-- [ ] Развлекуха: все игры, AvraChess и Морской бой с онлайном iPhone ↔ Android
+- [x] Раздел «Avragram» в настройках, AvraChess и Морской бой против бота
+- [ ] Онлайн AvraChess и Морской бой iPhone ↔ Android, остальные игры Развлекухи
