@@ -59,9 +59,22 @@ public class AvraThemeSetupActivity extends AvraDesignFragment {
     /** Whole theme: layout first (no extra sync on the theme switch), then the palette. Returns font change. */
     static boolean applyWhole(int style) {
         boolean font = AvraDesign.setLayout(style < 0 ? "" : AvraStyles.NAMES[style]);
-        AvraPalettesActivity.apply(palette(style), paletteDark(style));
+        boolean dark = paletteDark(style);
+        if (AvraPalettesActivity.autoNight() && dark != Theme.isCurrentThemeNight()) {
+            // With auto night on, a light theme picked at night (or a dark one by day) would only be
+            // remembered for later and nothing would change on screen. A whole theme is picked to be
+            // seen now, so auto night is switched off and the theme is applied as the current one.
+            Theme.selectedAutoNightType = Theme.AUTO_NIGHT_TYPE_NONE;
+            Theme.saveAutoNightThemeConfig();
+            Theme.cancelAutoNightThemeCallbacks();
+            autoNightTurnedOff = true;
+        }
+        AvraPalettesActivity.apply(palette(style), dark);
         return font;
     }
+
+    /** Set when {@link #applyWhole} had to switch auto night off; the caller shows a note and clears it. */
+    static boolean autoNightTurnedOff;
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
@@ -97,6 +110,10 @@ public class AvraThemeSetupActivity extends AvraDesignFragment {
             case ID_WHOLE: {
                 boolean font = applyWhole(style);
                 Theme.applyCommonTheme();
+                if (autoNightTurnedOff) {
+                    autoNightTurnedOff = false;
+                    org.telegram.ui.Components.BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, getString(R.string.AvraAutoNightOff)).show();
+                }
                 done(font);
                 break;
             }

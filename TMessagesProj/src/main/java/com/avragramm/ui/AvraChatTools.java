@@ -70,6 +70,40 @@ public final class AvraChatTools {
         fragment.showDialog(b.create());
     }
 
+    // ---------------------------------------------------------------- fun
+
+    /** "Fun" popup from the ⋮ menu: the games, the soundpad and the settings page. */
+    public static void showFun(BaseFragment fragment, long dialogId) {
+        Context ctx = fragment.getParentActivity();
+        if (ctx == null) return;
+        int games = com.avragramm.AvraGames.IDS.length;
+        CharSequence[] items = new CharSequence[games + 2];
+        int[] icons = new int[games + 2];
+        for (int i = 0; i < games; i++) {
+            int best = com.avragramm.AvraGames.bestAny(i);
+            items[i] = com.avragramm.AvraGames.TITLES[i]
+                    + (best > 0 ? "  · " + formatString(R.string.AvraGameBestShort, best) : "");
+            icons[i] = R.drawable.dialog_media_game_20;
+        }
+        items[games] = getString(R.string.AvraSoundpad);
+        icons[games] = R.drawable.bot_music;
+        items[games + 1] = getString(R.string.AvraFunSettingsItem);
+        icons[games + 1] = R.drawable.msg_settings;
+        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+        b.setTitle(getString(R.string.AvraFun));
+        b.setItems(items, icons, (d, which) -> {
+            if (which < games) {
+                fragment.presentFragment(new AvraGameActivity(which, dialogId));
+            } else if (which == games) {
+                new AvraSoundpadSheet(ctx, Theme.isCurrentThemeDark()).show();
+            } else {
+                fragment.presentFragment(new AvraFunActivity(dialogId));
+            }
+        });
+        b.setNegativeButton(getString(R.string.AvraClose), null);
+        fragment.showDialog(b.create());
+    }
+
     // ---------------------------------------------------------------- spam
 
     public static void showSpam(BaseFragment fragment, int account, long dialogId, String presetText) {

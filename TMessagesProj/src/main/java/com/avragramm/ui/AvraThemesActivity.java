@@ -7,8 +7,10 @@ import com.avragramm.AvraDesign;
 import com.avragramm.AvraStyles;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.ThemeActivity;
@@ -29,7 +31,7 @@ import static org.telegram.messenger.LocaleController.getString;
  * </ul>
  * The user's own changes (override layer) stay on top of all of them.
  */
-public class AvraThemesActivity extends AvraDesignFragment {
+public class AvraThemesActivity extends AvraDesignFragment implements NotificationCenter.NotificationCenterDelegate {
 
     private static final int ID_NIGHT_MODE = 10, ID_LAYOUTS = 11, ID_PALETTES = 12;
     private static final int ID_TELEGRAM = 99, ID_THEME_BASE = 1000;
@@ -66,6 +68,12 @@ public class AvraThemesActivity extends AvraDesignFragment {
             boolean font = AvraThemeSetupActivity.applyWhole(style);
             Theme.applyCommonTheme();
             changed(font);
+            if (AvraThemeSetupActivity.autoNightTurnedOff) {
+                AvraThemeSetupActivity.autoNightTurnedOff = false;
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.AvraAutoNightOff)).show();
+            }
+            // The theme may finish applying in the background later than any fixed delay (slow devices):
+            // the list is refreshed again on didSetNewTheme, this is only a fallback.
             AndroidUtilities.cancelRunOnUIThread(refreshLater);
             AndroidUtilities.runOnUIThread(refreshLater, 450);
         });
@@ -119,7 +127,22 @@ public class AvraThemesActivity extends AvraDesignFragment {
     }
 
     @Override
+    public boolean onFragmentCreate() {
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didSetNewTheme);
+        return super.onFragmentCreate();
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.didSetNewTheme) {
+            AndroidUtilities.cancelRunOnUIThread(refreshLater);
+            AndroidUtilities.runOnUIThread(refreshLater, 60);
+        }
+    }
+
+    @Override
     public void onFragmentDestroy() {
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didSetNewTheme);
         AndroidUtilities.cancelRunOnUIThread(refreshLater);
         super.onFragmentDestroy();
     }

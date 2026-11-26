@@ -248,7 +248,7 @@ Actual:
     <string name="AvraMuted">%1$s is muted: new messages are deleted for both</string>
     <string name="AvraUnmuted">%1$s is unmuted</string>
     <string name="AvraFun">Fun</string>
-    <string name="AvraFunInfoShort">Games, soundpad, spam, plugins</string>
+    <string name="AvraFunInfoShort">Games, soundpad, plugins</string>
     <string name="AvraFunGames">Games</string>
     <string name="AvraFunGamesInfo">The result of every game goes to this chat. If the game was already played here, the chat record of all players is added.</string>
     <string name="AvraFunGamesInfoNoChat">Opened from Settings: results stay on this device. Open “Fun” from a chat’s ⋮ menu to send them to the chat.</string>
@@ -334,4 +334,6 @@ Actual:
     <string name="AvraDownloadSpeedPerSec">%1$s/s</string>
     <string name="AvraPhoneRegion">Phone number region</string>
     <string name="AvraPhoneRegionInfo">Country, ISO code and flag in the menu of a number in profiles and chats</string>
+    <string name="AvraFunSettingsItem">Fun settings</string>
+    <string name="AvraAutoNightOff">Auto-night mode is off so the theme is shown right away. You can turn it back on in Night mode.</string>
 </resources>
