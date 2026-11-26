@@ -24,6 +24,7 @@ import static org.telegram.messenger.LocaleController.getString;
 /** Fun → Launch screen: built-in video, own video or own photo with a duration, and a preview. */
 public class AvraIntroActivity extends UniversalFragment {
 
+    private static final int ID_SHUFFLE = 8;
     private static final int ID_ENABLED = 1, ID_DEFAULT = 2, ID_VIDEO = 3, ID_PHOTO = 4,
             ID_PREVIEW = 5, ID_RESET = 6;
     private static final int REQ_VIDEO = 7731, REQ_PHOTO = 7732;
@@ -59,6 +60,11 @@ public class AvraIntroActivity extends UniversalFragment {
         items.add(UItem.asRadio(ID_PHOTO, getString(R.string.AvraIntroOwnPhoto),
                 getString(hasPhoto() ? R.string.AvraIntroChange : R.string.AvraIntroPick)).setChecked(type == AvraConfig.INTRO_PHOTO));
         items.add(UItem.asShadow(getString(importing ? R.string.AvraIntroImporting : R.string.AvraIntroWhatInfo)));
+
+        if (type == AvraConfig.INTRO_DEFAULT) {
+            items.add(UItem.asCheck(ID_SHUFFLE, getString(R.string.AvraIntroShuffle), formatString(R.string.AvraIntroShuffleInfo, AvraIntro.VIDEOS.length), true).setChecked(AvraConfig.introShuffle));
+            items.add(UItem.asShadow(null));
+        }
 
         if (type == AvraConfig.INTRO_PHOTO) {
             items.add(UItem.asHeader(getString(R.string.AvraIntroDuration)));
@@ -128,6 +134,11 @@ public class AvraIntroActivity extends UniversalFragment {
         switch (item.id) {
             case ID_ENABLED:
                 AvraConfig.introVideo = !AvraConfig.introVideo;
+                AvraConfig.save();
+                listView.adapter.update(true);
+                break;
+            case ID_SHUFFLE:
+                AvraConfig.introShuffle = !AvraConfig.introShuffle;
                 AvraConfig.save();
                 listView.adapter.update(true);
                 break;

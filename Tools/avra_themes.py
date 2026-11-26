@@ -53,6 +53,8 @@ STYLES = [
     ("avra_royal", "Royal", "Роял", True, "#D4AF37", "#0E0B07", "#18130C", "#15110A", "#F5ECD7", "#A8977A", "#221A10", "#D4AF37", "#0E0B07", "#0E0B07", ["#0E0B07", "#2A1F0C", "#1A140A", "#33260E"], False),
     ("avra_ice", "Ice", "Лёд", False, "#0EA5E9", "#EEF8FF", "#FFFFFF", "#FFFFFF", "#0B2233", "#5C7A8F", "#FFFFFF", "#0EA5E9", "#FFFFFF", "#FFFFFF", ["#D6F0FF", "#EAF6FF", "#CDEBFF", "#F2FBFF"], True),
     ("avra_cherry", "Cherry", "Вишня", True, "#F43F5E", "#14070B", "#1F0C12", "#1B0A10", "#FFE4EA", "#B88A96", "#2A1119", "#E11D48", "#FFFFFF", "#FFFFFF", ["#14070B", "#3A0A18", "#1F0C24", "#2E0A10"], False),
+    # Deliberately awful "AI slop": acid colors that fight each other, every minor element its own random neon (see SLOP)
+    ("avra_neuroslop", "Neuroslop", "Нейрослоп", False, "#FF00E5", "#C6FF00", "#FFF200", "#00E5FF", "#2B0057", "#D5006D", "#FF9AF5", "#7C4DFF", "#FFFF00", "#00FF66", ["#FF0080", "#00FFEA", "#FFE600", "#8A00FF"], True),
 ]
 
 # Per-style geometry: font, button (0 telegram, 1 pill, 2 rounded, 3 sharp, 4 tile), bubble radius 0..17,
@@ -93,6 +95,7 @@ DESIGN = {
     "avra_royal":       ("playfair",       2, 10, 28, 2, 14, True,  False, False, True,  True,  False),
     "avra_ice":         ("comfortaa",      1, 17, 28, 2, 28, False, False, True,  True,  True,  True),
     "avra_cherry":      ("raleway",        2, 14, 20, 2, 18, False, False, False, True,  True,  False),
+    "avra_neuroslop":   ("caveat",         4, 17,  3, 2, 28, True,  True,  True,  True,  True,  True),
 }
 
 
@@ -112,7 +115,7 @@ ANIM = {
     "avra_paper": (7, 1, 110), "avra_terminal": (3, 0, 60), "avra_pixel": (7, 2, 80),
     "avra_cyber": (8, 3, 90), "avra_minimal": (0, 0, 100), "avra_caramel": (5, 2, 110),
     "avra_midnight": (6, 1, 110), "avra_notebook": (7, 4, 110), "avra_royal": (9, 1, 120),
-    "avra_ice": (4, 5, 110), "avra_cherry": (5, 4, 100),
+    "avra_ice": (4, 5, 110), "avra_cherry": (5, 4, 100), "avra_neuroslop": (8, 4, 75),
 }
 
 
@@ -169,6 +172,19 @@ def load(name):
             except ValueError:
                 pass
     return out
+
+
+# Styles whose non-structural keys get a random neon each (seeded by the key name, so stable between runs)
+SLOP = {"avra_neuroslop"}
+SLOP_KEEP = ("chat_messageText", "windowBackgroundWhiteBlackText", "dialogTextBlack", "chats_name", "actionBarDefaultTitle")
+
+
+def slop(key, val):
+    import zlib
+    a = split(val)[0]
+    h = (zlib.crc32(key.encode()) % 360) / 360.0
+    _, l, _ = hls(val)
+    return from_hls(a, h, 0.35 + 0.3 * l, 1.0)
 
 
 def build(style, base):
@@ -234,7 +250,25 @@ def build(style, base):
             out[key] = from_hls(a, bh, l, min(0.5, bs * 0.9))
         else:
             out[key] = val & 0xFFFFFFFF
+    if style[0] in SLOP:
+        for key in list(out):
+            if not key.startswith(SLOP_KEEP):
+                out[key] = slop(key, out[key])
     out.update(explicit)
+    if style[0] in SLOP:  # a few extra clashes on top of the palette
+        out.update({
+            "chats_unreadCounter": parse_hex("#FF3D00"), "chats_unreadCounterText": parse_hex("#00FF00"),
+            "chats_actionBackground": parse_hex("#00FF00"), "chats_actionIcon": parse_hex("#FF00E5"),
+            "chat_messagePanelSend": parse_hex("#FF3D00"), "chat_messagePanelIcons": parse_hex("#0091FF"),
+            "chat_messagePanelBackground": parse_hex("#FF9AF5"), "chat_goDownButton": parse_hex("#00FFEA"),
+            "actionBarDefaultIcon": parse_hex("#FF0000"), "actionBarDefaultSubtitle": parse_hex("#6200FF"),
+            "chats_message": parse_hex("#0057FF"), "chats_date": parse_hex("#FF6D00"),
+            "windowBackgroundWhiteBlueHeader": parse_hex("#FF0000"), "windowBackgroundWhiteGrayText2": parse_hex("#00A86B"),
+            "switchTrackChecked": parse_hex("#FF3D00"), "chat_inTimeText": parse_hex("#00A0FF"),
+            "chats_menuBackground": parse_hex("#00FFB3"), "chats_menuItemIcon": parse_hex("#FF00E5"),
+            "chats_menuTopBackgroundCats": parse_hex("#FF6D00"), "dialogBackground": parse_hex("#FFE0FA"),
+            "dialogButton": parse_hex("#00B300"),
+        })
     if glass:  # translucent incoming bubbles over the gradient wallpaper
         out["chat_inBubble"] = with_alpha(IN, 0xC2 if dark else 0xD9)
     return out

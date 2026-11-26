@@ -33,6 +33,8 @@ public final class AvraConfig {
     public static int introType = INTRO_DEFAULT;
     /** How long an own photo stays on screen, seconds. */
     public static int introPhotoSec = 3;
+    /** Built-in videos: a random one each launch (never the same twice in a row) or always the first. */
+    public static boolean introShuffle = true;
     /** "A" badge for other Avragram users (found by a hidden handshake in private chats). */
     public static boolean avraBadge = true;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
@@ -64,6 +66,7 @@ public final class AvraConfig {
         introVideo = p.getBoolean("introVideo", true);
         introType = p.getInt("introType", INTRO_DEFAULT);
         introPhotoSec = p.getInt("introPhotoSec", 3);
+        introShuffle = p.getBoolean("introShuffle", true);
         avraBadge = p.getBoolean("avraBadge", true);
         loaded = true;
     }
@@ -82,6 +85,7 @@ public final class AvraConfig {
                 .putBoolean("introVideo", introVideo)
                 .putInt("introType", introType)
                 .putInt("introPhotoSec", introPhotoSec)
+                .putBoolean("introShuffle", introShuffle)
                 .putBoolean("avraBadge", avraBadge)
                 .apply();
     }

@@ -378,7 +378,7 @@ Actual:
     <string name="AvraIntroScreen">Launch screen</string>
     <string name="AvraIntroOff">Off</string>
     <string name="AvraIntroWhat">What to show</string>
-    <string name="AvraIntroDefault">Standard video</string>
+    <string name="AvraIntroDefault">Built-in videos</string>
     <string name="AvraIntroOwnVideo">My video</string>
     <string name="AvraIntroOwnPhoto">My photo</string>
     <string name="AvraIntroPick">Choose…</string>
@@ -398,4 +398,6 @@ Actual:
     <string name="AvraBadgeInfo">%1$s also uses Avragram</string>
     <string name="AvraBadgeSelf">You use Avragram</string>
     <string name="AvraBadgeInfoSub">Only Avragram users see this badge</string>
+    <string name="AvraIntroShuffle">Shuffle videos</string>
+    <string name="AvraIntroShuffleInfo">A random one of %1$d built-in videos on every launch, never the same twice in a row</string>
 </resources>

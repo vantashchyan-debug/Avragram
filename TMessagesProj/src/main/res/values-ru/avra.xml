@@ -378,7 +378,7 @@
     <string name="AvraIntroScreen">Заставка при запуске</string>
     <string name="AvraIntroOff">Выключена</string>
     <string name="AvraIntroWhat">Что показывать</string>
-    <string name="AvraIntroDefault">Стандартное видео</string>
+    <string name="AvraIntroDefault">Встроенные видео</string>
     <string name="AvraIntroOwnVideo">Своё видео</string>
     <string name="AvraIntroOwnPhoto">Своё фото</string>
     <string name="AvraIntroPick">Выбрать…</string>
@@ -398,4 +398,6 @@
     <string name="AvraBadgeInfo">%1$s тоже пользуется Avragram</string>
     <string name="AvraBadgeSelf">Ты пользуешься Avragram</string>
     <string name="AvraBadgeInfoSub">Этот значок видят только пользователи Avragram</string>
+    <string name="AvraIntroShuffle">Перемешивать видео</string>
+    <string name="AvraIntroShuffleInfo">При каждом запуске случайное из %1$d встроенных видео, одно и то же два раза подряд не попадается</string>
 </resources>

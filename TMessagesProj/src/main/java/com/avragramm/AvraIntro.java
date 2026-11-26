@@ -45,6 +45,21 @@ public final class AvraIntro {
 
     private static boolean shownThisProcess, fromLauncher;
 
+    /** Built-in launch videos, mixed when "Shuffle" is on. */
+    public static final int[] VIDEOS = {R.raw.avra_intro, R.raw.avra_intro2, R.raw.avra_intro3};
+
+    /** Next built-in video: random, but not the one played last time. */
+    private static int pickVideo() {
+        AvraConfig.ensureLoaded();
+        if (!AvraConfig.introShuffle || VIDEOS.length < 2) return VIDEOS[0];
+        android.content.SharedPreferences p = ApplicationLoader.applicationContext.getSharedPreferences("avra_intro", Context.MODE_PRIVATE);
+        int last = p.getInt("last", -1);
+        int i = new java.util.Random().nextInt(VIDEOS.length - (last >= 0 && last < VIDEOS.length ? 1 : 0));
+        if (last >= 0 && last < VIDEOS.length && i >= last) i++;
+        p.edit().putInt("last", i).apply();
+        return VIDEOS[i];
+    }
+
     /**
      * LaunchActivity.handleIntent() sets the intent action to null once it is processed, so the
      * "opened from the launcher" check has to be taken at the very start of onCreate.
@@ -219,7 +234,7 @@ public final class AvraIntro {
                     if (source == AvraConfig.INTRO_VIDEO) {
                         p.setDataSource(customVideo().getAbsolutePath());
                     } else {
-                        p.setDataSource(ctx, Uri.parse("android.resource://" + ctx.getPackageName() + "/" + R.raw.avra_intro));
+                        p.setDataSource(ctx, Uri.parse("android.resource://" + ctx.getPackageName() + "/" + pickVideo()));
                     }
                     p.setSurface(new Surface(st));
                     AudioManager am = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
