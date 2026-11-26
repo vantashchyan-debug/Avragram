@@ -33,6 +33,10 @@ PY
 # 3. App icon
 cp "$HERE/branding/AppIcon.png" "$SG/Telegram/Telegram-iOS/DefaultAppIcon.xcassets/AppIconLLC.appiconset/Swiftgram.png"
 
+# 3b. Test signing profiles: the ones in Swiftgram/Telegram expired on 2026-10-30; ours are the same
+#     profiles re-signed with the same self-signed test certificate, valid until 2030-10-01
+cp "$HERE"/codesigning/profiles/*.mobileprovision "$SG/build-system/fake-codesigning/profiles/"
+
 # 4. Avragram sources and resources
 if [ -d "$HERE/overlay" ] && [ -n "$(ls -A "$HERE/overlay")" ]; then
   cp -R "$HERE/overlay/." "$SG/"
