@@ -20,6 +20,7 @@ import org.telegram.ui.SettingsActivity;
 
 import java.util.ArrayList;
 
+import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
 
 /**
@@ -29,7 +30,7 @@ import static org.telegram.messenger.LocaleController.getString;
 public final class AvraMegaSettings {
 
     public static final int ID_AVRA = -101, ID_ICON = -102, ID_GENERAL = -103, ID_APPEARANCE = -104,
-            ID_CHATS = -105, ID_PLUGINS = -106, ID_OTHER = -107, ID_PRIVACY = -108, ID_CREATORS = -110, ID_REPORT = -111, ID_SOUNDPAD = -112, ID_FUN = -113, ID_BEHIND = -114, ID_CALC = -115;
+            ID_CHATS = -105, ID_PLUGINS = -106, ID_OTHER = -107, ID_PRIVACY = -108, ID_CREATORS = -110, ID_REPORT = -111, ID_SOUNDPAD = -112, ID_FUN = -113, ID_BEHIND = -114, ID_CALC = -115, ID_UPDATES = -116;
 
     private AvraMegaSettings() {}
 
@@ -53,6 +54,10 @@ public final class AvraMegaSettings {
         items.add(UItem.asShadow(null));
         items.add(UItem.asHeader(AvraBrand.NAME));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_CREATORS, 0xFF6C6FF5, 0xFF4F52E8, R.drawable.msg_contacts, getString(R.string.AvraCreators), "@" + AvraBrand.AUTHORS[0] + " · @" + AvraBrand.AUTHORS[1]));
+        items.add(SettingsActivity.SettingCell.Factory.of(ID_UPDATES, 0xFF34C759, 0xFF1FA544, R.drawable.msg_download, getString(R.string.AvraUpdates),
+                com.avragramm.AvraUpdater.state == com.avragramm.AvraUpdater.AVAILABLE || com.avragramm.AvraUpdater.state == com.avragramm.AvraUpdater.READY
+                        ? formatString(R.string.AvraUpdateAvailableShort, com.avragramm.AvraUpdater.release.version)
+                        : formatString(R.string.AvraUpdatesInfo, AvraBrand.VERSION)));
         items.add(SettingsActivity.SettingCell.Factory.of(ID_REPORT, 0xFFFF9500, 0xFFE07B12, R.drawable.msg_report, getString(R.string.AvraReport)));
     }
 
@@ -89,6 +94,7 @@ public final class AvraMegaSettings {
                 AvraCreatorsActivity.showReport(f);
                 return true;
             case ID_CALC: next = new AvraCalcActivity(); break;
+            case ID_UPDATES: next = new AvraUpdateActivity(); break;
             default: return false;
         }
         f.presentFragment(next);

@@ -6325,6 +6325,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     public void checkAppUpdate(boolean force, Browser.Progress progress) {
         if (true) { // Avragram: the exteraGram updater would offer exteraGram builds — updates come from GitHub releases
             if (progress != null) progress.end();
+            com.avragramm.AvraUpdater.autoCheck(this); // once a day, see Settings → Avragram → Updates
             return;
         }
         if (!force) {
