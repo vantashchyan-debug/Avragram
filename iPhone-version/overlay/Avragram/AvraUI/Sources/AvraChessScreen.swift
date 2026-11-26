@@ -30,9 +30,13 @@ final class AvraChessGame: ObservableObject {
     let onlineId: String?
     private var observer: NSObjectProtocol?
 
-    init(level: Int) {
+    /// Two players on one phone: both sides move, no bot.
+    let twoPlayers: Bool
+
+    init(level: Int, twoPlayers: Bool = false) {
         self.level = level
         self.onlineId = nil
+        self.twoPlayers = twoPlayers
         resetIds()
         refresh()
     }
@@ -40,6 +44,7 @@ final class AvraChessGame: ObservableObject {
     init(online id: String) {
         self.level = 0
         self.onlineId = id
+        self.twoPlayers = false
         if let g = AvraChessNet.games[id] {
             humanColor = g.myColor
             board = g.board()
@@ -100,7 +105,7 @@ final class AvraChessGame: ObservableObject {
     func canMove(_ s: Int) -> Bool {
         let p = squares[s]
         if onlineId != nil && !(online?.myTurn ?? false) { return false }
-        return !thinking && !over && p != 0 && (p > 0 ? 1 : -1) == board.side && board.side == humanColor
+        return !thinking && !over && p != 0 && (p > 0 ? 1 : -1) == board.side && (twoPlayers || board.side == humanColor)
     }
 
     func tap(_ s: Int) {
@@ -128,7 +133,7 @@ final class AvraChessGame: ObservableObject {
             return true
         }
         apply(m)
-        if !over {
+        if !over && !twoPlayers {
             thinking = true
             refresh()
             let snapshot = board.copy()
@@ -192,7 +197,7 @@ final class AvraChessGame: ObservableObject {
 
     func undo() {
         guard !thinking else { return }
-        let n = board.side == humanColor ? 2 : 1
+        let n = twoPlayers ? 1 : (board.side == humanColor ? 2 : 1)
         for _ in 0..<n where board.ply > 0 { board.unmake() }
         resetIds()
         withAnimation(.easeInOut(duration: 0.25)) {
@@ -206,7 +211,7 @@ final class AvraChessGame: ObservableObject {
 
     func newGame() {
         board = AvraChessBoard()
-        humanColor = -humanColor
+        if !twoPlayers { humanColor = -humanColor }
         resetIds()
         withAnimation(.easeInOut(duration: 0.3)) {
             squares = board.sq
@@ -215,7 +220,7 @@ final class AvraChessGame: ObservableObject {
             targets = []
         }
         refresh()
-        if board.side != humanColor {
+        if board.side != humanColor && !twoPlayers {
             thinking = true
             let snapshot = board.copy()
             let lvl = level
@@ -245,13 +250,14 @@ final class AvraChessGame: ObservableObject {
         }
         let st = board.status()
         switch st {
-        case .mate: statusText = (board.side == humanColor ? "💀 Мат. Ты проиграл" : "🏆 Мат! Ты победил")
+        case .mate: statusText = twoPlayers ? (board.side == 1 ? "🏁 Мат! Победили чёрные" : "🏁 Мат! Победили белые") : (board.side == humanColor ? "💀 Мат. Ты проиграл" : "🏆 Мат! Ты победил")
         case .stalemate: statusText = "🤝 Пат — ничья"
         case .repetition: statusText = "🤝 Троекратное повторение — ничья"
         case .fifty: statusText = "🤝 Правило 50 ходов — ничья"
         case .material: statusText = "🤝 Недостаточно материала — ничья"
         case .ongoing:
             if thinking { statusText = "🤖 AvraBot думает…" }
+            else if twoPlayers { statusText = (board.side == 1 ? "Ход белых" : "Ход чёрных") + (board.inCheck ? " · Шах!" : "") }
             else { statusText = (board.side == humanColor ? "Твой ход" : "Ход бота") + (board.inCheck ? " · Шах!" : "") }
         }
     }
@@ -410,15 +416,18 @@ struct AvraChessScreen: View {
     @Environment(\.sgTheme) var theme
     @Environment(\.sgNavigation) var navigation
 
-    init(level: Int) {
-        _game = StateObject(wrappedValue: AvraChessGame(level: level))
+    let twoPlayers: Bool
+
+    init(level: Int, twoPlayers: Bool = false) {
+        self.twoPlayers = twoPlayers
+        _game = StateObject(wrappedValue: AvraChessGame(level: level, twoPlayers: twoPlayers))
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
                 HStack {
-                    Text("🤖 AvraBot · \(AvraChessAi.levelNames[game.level]) (\(AvraChessAi.levelRating[game.level]))")
+                    Text(twoPlayers ? "👥 Вдвоём на одном телефоне" : "🤖 AvraBot · \(AvraChessAi.levelNames[game.level]) (\(AvraChessAi.levelRating[game.level]))")
                         .font(.headline)
                     Spacer()
                 }
@@ -455,10 +464,12 @@ struct AvraChessScreen: View {
                 Button(action: { navigation?.push(title: "Оформление шахмат") { AvraChessSettingsScreen() } }) {
                     Label("Доска, фигуры, звуки", systemImage: "paintpalette").frame(maxWidth: .infinity)
                 }.buttonStyle(.bordered)
-                Picker("Уровень", selection: $game.level) {
-                    ForEach(0..<4, id: \.self) { i in Text(AvraChessAi.levelNames[i]).tag(i) }
+                if !twoPlayers {
+                    Picker("Уровень", selection: $game.level) {
+                        ForEach(0..<4, id: \.self) { i in Text(AvraChessAi.levelNames[i]).tag(i) }
+                    }
+                    .pickerStyle(.segmented)
                 }
-                .pickerStyle(.segmented)
             }
             .padding(16)
         }

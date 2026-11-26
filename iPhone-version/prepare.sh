@@ -32,6 +32,20 @@ PY
 
 # 3. App icon
 cp "$HERE/branding/AppIcon.png" "$SG/Telegram/Telegram-iOS/DefaultAppIcon.xcassets/AppIconLLC.appiconset/Swiftgram.png"
+# iOS 26+ takes the home screen icon from the Icon Composer package (glass layers)
+rm -rf "$SG/Telegram/Telegram-iOS/Swiftgram.icon/Assets"
+mkdir -p "$SG/Telegram/Telegram-iOS/Swiftgram.icon/Assets"
+cp "$HERE/branding/icon/icon.json" "$SG/Telegram/Telegram-iOS/Swiftgram.icon/icon.json"
+cp "$HERE/branding/icon/Assets/"* "$SG/Telegram/Telegram-iOS/Swiftgram.icon/Assets/"
+# the default alternate icon (Settings → Appearance → App Icon) is ours too
+for f in "$SG"/Telegram/Telegram-iOS/SGDefault.alticon/*.png; do
+  python3 - "$HERE/branding/AppIcon.png" "$f" <<'PY' || cp "$HERE/branding/AppIcon.png" "$f"
+import sys, subprocess
+src, dst = sys.argv[1], sys.argv[2]
+size = subprocess.check_output(["sips", "-g", "pixelWidth", dst]).decode().split()[-1]
+subprocess.check_call(["sips", "-z", size, size, src, "--out", dst], stdout=subprocess.DEVNULL)
+PY
+done
 
 # 3b. Test signing profiles: the ones in Swiftgram/Telegram expired on 2026-10-30; ours are the same
 #     profiles re-signed with the same self-signed test certificate, valid until 2030-10-01

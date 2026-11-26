@@ -40,6 +40,9 @@ struct AvraHubView: View {
                     row("♟", "AvraChess", "Шахматы против AvraBot, 4 уровня") {
                         navigation?.push(title: "AvraChess") { AvraChessScreen(level: 1) }
                     }
+                    row("👥", "AvraChess вдвоём", "Двое на одном телефоне") {
+                        navigation?.push(title: "AvraChess") { AvraChessScreen(level: 0, twoPlayers: true) }
+                    }
                     row("🌐", "AvraChess онлайн", "С другом через личку, рейтинг Эло, играет и с Android") {
                         navigation?.push(title: "AvraChess онлайн") { AvraChessOnlineScreen() }
                     }
