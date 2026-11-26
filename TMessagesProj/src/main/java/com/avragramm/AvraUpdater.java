@@ -36,7 +36,6 @@ public final class AvraUpdater {
     public static final String REPO = "vantashchyan-debug/Avragram";
     private static final String API = "https://api.github.com/repos/" + REPO + "/releases/latest";
     public static final String RELEASES_URL = "https://github.com/" + REPO + "/releases";
-    private static final long DAY = 24L * 60 * 60 * 1000;
 
     public static final DispatchQueue queue = new DispatchQueue("avraUpdater");
 
@@ -155,24 +154,29 @@ public final class AvraUpdater {
 
     // ------------------------------------------------------------------ check
 
-    /** Called on app start / resume: checks once a day, downloads in the background, then offers to install. */
+    private static boolean checkedThisLaunch;
+
+    /**
+     * Called on app start / resume: checks GitHub once per launch and, when there is a newer version,
+     * only shows a popup ("Download" / "Later"); nothing is downloaded or installed by itself.
+     */
     public static void autoCheck(Activity activity) {
-        if (!autoCheck() || state == CHECKING || state == DOWNLOADING) return;
-        if (state == READY && release != null && activity != null) {
-            return; // already offered in this session; the settings screen still has the button
+        if (!autoCheck() || checkedThisLaunch || state == CHECKING || state == DOWNLOADING) return;
+        checkedThisLaunch = true;
+        check(false, () -> offerWhenFree(0));
+    }
+
+    /** Shows the popup once the launch screen is gone (it would cover it otherwise). */
+    private static void offerWhenFree(int tries) {
+        if (state != AVAILABLE && state != READY) return;
+        Activity a = currentActivity();
+        if (a == null || a.isFinishing()) return;
+        if (AvraIntro.isShowing() && tries < 40) {
+            AndroidUtilities.runOnUIThread(() -> offerWhenFree(tries + 1), 500);
+            return;
         }
-        if (Math.abs(System.currentTimeMillis() - lastCheck()) < DAY) return;
-        check(false, () -> {
-            if (state == AVAILABLE && autoDownload()) {
-                download(() -> {
-                    Activity a = currentActivity();
-                    if (state == READY && a != null) offerInstall(a);
-                });
-            } else if (state == AVAILABLE) {
-                Activity a = currentActivity();
-                if (a != null) offerDownload(a);
-            }
-        });
+        if (state == READY) offerInstall(a);
+        else offerDownload(a);
     }
 
     private static Activity currentActivity() {

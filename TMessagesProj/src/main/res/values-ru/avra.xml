@@ -353,8 +353,8 @@
     <string name="AvraUpdateNever">Ещё не проверялось.</string>
     <string name="AvraUpdateLast">Последняя проверка: %1$s</string>
     <string name="AvraUpdateAutoHeader">Автоматически</string>
-    <string name="AvraUpdateAuto">Проверять каждый день</string>
-    <string name="AvraUpdateAutoInfo">Раз в день при открытии приложения</string>
+    <string name="AvraUpdateAuto">Проверять при запуске</string>
+    <string name="AvraUpdateAutoInfo">При каждом запуске. Если вышла новая версия, появится окно, а скачивание начнётся только по кнопке</string>
     <string name="AvraUpdateAutoDownload">Скачивать в фоне</string>
     <string name="AvraUpdateAutoDownloadInfo">Скачивает %1$s под твой процессор и предлагает установить</string>
     <string name="AvraUpdateReleases">Все релизы на GitHub</string>

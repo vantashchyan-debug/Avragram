@@ -353,8 +353,8 @@ Actual:
     <string name="AvraUpdateNever">Not checked yet.</string>
     <string name="AvraUpdateLast">Last check: %1$s</string>
     <string name="AvraUpdateAutoHeader">Automatically</string>
-    <string name="AvraUpdateAuto">Check every day</string>
-    <string name="AvraUpdateAutoInfo">Once a day, when the app is opened</string>
+    <string name="AvraUpdateAuto">Check on launch</string>
+    <string name="AvraUpdateAutoInfo">On every launch. If a new version is out, a popup appears; it downloads only when you tap the button</string>
     <string name="AvraUpdateAutoDownload">Download in the background</string>
     <string name="AvraUpdateAutoDownloadInfo">Downloads %1$s for your processor, then offers to install it</string>
     <string name="AvraUpdateReleases">All releases on GitHub</string>

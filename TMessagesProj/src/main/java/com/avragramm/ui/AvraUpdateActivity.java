@@ -78,9 +78,6 @@ public class AvraUpdateActivity extends UniversalFragment implements AvraUpdater
 
         items.add(UItem.asHeader(getString(R.string.AvraUpdateAutoHeader)));
         items.add(UItem.asCheck(ID_AUTO, getString(R.string.AvraUpdateAuto), getString(R.string.AvraUpdateAutoInfo), true).setChecked(AvraUpdater.autoCheck()));
-        if (AvraUpdater.autoCheck()) {
-            items.add(UItem.asCheck(ID_AUTO_DOWNLOAD, getString(R.string.AvraUpdateAutoDownload), formatString(R.string.AvraUpdateAutoDownloadInfo, AvraUpdater.assetName() == null ? "?" : AvraUpdater.assetName()), true).setChecked(AvraUpdater.autoDownload()));
-        }
         items.add(UItem.asButton(ID_RELEASES, R.drawable.msg_openin, getString(R.string.AvraUpdateReleases)));
         items.add(UItem.asShadow(getString(R.string.AvraUpdateInfo)));
     }

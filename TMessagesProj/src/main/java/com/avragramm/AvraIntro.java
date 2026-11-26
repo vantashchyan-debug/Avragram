@@ -43,7 +43,12 @@ public final class AvraIntro {
     private AvraIntro() {
     }
 
-    private static boolean shownThisProcess, fromLauncher;
+    private static boolean shownThisProcess, fromLauncher, showing;
+
+    /** Is the launch screen on the screen right now. */
+    public static boolean isShowing() {
+        return showing;
+    }
 
     /** Built-in launch videos, mixed when "Shuffle" is on. */
     public static final int[] VIDEOS = {R.raw.avra_intro, R.raw.avra_intro2, R.raw.avra_intro3};
@@ -179,12 +184,14 @@ public final class AvraIntro {
         overlay.addView(skip, lp);
 
         decor.addView(overlay, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        showing = true;
 
         final MediaPlayer[] player = new MediaPlayer[1];
         final boolean[] closed = new boolean[1];
         final Runnable close = () -> {
             if (closed[0]) return;
             closed[0] = true;
+            showing = false;
             MediaPlayer p = player[0];
             player[0] = null;
             if (p != null) {
