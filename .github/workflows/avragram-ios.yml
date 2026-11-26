@@ -1,0 +1,68 @@
+name: Avragram iOS
+
+# Builds the iPhone version (Swiftgram + Avragram, sources in iPhone-version/) and publishes
+# Avragram-iOS.ipa as a pre-release. Started by hand: Actions → Avragram iOS → Run workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: xcode-27
+    timeout-minutes: 360
+    steps:
+      - name: Avragram sources
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: iPhone-version
+
+      - name: Swiftgram sources
+        run: |
+          set -e
+          COMMIT=$(cat iPhone-version/SWIFTGRAM_COMMIT)
+          sudo mkdir -p /Users/Shared/telegram-ios
+          sudo chown -R "$(whoami)" /Users/Shared/telegram-ios
+          cd /Users/Shared/telegram-ios
+          git init -q
+          git remote add origin https://github.com/Swiftgram/Telegram-iOS.git
+          git fetch -q --depth 1 origin "$COMMIT"
+          git checkout -q FETCH_HEAD
+          git submodule update --init --recursive --depth 1 --jobs 8
+          df -h /Users/Shared
+
+      - name: Make it Avragram
+        env:
+          AVRA_API_ID: ${{ secrets.AVRA_API_ID }}
+          AVRA_API_HASH: ${{ secrets.AVRA_API_HASH }}
+        run: bash iPhone-version/prepare.sh /Users/Shared/telegram-ios
+
+      - name: Build
+        run: |
+          set -e
+          cd /Users/Shared/telegram-ios
+          XCODE_VERSION=$(python3 -c 'import json;print(json.load(open("versions.json"))["xcode"])')
+          sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app/Contents/Developer
+          python3 build-system/Make/ImportCertificates.py --path build-system/fake-codesigning/certs
+          python3 -u build-system/Make/Make.py \
+            --bazelUserRoot="/private/var/tmp/_bazel_containerhost" \
+            build \
+            --configurationPath="build-system/avragram-configuration.json" \
+            --codesigningInformationPath=build-system/fake-codesigning \
+            --configuration=release_arm64 \
+            --buildNumber=${{ github.run_number }}
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/Telegram.ipa "$GITHUB_WORKSPACE/out/Avragram-iOS.ipa"
+          ls -la "$GITHUB_WORKSPACE/out"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(cat iPhone-version/VERSION)
+          TAG="ios-v$VERSION"
+          NOTES="Avragram для iPhone $VERSION (сборка ${{ github.run_number }}). Ставится через SideStore или AltStore, инструкция в iPhone-version/README.md."
+          gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --prerelease --title "Avragram iOS $VERSION" --notes "$NOTES"
+          gh release upload "$TAG" out/Avragram-iOS.ipa -R "$GITHUB_REPOSITORY" --clobber
