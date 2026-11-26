@@ -24,9 +24,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Avragram updates from GitHub releases (vantashchyan-debug/Avragram): once a day it checks the latest
- * release, downloads the APK built for this phone's processor (arm64-v8a or armeabi-v7a) and offers to
- * install it. Android always asks the user to confirm the installation itself.
+ * Avragram updates from GitHub releases (vantashchyan-debug/Avragram). The check reads the whole list of
+ * releases and offers the NEWEST version that already has the file for this phone (arm64 / armv7 /
+ * Android 6), so an old install jumps straight to the latest one. Any other version can be picked in
+ * Settings → Updates → Choose version. Android always asks the user to confirm the installation.
  */
 public final class AvraUpdater {
 
@@ -34,13 +35,13 @@ public final class AvraUpdater {
     }
 
     public static final String REPO = "vantashchyan-debug/Avragram";
-    private static final String API = "https://api.github.com/repos/" + REPO + "/releases/latest";
+    private static final String API = "https://api.github.com/repos/" + REPO + "/releases?per_page=60";
     public static final String RELEASES_URL = "https://github.com/" + REPO + "/releases";
 
     public static final DispatchQueue queue = new DispatchQueue("avraUpdater");
 
     public static final class Release {
-        public String version, tag, notes, assetName, url, pageUrl;
+        public String version, tag, notes, assetName, url, pageUrl, date;
         public long size;
     }
 
@@ -115,6 +116,7 @@ public final class AvraUpdater {
     /** Release file for this phone: Avragram-arm64.apk / Avragram-armv7.apk. */
     public static String assetName() {
         String abi = abi();
+        if (Build.VERSION.SDK_INT < 24 && abi != null) return "Avragram-android6.apk"; // Android 6: its own build
         if ("arm64-v8a".equals(abi)) return "Avragram-arm64.apk";
         if ("armeabi-v7a".equals(abi)) return "Avragram-armv7.apk";
         return null;
@@ -123,6 +125,7 @@ public final class AvraUpdater {
     public static String abiTitle() {
         String abi = abi();
         if ("arm64-v8a".equals(abi)) return "arm64-v8a (64-bit)";
+        if (Build.VERSION.SDK_INT < 24 && abi != null) return "Android 6 · 32-bit";
         if ("armeabi-v7a".equals(abi)) return "armeabi-v7a (32-bit)";
         return Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "?";
     }
@@ -191,7 +194,12 @@ public final class AvraUpdater {
             Release r = null;
             String err = null;
             try {
-                r = fetchLatest();
+                ArrayList<Release> list = fetchAll();
+                for (Release x : list) {
+                    if (x.url == null) continue;
+                    if (r == null || compare(x.version, r.version) > 0) r = x;
+                }
+                if (r == null && !list.isEmpty()) r = list.get(0);
             } catch (Exception e) {
                 FileLog.e(e);
                 err = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
@@ -221,7 +229,9 @@ public final class AvraUpdater {
         });
     }
 
-    private static Release fetchLatest() throws Exception {
+    /** Every release, newest version first, with this phone's file (url null if it has none). */
+    public static ArrayList<Release> fetchAll() throws Exception {
+        AvraTrust.install();
         HttpURLConnection c = (HttpURLConnection) new URL(API).openConnection();
         c.setConnectTimeout(15000);
         c.setReadTimeout(20000);
@@ -236,28 +246,49 @@ public final class AvraUpdater {
                 int n;
                 while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
             }
-            JSONObject o = new JSONObject(out.toString("UTF-8"));
-            Release r = new Release();
-            r.tag = o.optString("tag_name");
-            r.version = clean(r.tag);
-            r.notes = o.optString("body", "");
-            r.pageUrl = o.optString("html_url", RELEASES_URL);
+            JSONArray arr = new JSONArray(out.toString("UTF-8"));
+            ArrayList<Release> list = new ArrayList<>();
             String want = assetName();
-            JSONArray assets = o.optJSONArray("assets");
-            if (want != null && assets != null) {
-                for (int i = 0; i < assets.length(); i++) {
-                    JSONObject a = assets.getJSONObject(i);
-                    if (want.equals(a.optString("name"))) {
-                        r.assetName = want;
-                        r.url = a.optString("browser_download_url");
-                        r.size = a.optLong("size");
+            for (int k = 0; k < arr.length(); k++) {
+                JSONObject o = arr.getJSONObject(k);
+                if (o.optBoolean("draft") || o.optBoolean("prerelease")) continue;
+                Release r = new Release();
+                r.tag = o.optString("tag_name");
+                r.version = clean(r.tag);
+                r.notes = o.optString("body", "");
+                r.pageUrl = o.optString("html_url", RELEASES_URL);
+                r.date = o.optString("published_at", "");
+                JSONArray assets = o.optJSONArray("assets");
+                if (want != null && assets != null) {
+                    for (int i = 0; i < assets.length(); i++) {
+                        JSONObject a = assets.getJSONObject(i);
+                        if (want.equals(a.optString("name"))) {
+                            r.assetName = want;
+                            r.url = a.optString("browser_download_url");
+                            r.size = a.optLong("size");
+                        }
                     }
                 }
+                list.add(r);
             }
-            return r;
+            java.util.Collections.sort(list, (x, y) -> compare(y.version, x.version));
+            return list;
         } finally {
             c.disconnect();
         }
+    }
+
+    /** Chooses a version from the list (newer, the same, or older for a rollback). */
+    public static void select(Release r) {
+        if (r == null || state == DOWNLOADING) return;
+        release = r;
+        File f = apkFile(r);
+        setState(f.exists() && f.length() == r.size ? READY : AVAILABLE);
+    }
+
+    public static boolean isReady(Release r) {
+        File f = apkFile(r);
+        return f.exists() && f.length() == r.size;
     }
 
     // ------------------------------------------------------------------ download
@@ -284,6 +315,7 @@ public final class AvraUpdater {
                     dir.mkdirs();
                 }
                 File tmp = new File(f.getPath() + ".part");
+                AvraTrust.install();
                 HttpURLConnection c = (HttpURLConnection) new URL(r.url).openConnection();
                 c.setConnectTimeout(15000);
                 c.setReadTimeout(30000);

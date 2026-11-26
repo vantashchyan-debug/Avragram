@@ -671,4 +671,17 @@
     <string name="AvraSeaYourFleet">Твой флот</string>
     <string name="AvraSeaYourTurn">Твой выстрел!</string>
     <string name="AvraSeaYourTurnInfo">Нажми на клетку в водах соперника. Попадание даёт ещё выстрел</string>
+    <string name="AvraUpdateVersions">Выбрать версию</string>
+    <string name="AvraUpdateVersionsHeader">Установлена: %1$s</string>
+    <string name="AvraUpdateTagCurrent">установлена</string>
+    <string name="AvraUpdateTagNewer">новее</string>
+    <string name="AvraUpdateTagOlder">старее</string>
+    <string name="AvraUpdateTagLatest">последняя</string>
+    <string name="AvraUpdateTagNoFile">нет файла для этого телефона</string>
+    <string name="AvraUpdateVersionsInfo">Новая версия ставится поверх текущей, можно обновиться и на одну версию вперёд, а не сразу на последнюю. Для отката на старую версию Avragram сначала нужно удалить: Android не ставит старую версию поверх новой.</string>
+    <string name="AvraUpdateReinstall">Переустановить</string>
+    <string name="AvraUpdateReinstallInfo">Эта версия уже установлена. Она скачается и встанет поверх себя, ничего не пропадёт.</string>
+    <string name="AvraUpdateRollbackInfo">Откат на %1$s: Android не ставит старую версию поверх новой. 1) Скачай файл, он откроется в браузере и попадёт в Загрузки. 2) Удали Avragram. 3) Открой скачанный файл. Переписки останутся в облаке, но придётся заново войти, а локальные данные пропадут (настройки Avragram, сохранённые удалённые сообщения).</string>
+    <string name="AvraUpdateRollbackDownload">Скачать файл</string>
+    <string name="AvraUpdateRollbackRemove">Удалить Avragram</string>
 </resources>

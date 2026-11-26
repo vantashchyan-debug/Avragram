@@ -671,4 +671,17 @@ Actual:
     <string name="AvraSeaYourFleet">Your fleet</string>
     <string name="AvraSeaYourTurn">Your shot!</string>
     <string name="AvraSeaYourTurnInfo">Tap a cell in the enemy waters. A hit gives one more shot</string>
+    <string name="AvraUpdateVersions">Choose version</string>
+    <string name="AvraUpdateVersionsHeader">Installed: %1$s</string>
+    <string name="AvraUpdateTagCurrent">installed</string>
+    <string name="AvraUpdateTagNewer">newer</string>
+    <string name="AvraUpdateTagOlder">older</string>
+    <string name="AvraUpdateTagLatest">latest</string>
+    <string name="AvraUpdateTagNoFile">no file for this phone</string>
+    <string name="AvraUpdateVersionsInfo">A newer version installs over the current one — you can also go just one version up. An older one (rollback) needs Avragram removed first: Android never installs an older version over a newer one.</string>
+    <string name="AvraUpdateReinstall">Reinstall</string>
+    <string name="AvraUpdateReinstallInfo">This version is installed now. It will be downloaded and installed again over itself; nothing is lost.</string>
+    <string name="AvraUpdateRollbackInfo">Rolling back to %1$s: Android does not install an older version over a newer one. 1) Download the file (it opens in the browser and lands in Downloads). 2) Remove Avragram. 3) Open the downloaded file. Your chats stay in the cloud, but you will log in again and local data (Avragram settings, saved deleted messages) will be lost.</string>
+    <string name="AvraUpdateRollbackDownload">Download file</string>
+    <string name="AvraUpdateRollbackRemove">Remove Avragram</string>
 </resources>

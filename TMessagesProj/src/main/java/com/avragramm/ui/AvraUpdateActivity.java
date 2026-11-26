@@ -20,7 +20,7 @@ import static org.telegram.messenger.LocaleController.getString;
 /** Settings → Avragram → Updates: version, processor, daily auto check / download and a manual check. */
 public class AvraUpdateActivity extends UniversalFragment implements AvraUpdater.Listener {
 
-    private static final int ID_ACTION = 1, ID_AUTO = 2, ID_AUTO_DOWNLOAD = 3, ID_RELEASES = 4;
+    private static final int ID_ACTION = 1, ID_AUTO = 2, ID_AUTO_DOWNLOAD = 3, ID_RELEASES = 4, ID_VERSIONS = 5;
 
     @Override
     protected CharSequence getTitle() {
@@ -74,6 +74,7 @@ public class AvraUpdateActivity extends UniversalFragment implements AvraUpdater
         items.add(UItem.asButton(-1, R.drawable.msg_info, getString(R.string.AvraUpdateCurrent), AvraBrand.VERSION));
         items.add(UItem.asButton(-2, R.drawable.msg_customize, getString(R.string.AvraUpdateCpu), AvraUpdater.abiTitle()));
         items.add(UItem.asButton(ID_ACTION, R.drawable.msg_download, actionTitle()));
+        items.add(UItem.asButton(ID_VERSIONS, R.drawable.msg_list, getString(R.string.AvraUpdateVersions)));
         items.add(UItem.asShadow(statusText()));
 
         items.add(UItem.asHeader(getString(R.string.AvraUpdateAutoHeader)));
@@ -111,6 +112,9 @@ public class AvraUpdateActivity extends UniversalFragment implements AvraUpdater
             case ID_AUTO_DOWNLOAD:
                 AvraUpdater.setAutoDownload(!AvraUpdater.autoDownload());
                 listView.adapter.update(true);
+                break;
+            case ID_VERSIONS:
+                presentFragment(new AvraVersionsActivity());
                 break;
             case ID_RELEASES:
                 Browser.openUrl(getParentActivity(), AvraUpdater.release != null && AvraUpdater.release.pageUrl != null ? AvraUpdater.release.pageUrl : AvraUpdater.RELEASES_URL);
