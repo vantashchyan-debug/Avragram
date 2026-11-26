@@ -149,8 +149,6 @@ public enum AvraCalc {
     }
 }
 
-}
-
 
 /// /calc"…" in outgoing messages (on unless switched off in Avragram → Fun).
 public enum AvraCalcCommand {
