@@ -366,4 +366,7 @@
     <string name="AvraUpdateInstall">Установить</string>
     <string name="AvraUpdateDownload">Скачать</string>
     <string name="AvraUpdateLater">Позже</string>
+    <string name="AvraIntro">Видео при запуске</string>
+    <string name="AvraIntroInfo">Играет при открытии приложения с рабочего стола. Нажми, чтобы пропустить; в беззвучном режиме без звука</string>
+    <string name="AvraIntroSkip">Нажми, чтобы пропустить</string>
 </resources>

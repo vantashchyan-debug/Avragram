@@ -24,7 +24,7 @@ public class AvraFunActivity extends UniversalFragment {
 
     private static final int ID_GAME = 100, ID_SOUNDPAD = 200,
             ID_SEND_RESULTS = 300, ID_CALC_COMMAND = 301, ID_BEHIND = 302,
-            ID_DOWNLOAD_SPEED = 400, ID_PHONE_REGION = 401;
+            ID_DOWNLOAD_SPEED = 400, ID_PHONE_REGION = 401, ID_INTRO = 303;
 
     /** Chat the section was opened from (0 = from Settings: no spam, results are not sent). */
     private final long dialogId;
@@ -64,6 +64,7 @@ public class AvraFunActivity extends UniversalFragment {
         items.add(UItem.asHeader(getString(R.string.AvraFunSettings)));
         items.add(UItem.asSwitchNoIcon(ID_SEND_RESULTS, getString(R.string.AvraGameSendSwitch)).setChecked(AvraGames.sendResults()));
         items.add(UItem.asSwitchNoIcon(ID_CALC_COMMAND, getString(R.string.AvraCalcCommandSwitch)).setChecked(AvraConfig.calcCommand));
+        items.add(UItem.asCheck(ID_INTRO, getString(R.string.AvraIntro), getString(R.string.AvraIntroInfo), true).setChecked(AvraConfig.introVideo));
         items.add(UItem.asButton(ID_BEHIND, R.drawable.msg_block2, getString(R.string.AvraBehind)));
         items.add(UItem.asShadow(getString(R.string.AvraFunSettingsInfo)));
 
@@ -82,6 +83,10 @@ public class AvraFunActivity extends UniversalFragment {
             if (getParentActivity() != null) {
                 new AvraSoundpadSheet(getParentActivity(), org.telegram.ui.ActionBar.Theme.isCurrentThemeDark()).show();
             }
+        } else if (id == ID_INTRO) {
+            AvraConfig.introVideo = !AvraConfig.introVideo;
+            AvraConfig.save();
+            listView.adapter.update(true);
         } else if (id == ID_DOWNLOAD_SPEED) {
             AvraConfig.downloadSpeed = !AvraConfig.downloadSpeed;
             AvraConfig.save();

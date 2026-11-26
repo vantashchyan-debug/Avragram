@@ -27,6 +27,7 @@ public final class AvraConfig {
     public static boolean calcCommand = true;
     public static boolean downloadSpeed = true;
     public static boolean phoneRegion = true;
+    public static boolean introVideo = true;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
 
     private static volatile boolean loaded;
@@ -53,6 +54,7 @@ public final class AvraConfig {
         calcCommand = p.getBoolean("calcCommand", true);
         downloadSpeed = p.getBoolean("downloadSpeed", true);
         phoneRegion = p.getBoolean("phoneRegion", true);
+        introVideo = p.getBoolean("introVideo", true);
         loaded = true;
     }
 
@@ -67,6 +69,7 @@ public final class AvraConfig {
                 .putBoolean("calcCommand", calcCommand)
                 .putBoolean("downloadSpeed", downloadSpeed)
                 .putBoolean("phoneRegion", phoneRegion)
+                .putBoolean("introVideo", introVideo)
                 .apply();
     }
 

@@ -366,4 +366,7 @@ Actual:
     <string name="AvraUpdateInstall">Install</string>
     <string name="AvraUpdateDownload">Download</string>
     <string name="AvraUpdateLater">Later</string>
+    <string name="AvraIntro">Launch video</string>
+    <string name="AvraIntroInfo">Plays when the app is opened from the launcher. Tap to skip; muted in silent mode</string>
+    <string name="AvraIntroSkip">Tap to skip</string>
 </resources>

@@ -967,6 +967,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         //    refreshRateController = new RefreshRateController(this);
         //}
         checkFrameMetrics();
+        com.avragramm.AvraIntro.maybeShow(this, savedInstanceState != null); // Avragram: launch video
     }
 
     public void checkFrameMetrics() {
