@@ -29,8 +29,14 @@ struct AvraHubView: View {
                     row("♟", "AvraChess", "Шахматы против AvraBot, 4 уровня") {
                         navigation?.push(title: "AvraChess") { AvraChessScreen(level: 1) }
                     }
+                    row("🌐", "AvraChess онлайн", "С другом через личку, рейтинг Эло, играет и с Android") {
+                        navigation?.push(title: "AvraChess онлайн") { AvraChessOnlineScreen() }
+                    }
                     row("🚢", "Морской бой", "Против бота: Юнга, Боцман, Адмирал") {
                         navigation?.push(title: "Морской бой") { AvraSeaScreen(level: 1) }
+                    }
+                    row("⚓", "Морской бой онлайн", "С другом, честная игра с проверкой расстановки") {
+                        navigation?.push(title: "Морской бой онлайн") { AvraSeaOnlineLobby() }
                     }
                     ForEach(AvraGameKind.allCases) { g in
                         let best = AvraScores.bestAny(g)
@@ -44,6 +50,12 @@ struct AvraHubView: View {
                     row("📨", "Спам", "Отправить сообщение несколько раз в выбранный чат") {
                         navigation?.push(title: "Спам") { AvraSpamScreen(context: context) }
                     }
+                    row("🎛", "Саундпад", "12 звуков и свои, слышно собеседнику в звонке") {
+                        navigation?.push(title: "Саундпад") { AvraSoundpadScreen() }
+                    }
+                    row("🎙", "Voice changer", "Бас, хелий, робот, эхо, рация, демон и другие") {
+                        navigation?.push(title: "Voice changer") { AvraVoiceScreen() }
+                    }
                 }
 
                 section("Оформление") {
@@ -52,6 +64,12 @@ struct AvraHubView: View {
                     }
                     row("🎬", "Видео при запуске", "Видео Avragram вперемешку, своё видео или фото") {
                         navigation?.push(title: "Видео при запуске") { AvraIntroSettingsScreen() }
+                    }
+                }
+
+                section("Приватность") {
+                    row("🔇", "Мут и «Сказано за спиной»", "Сообщения замученного удаляются у обоих сразу") {
+                        navigation?.push(title: "Мут") { AvraMuteScreen(context: context) }
                     }
                 }
 

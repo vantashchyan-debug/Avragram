@@ -26,10 +26,57 @@ final class AvraChessGame: ObservableObject {
     private(set) var board = AvraChessBoard()
     private let ai = AvraChessAi()
     private let queue = DispatchQueue(label: "avra.chess.ai", qos: .userInitiated)
+    /// Online game id (moves go to AvraChessNet instead of the bot).
+    let onlineId: String?
+    private var observer: NSObjectProtocol?
 
     init(level: Int) {
         self.level = level
+        self.onlineId = nil
         resetIds()
+        refresh()
+    }
+
+    init(online id: String) {
+        self.level = 0
+        self.onlineId = id
+        if let g = AvraChessNet.games[id] {
+            humanColor = g.myColor
+            board = g.board()
+        }
+        resetIds()
+        squares = board.sq
+        lastMove = board.lastMove
+        refresh()
+        observer = NotificationCenter.default.addObserver(forName: AvraOnline.changed, object: nil, queue: .main) { [weak self] _ in
+            self?.syncOnline()
+        }
+    }
+
+    deinit {
+        if let observer = observer { NotificationCenter.default.removeObserver(observer) }
+    }
+
+    var online: AvraChessOnlineGame? { onlineId.flatMap { AvraChessNet.games[$0] } }
+
+    /// New moves of an online game: play the new ones with animation.
+    private func syncOnline() {
+        guard let g = online else { return }
+        if g.moves.count > board.ply {
+            let known = (0..<board.ply).map { AvraChessBoard.uci(board.moveAt($0)) }
+            if Array(g.moves.prefix(board.ply)) == known {
+                for u in g.moves[board.ply...] {
+                    let m = board.parseUci(u)
+                    if m == 0 { break }
+                    apply(m, local: false)
+                }
+                return
+            }
+            board = g.board()
+            resetIds()
+            squares = board.sq
+            lastMove = board.lastMove
+        }
         refresh()
     }
 
@@ -52,6 +99,7 @@ final class AvraChessGame: ObservableObject {
 
     func canMove(_ s: Int) -> Bool {
         let p = squares[s]
+        if onlineId != nil && !(online?.myTurn ?? false) { return false }
         return !thinking && !over && p != 0 && (p > 0 ? 1 : -1) == board.side && board.side == humanColor
     }
 
@@ -73,6 +121,12 @@ final class AvraChessGame: ObservableObject {
         let options = board.legal().filter { AvraChessBoard.from($0) == from && AvraChessBoard.to($0) == to }
         guard !options.isEmpty else { return false }
         let m = options.first { AvraChessBoard.promo($0) == 5 } ?? options[0]
+        if let id = onlineId {
+            let uci = AvraChessBoard.uci(m)
+            apply(m, local: true)
+            AvraChessNet.move(id, uci: uci)
+            return true
+        }
         apply(m)
         if !over {
             thinking = true
@@ -91,7 +145,7 @@ final class AvraChessGame: ObservableObject {
         return true
     }
 
-    private func apply(_ m: Int) {
+    private func apply(_ m: Int, local: Bool = true) {
         let from = AvraChessBoard.from(m), to = AvraChessBoard.to(m), fl = AvraChessBoard.flags(m)
         var newIds = ids
         if fl & AvraChessBoard.fEp != 0 { newIds[to - 8 * board.side] = 0 }
@@ -111,7 +165,7 @@ final class AvraChessGame: ObservableObject {
             selected = nil
             targets = []
         }
-        AvraHaptics.tap(capture)
+        AvraHaptics.tap(capture || !local)
         refresh()
     }
 
@@ -156,6 +210,18 @@ final class AvraChessGame: ObservableObject {
     }
 
     private func refresh() {
+        if let g = online {
+            switch g.state {
+            case AvraChessNet.inviteOut: statusText = "⏳ Ждём, пока соперник примет вызов"
+            case AvraChessNet.inviteIn: statusText = "📨 Тебе бросили вызов"
+            case AvraChessNet.declined: statusText = "Вызов отклонён"
+            case AvraChessNet.finished: statusText = (g.result == 0 ? "🤝 " : g.result == g.myColor ? "🏆 " : "💀 ") + AvraChessNet.resultText(g)
+            default:
+                if g.drawOfferIn { statusText = "🤝 Соперник предлагает ничью" }
+                else { statusText = (g.myTurn ? "Твой ход" : "Ход соперника") + (board.inCheck ? " · Шах!" : "") }
+            }
+            return
+        }
         let st = board.status()
         switch st {
         case .mate: statusText = (board.side == humanColor ? "💀 Мат. Ты проиграл" : "🏆 Мат! Ты победил")
