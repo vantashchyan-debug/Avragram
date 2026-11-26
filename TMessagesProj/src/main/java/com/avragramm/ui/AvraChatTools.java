@@ -230,4 +230,32 @@ public final class AvraChatTools {
         android.widget.TextView button = (android.widget.TextView) d.getButton(android.content.DialogInterface.BUTTON_POSITIVE);
         if (button != null) button.setTextColor(Theme.getColor(Theme.key_text_RedBold, fragment.getResourceProvider()));
     }
+
+    /** Fake mute: their new messages vanish for them at once, but stay here marked as deleted. */
+    public static void showFakeMute(BaseFragment fragment, int account, org.telegram.tgnet.TLRPC.User user, Runnable onChanged) {
+        Context ctx = fragment.getParentActivity();
+        if (ctx == null || user == null) return;
+        String name = com.avragramm.AvraPresence.at(org.telegram.messenger.UserObject.getPublicUsername(user));
+        if (name == null) name = org.telegram.messenger.UserObject.getUserName(user);
+        final String who = TextUtils.isEmpty(name) ? getString(R.string.AvraMuteThisPerson) : name;
+        if (com.avragramm.AvraMute.isFakeMuted(account, user.id)) {
+            com.avragramm.AvraMute.toggle(account, user.id, true);
+            if (onChanged != null) onChanged.run();
+            org.telegram.ui.Components.BulletinFactory.of(fragment).createSimpleBulletin(R.raw.contact_check,
+                    formatString(R.string.AvraFakeUnmuted, who)).show();
+            return;
+        }
+        AlertDialog d = new AlertDialog.Builder(ctx, fragment.getResourceProvider())
+                .setTitle(formatString(R.string.AvraFakeMuteTitle, who))
+                .setMessage(AndroidUtilities.replaceTags(getString(R.string.AvraFakeMuteText)))
+                .setPositiveButton(getString(R.string.AvraFakeMuteUser), (dialog, which) -> {
+                    if (!com.avragramm.AvraMute.isFakeMuted(account, user.id)) com.avragramm.AvraMute.toggle(account, user.id, true);
+                    if (onChanged != null) onChanged.run();
+                    org.telegram.ui.Components.BulletinFactory.of(fragment).createSimpleBulletin(R.raw.ic_ban,
+                            formatString(R.string.AvraFakeMuted, who)).show();
+                })
+                .setNegativeButton(getString(R.string.Cancel), null)
+                .create();
+        fragment.showDialog(d);
+    }
 }

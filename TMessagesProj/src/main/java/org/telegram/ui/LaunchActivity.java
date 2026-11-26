@@ -480,6 +480,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        com.avragramm.AvraIntro.captureLaunch(getIntent()); // before handleIntent clears the action
         isActive = true;
         activeInstanceCount++;
         if (BuildVars.DEBUG_VERSION) {

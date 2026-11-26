@@ -34,7 +34,16 @@ public final class AvraIntro {
     private AvraIntro() {
     }
 
-    private static boolean shownThisProcess;
+    private static boolean shownThisProcess, fromLauncher;
+
+    /**
+     * LaunchActivity.handleIntent() sets the intent action to null once it is processed, so the
+     * "opened from the launcher" check has to be taken at the very start of onCreate.
+     */
+    public static void captureLaunch(Intent intent) {
+        fromLauncher = intent != null && Intent.ACTION_MAIN.equals(intent.getAction())
+                && (intent.getCategories() == null || intent.hasCategory(Intent.CATEGORY_LAUNCHER));
+    }
 
     public static boolean enabled() {
         AvraConfig.ensureLoaded();
@@ -44,8 +53,8 @@ public final class AvraIntro {
     /** Called at the end of LaunchActivity.onCreate. */
     public static void maybeShow(Activity activity, boolean restored) {
         if (shownThisProcess || restored || activity == null || !enabled()) return;
-        Intent intent = activity.getIntent();
-        if (intent == null || !Intent.ACTION_MAIN.equals(intent.getAction())) return;
+        if (!fromLauncher) return;
+        fromLauncher = false;
         shownThisProcess = true;
         try {
             show(activity);

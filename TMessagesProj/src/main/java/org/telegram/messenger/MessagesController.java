@@ -21355,6 +21355,20 @@ public class MessagesController extends BaseController implements NotificationCe
         SparseIntArray markAsReadEncryptedFinal = markAsReadEncrypted;
         // AvraGramm: keep remotely deleted messages, only mark them as deleted
         com.avragramm.AvraConfig.ensureLoaded();
+        if (deletedMessages != null && !com.avragramm.AvraConfig.saveDeleted && deletedMessages.get(0) != null) {
+            // Avragram fake mute: messages it deleted for the other side stay here, marked as deleted
+            ArrayList<Integer> avraKept = com.avragramm.AvraMute.keepFakeDeleted(currentAccount, deletedMessages.get(0));
+            if (deletedMessages.get(0).isEmpty()) deletedMessages.remove(0);
+            if (deletedMessages.size() == 0) deletedMessages = null;
+            if (avraKept != null) {
+                final LongSparseArray<ArrayList<Integer>> avraMark = new LongSparseArray<>();
+                avraMark.put(0, avraKept);
+                getMessagesStorage().getStorageQueue().postRunnable(() -> {
+                    com.avragramm.AvraDeleted.get(currentAccount).remember(avraMark);
+                    AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.avraMessagesMarkedDeleted, avraMark));
+                });
+            }
+        }
         if (deletedMessages != null && com.avragramm.AvraConfig.saveDeleted) {
             final LongSparseArray<ArrayList<Integer>> avraDeleted = deletedMessages;
             deletedMessages = null;

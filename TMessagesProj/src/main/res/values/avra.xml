@@ -369,4 +369,10 @@ Actual:
     <string name="AvraIntro">Launch video</string>
     <string name="AvraIntroInfo">Plays when the app is opened from the launcher. Tap to skip; muted in silent mode</string>
     <string name="AvraIntroSkip">Tap to skip</string>
+    <string name="AvraFakeMuteUser">Fake mute</string>
+    <string name="AvraFakeUnmuteUser">Remove fake mute</string>
+    <string name="AvraFakeMuteTitle">Fake mute %1$s?</string>
+    <string name="AvraFakeMuteText">Every new message from this person is **deleted for them** right after it arrives: they think it is gone. **You still see it**, marked as deleted.\n\nWorks in this private chat until you remove it. Replaces the normal mute.</string>
+    <string name="AvraFakeMuted">%1$s is fake-muted: their messages vanish for them, you still read them</string>
+    <string name="AvraFakeUnmuted">Fake mute for %1$s is off</string>
 </resources>

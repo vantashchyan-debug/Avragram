@@ -30,15 +30,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class AvraMute {
 
     private static final Set<Long>[] cache = new Set[UserConfig.MAX_ACCOUNT_COUNT];
+    private static final Set<Long>[] fakeCache = new Set[UserConfig.MAX_ACCOUNT_COUNT];
 
     private AvraMute() {}
 
-    private static synchronized Set<Long> set(int account) {
+    private static Set<Long> set(int account) {
+        return set(account, false);
+    }
+
+    private static synchronized Set<Long> set(int account, boolean fake) {
+        Set<Long>[] cache = fake ? fakeCache : AvraMute.cache;
         Set<Long> s = cache[account];
         if (s == null) {
             s = Collections.newSetFromMap(new ConcurrentHashMap<>());
             if (ApplicationLoader.applicationContext != null) {
-                for (String v : AvraConfig.prefs().getStringSet(key(account), Collections.emptySet())) {
+                for (String v : AvraConfig.prefs().getStringSet(key(account, fake), Collections.emptySet())) {
                     try {
                         s.add(Long.parseLong(v));
                     } catch (NumberFormatException ignored) {
@@ -50,8 +56,8 @@ public final class AvraMute {
         return s;
     }
 
-    private static String key(int account) {
-        return "mute_" + account;
+    private static String key(int account, boolean fake) {
+        return (fake ? "fmute_" : "mute_") + account;
     }
 
     public static boolean isMuted(int account, long userId) {
@@ -70,9 +76,16 @@ public final class AvraMute {
     }
 
     /** Mutes / unmutes a user; returns the new state. */
-    public static synchronized boolean toggle(int account, long userId) {
+    public static boolean toggle(int account, long userId) {
+        return toggle(account, userId, false);
+    }
+
+    /** Mutes / unmutes (real or fake); the two modes exclude each other. Returns the new state. */
+    public static synchronized boolean toggle(int account, long userId, boolean fake) {
         if (userId <= 0) return false;
-        Set<Long> s = set(account);
+        Set<Long> other = set(account, !fake);
+        if (other.remove(userId)) save(account, !fake, other);
+        Set<Long> s = set(account, fake);
         boolean muted;
         if (s.contains(userId)) {
             s.remove(userId);
@@ -81,13 +94,77 @@ public final class AvraMute {
             s.add(userId);
             muted = true;
         }
+        save(account, fake, s);
+        return muted;
+    }
+
+    private static void save(int account, boolean fake, Set<Long> s) {
         HashSet<String> out = new HashSet<>();
         for (Long id : s) out.add(String.valueOf(id));
         SharedPreferences.Editor e = AvraConfig.prefs().edit();
-        if (out.isEmpty()) e.remove(key(account));
-        else e.putStringSet(key(account), out);
+        if (out.isEmpty()) e.remove(key(account, fake));
+        else e.putStringSet(key(account, fake), out);
         e.apply();
-        return muted;
+    }
+
+    /** Fake mute: their messages are deleted for them at once, but stay here marked as deleted. */
+    public static boolean isFakeMuted(int account, long userId) {
+        return userId > 0 && set(account, true).contains(userId);
+    }
+
+    /** Ids deleted by fake mute that this client must keep even if a delete update comes back. */
+    private static final Set<Integer>[] fakeDeleted = new Set[UserConfig.MAX_ACCOUNT_COUNT];
+
+    private static synchronized Set<Integer> fakeDeleted(int account) {
+        if (fakeDeleted[account] == null) fakeDeleted[account] = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        return fakeDeleted[account];
+    }
+
+    /**
+     * Called by update processing with the private-chat/basic-group deletions (dialog key 0):
+     * removes the fake-muted ids from the list (they are kept) and returns them; null if none.
+     */
+    public static ArrayList<Integer> keepFakeDeleted(int account, ArrayList<Integer> ids) {
+        if (ids == null || fakeDeleted[account] == null || fakeDeleted[account].isEmpty()) return null;
+        ArrayList<Integer> kept = null;
+        for (int i = ids.size() - 1; i >= 0; i--) {
+            Integer id = ids.get(i);
+            if (fakeDeleted[account].remove(id)) {
+                if (kept == null) kept = new ArrayList<>();
+                kept.add(id);
+                ids.remove(i);
+            }
+        }
+        return kept;
+    }
+
+    private static void fakeDelete(int account, TLRPC.Message message) {
+        final int id = message.id;
+        fakeDeleted(account).add(id);
+        AndroidUtilities.runOnUIThread(() -> {
+            MessagesController mc = MessagesController.getInstance(account);
+            TLRPC.TL_messages_deleteMessages req = new TLRPC.TL_messages_deleteMessages();
+            req.revoke = true;
+            req.id.add(id);
+            org.telegram.tgnet.ConnectionsManager.getInstance(account).sendRequest(req, (response, error) -> {
+                if (response instanceof TLRPC.TL_messages_affectedMessages) {
+                    TLRPC.TL_messages_affectedMessages res = (TLRPC.TL_messages_affectedMessages) response;
+                    // The deletion is ours: advance pts without deleting anything locally.
+                    mc.processNewDifferenceParams(-1, res.pts, -1, res.pts_count);
+                    androidx.collection.LongSparseArray<ArrayList<Integer>> mark = new androidx.collection.LongSparseArray<>();
+                    ArrayList<Integer> list = new ArrayList<>(1);
+                    list.add(id);
+                    mark.put(0, list);
+                    org.telegram.messenger.MessagesStorage.getInstance(account).getStorageQueue().postRunnable(() -> {
+                        AvraDeleted.get(account).remember(mark);
+                        AndroidUtilities.runOnUIThread(() -> org.telegram.messenger.NotificationCenter.getInstance(account)
+                                .postNotificationName(org.telegram.messenger.NotificationCenter.avraMessagesMarkedDeleted, mark));
+                    });
+                } else {
+                    fakeDeleted(account).remove(id);
+                }
+            });
+        });
     }
 
     /** Can this chat be muted: a private chat with another person (not yourself, not a secret chat). */
@@ -105,6 +182,11 @@ public final class AvraMute {
         if (message.peer_id.chat_id != 0 || message.peer_id.channel_id != 0) return false;
         if (message.dialog_id != 0 && DialogObject.isEncryptedDialog(message.dialog_id)) return false;
         long userId = message.peer_id.user_id;
+        if (isFakeMuted(account, userId)) {
+            AvraMuteLog.get(account).store(message);
+            fakeDelete(account, message);
+            return false; // shown here as usual
+        }
         if (!isMuted(account, userId)) return false;
         AvraMuteLog.get(account).store(message); // "Said behind your back" keeps a local copy
         final ArrayList<Integer> ids = new ArrayList<>(1);

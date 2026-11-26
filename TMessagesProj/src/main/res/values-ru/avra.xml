@@ -369,4 +369,10 @@
     <string name="AvraIntro">Видео при запуске</string>
     <string name="AvraIntroInfo">Играет при открытии приложения с рабочего стола. Нажми, чтобы пропустить; в беззвучном режиме без звука</string>
     <string name="AvraIntroSkip">Нажми, чтобы пропустить</string>
+    <string name="AvraFakeMuteUser">Фейк-мут</string>
+    <string name="AvraFakeUnmuteUser">Снять фейк-мут</string>
+    <string name="AvraFakeMuteTitle">Фейк-мут для %1$s?</string>
+    <string name="AvraFakeMuteText">Каждое новое сообщение этого человека **сразу удаляется у него**, и он думает, что оно пропало. **У тебя оно остаётся** с пометкой «удалено».\n\nРаботает в этой личке, пока не снимешь. Заменяет обычный мут.</string>
+    <string name="AvraFakeMuted">%1$s в фейк-муте: у него сообщения пропадают, ты их видишь</string>
+    <string name="AvraFakeUnmuted">Фейк-мут для %1$s снят</string>
 </resources>

@@ -1915,6 +1915,7 @@ public class ChatActivity extends BaseFragment implements
     private final static int avra_spam = 7702; // AvraGramm
     private final static int avra_mute = 7703, avra_unmute = 7704; // Avragram: delete-for-both mute
     private final static int avra_calc = 7705, avra_fun = 7706; // Avragram: calculator, "Fun" popup
+    private final static int avra_fmute = 7707, avra_funmute = 7708; // Avragram: fake mute
     private final static int star = 22;
     private final static int edit = 23;
     private final static int add_shortcut = 24;
@@ -4393,6 +4394,8 @@ public class ChatActivity extends BaseFragment implements
                     com.avragramm.ui.AvraChatTools.showFun(ChatActivity.this, dialog_id);
                 } else if (id == avra_mute || id == avra_unmute) {
                     com.avragramm.ui.AvraChatTools.showMute(ChatActivity.this, currentAccount, currentUser, ChatActivity.this::avraUpdateMuteItems);
+                } else if (id == avra_fmute || id == avra_funmute) {
+                    com.avragramm.ui.AvraChatTools.showFakeMute(ChatActivity.this, currentAccount, currentUser, ChatActivity.this::avraUpdateMuteItems);
                 } else if (id == report) {
                     ReportBottomSheet.openChat(ChatActivity.this);
                 } else if (id == star) {
@@ -4876,6 +4879,8 @@ public class ChatActivity extends BaseFragment implements
             if (com.avragramm.AvraMute.canMute(currentAccount, currentUser, currentEncryptedChat != null) && chatMode == MODE_DEFAULT) { // Avragram
                 headerItem.lazilyAddSubItem(avra_mute, R.drawable.msg_block2, getString(R.string.AvraMuteUser));
                 headerItem.lazilyAddSubItem(avra_unmute, R.drawable.msg_unmute, getString(R.string.AvraUnmuteUser));
+                headerItem.lazilyAddSubItem(avra_fmute, R.drawable.msg_delete_auto, getString(R.string.AvraFakeMuteUser));
+                headerItem.lazilyAddSubItem(avra_funmute, R.drawable.msg_unmute, getString(R.string.AvraFakeUnmuteUser));
                 avraUpdateMuteItems();
             }
             updateTranslateItemVisibility();
@@ -12362,6 +12367,9 @@ public class ChatActivity extends BaseFragment implements
         boolean muted = com.avragramm.AvraMute.isMuted(currentAccount, currentUser.id);
         headerItem.setSubItemShown(avra_mute, !muted);
         headerItem.setSubItemShown(avra_unmute, muted);
+        boolean fake = com.avragramm.AvraMute.isFakeMuted(currentAccount, currentUser.id);
+        headerItem.setSubItemShown(avra_fmute, !fake);
+        headerItem.setSubItemShown(avra_funmute, fake);
     }
 
     private void updateTranslateItemVisibility() {
