@@ -60,6 +60,36 @@ public final class AvraChessAi {
         return best
     }
 
+    /// Game review: exact scores of every legal move for the side to move, best first.
+    public func analyse(_ src: AvraChessBoard, maxDepth: Int, ms: Double) -> [(Int, Int)] {
+        let b = src.copy()
+        var moves = b.legal()
+        var result: [(Int, Int)] = []
+        if moves.isEmpty { return result }
+        order(b, &moves)
+        let until = Date().timeIntervalSince1970 + ms / 1000
+        for d in 1...maxDepth {
+            deadline = d == 1 ? Double.greatestFiniteMagnitude : until
+            stopped = false
+            var scored: [(Int, Int)] = []
+            for m in moves {
+                b.make(m)
+                let score = -search(b, d - 1, -Self.inf, Self.inf, 1)
+                b.unmake()
+                if stopped { break }
+                scored.append((m, score))
+            }
+            if stopped { break }
+            scored.sort { $0.1 > $1.1 }
+            result = scored
+            moves = scored.map { $0.0 }
+            if scored[0].1 > Self.mateScore - 1000 || Date().timeIntervalSince1970 > until { break }
+        }
+        return result
+    }
+
+    public static func isMate(_ score: Int) -> Bool { abs(score) > mateScore - 1000 }
+
     private func search(_ b: AvraChessBoard, _ depth: Int, _ alphaIn: Int, _ beta: Int, _ ply: Int) -> Int {
         nodes += 1
         if nodes & 1023 == 0 && Date().timeIntervalSince1970 > deadline { stopped = true }

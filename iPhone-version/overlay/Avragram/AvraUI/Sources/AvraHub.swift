@@ -14,10 +14,21 @@ struct AvraHubView: View {
     let context: AccountContext
     @Environment(\.sgTheme) private var theme
     @Environment(\.sgNavigation) private var navigation
+    @StateObject private var updater = AvraIOSUpdater()
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
+                if let v = updater.latest, let url = updater.url {
+                    Link(destination: url) {
+                        HStack {
+                            Text("⬆️ Вышла новая версия \(v). Скачай IPA и открой в SideStore").font(.subheadline.bold())
+                            Spacer()
+                        }
+                        .padding(12)
+                        .background(RoundedRectangle(cornerRadius: 12).fill(theme.accentColor.opacity(0.18)))
+                    }
+                }
                 VStack(spacing: 6) {
                     Text("Avragram").font(.system(size: 30, weight: .heavy))
                     Text("для iPhone · \(avragramIOSVersion)").font(.subheadline).foregroundColor(theme.secondaryTextColor)
@@ -71,6 +82,9 @@ struct AvraHubView: View {
                     row("🔇", "Мут и «Сказано за спиной»", "Сообщения замученного удаляются у обоих сразу") {
                         navigation?.push(title: "Мут") { AvraMuteScreen(context: context) }
                     }
+                    row("🗑", "Удалённые сообщения", "Сохранять то, что удалил собеседник") {
+                        navigation?.push(title: "Приватность") { AvraPrivacyScreen() }
+                    }
                 }
 
                 section("Настройки") {
@@ -87,6 +101,7 @@ struct AvraHubView: View {
             .padding(16)
         }
         .background(theme.backgroundColor.ignoresSafeArea())
+        .onAppear { updater.check() }
         .sgNavigationTitle("Avragram")
     }
 

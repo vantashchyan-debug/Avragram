@@ -92,6 +92,7 @@ struct AvraChessOnlineGameScreen: View {
     @StateObject private var game: AvraChessGame
     @State private var tick = Date()
     @Environment(\.sgTheme) private var theme
+    @Environment(\.sgNavigation) private var navigation
     private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     init(gameId: String, cardKind: String) {
@@ -181,6 +182,12 @@ struct AvraChessOnlineGameScreen: View {
                 Button("🔁 Реванш") {
                     AvraChessNet.invite(peer: g.peer, name: g.oppName, tc: g.tc, color: -g.myColor)
                 }.buttonStyle(.borderedProminent)
+                if !g.moves.isEmpty {
+                    Button("🔍 Обзор игры") {
+                        let moves = g.moves
+                        navigation?.push(title: "Обзор игры") { AvraChessReviewScreen(moves: moves) }
+                    }.buttonStyle(.bordered)
+                }
             }
         }
     }

@@ -216,6 +216,7 @@ final class AvraSeaGame: ObservableObject {
     }
 
     func start() {
+        AvraChessStyle.playSea("start")
         withAnimation(.easeInOut(duration: 0.35)) { placing = false }
         AvraHaptics.tap(true)
     }
@@ -226,10 +227,12 @@ final class AvraSeaGame: ObservableObject {
         let r = bot.resolve(cell, hitBefore: hit)
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { myShots.append((cell, r)) }
         show(r == "m" ? "💧 Мимо" : r == "k" ? "🔥 Убил!" : "💥 Попал!")
+        AvraChessStyle.playSea(r == "m" ? "splash" : r == "k" ? "sunk" : "hit")
         AvraHaptics.tap(r != "m")
         if myShots.filter({ $0.1 == "k" }).count >= AvraSeaBoard.fleet.count {
             winner = 1
             show("🏆 Победа!")
+            AvraChessStyle.playSea("win")
         } else if r == "m" {
             botTurn = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in self?.botShoot() }
@@ -244,9 +247,11 @@ final class AvraSeaGame: ObservableObject {
         let r = mine.resolve(cell, hitBefore: hit)
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { botShots.append((cell, r)) }
         show(r == "m" ? "😮‍💨 Соперник промахнулся" : r == "k" ? "💀 Твой корабль потоплен" : "💢 По тебе попали!")
+        AvraChessStyle.playSea(r == "m" ? "splash" : r == "k" ? "sunk" : "hit")
         if botShots.filter({ $0.1 == "k" }).count >= AvraSeaBoard.fleet.count {
             winner = -1
             show("💀 Поражение")
+            AvraChessStyle.playSea("lose")
         } else if r == "m" {
             botTurn = false
         } else {

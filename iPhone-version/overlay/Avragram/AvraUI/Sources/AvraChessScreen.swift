@@ -166,8 +166,29 @@ final class AvraChessGame: ObservableObject {
             targets = []
         }
         AvraHaptics.tap(capture || !local)
+        if board.inCheck { AvraChessStyle.play(.check) }
+        else if fl & AvraChessBoard.fCastle != 0 { AvraChessStyle.play(.castle) }
+        else if capture { AvraChessStyle.play(.capture) }
+        else { AvraChessStyle.play(.move) }
+        if board.status() != .ongoing { AvraChessStyle.play(.end) }
         refresh()
     }
+
+    /// Shows a position (game review); no moves can be made.
+    func show(_ b: AvraChessBoard) {
+        board = b.copy()
+        resetIds()
+        withAnimation(.easeInOut(duration: 0.2)) {
+            squares = board.sq
+            lastMove = board.lastMove
+            selected = nil
+            targets = []
+        }
+        humanColor = 2
+        statusText = ""
+    }
+
+    var uciMoves: [String] { (0..<board.ply).map { AvraChessBoard.uci(board.moveAt($0)) } }
 
     func undo() {
         guard !thinking else { return }
@@ -260,8 +281,8 @@ struct AvraChessBoardView: View {
     @State private var dragId: Int? = nil
     @State private var dragOffset: CGSize = .zero
 
-    private let light = Color(red: 0.93, green: 0.93, blue: 0.82)
-    private let dark = Color(red: 0.46, green: 0.59, blue: 0.34)
+    private var light: Color { AvraChessStyle.color(AvraChessStyle.boards[AvraChessStyle.board].0) }
+    private var dark: Color { AvraChessStyle.color(AvraChessStyle.boards[AvraChessStyle.board].1) }
 
     var body: some View {
         GeometryReader { geo in
@@ -363,9 +384,17 @@ struct AvraPieceView: View {
     private static let glyphs = ["", "♟\u{FE0E}", "♞\u{FE0E}", "♝\u{FE0E}", "♜\u{FE0E}", "♛\u{FE0E}", "♚\u{FE0E}"]
 
     var body: some View {
+        if let img = AvraChessStyle.image(piece) {
+            Image(uiImage: img).resizable().interpolation(.high).frame(width: size, height: size)
+        } else {
+            glyph
+        }
+    }
+
+    private var glyph: some View {
         let white = piece > 0
         let g = Self.glyphs[abs(piece)]
-        ZStack {
+        return ZStack {
             Text(g).font(.system(size: size * 0.8)).foregroundColor(white ? .black : .white).offset(x: 1, y: 1)
             Text(g).font(.system(size: size * 0.8)).foregroundColor(white ? .black : .white).offset(x: -1, y: -1)
             Text(g).font(.system(size: size * 0.8)).foregroundColor(white ? .white : Color(white: 0.08))
@@ -379,6 +408,7 @@ struct AvraPieceView: View {
 struct AvraChessScreen: View {
     @StateObject private var game: AvraChessGame
     @Environment(\.sgTheme) private var theme
+    @Environment(\.sgNavigation) private var navigation
 
     init(level: Int) {
         _game = StateObject(wrappedValue: AvraChessGame(level: level))
@@ -414,6 +444,17 @@ struct AvraChessScreen: View {
                     }
                     .buttonStyle(.borderedProminent)
                 }
+                if game.board.ply > 0 {
+                    Button(action: {
+                        let moves = game.uciMoves
+                        navigation?.push(title: "Обзор игры") { AvraChessReviewScreen(moves: moves) }
+                    }) {
+                        Label("Обзор игры", systemImage: "magnifyingglass").frame(maxWidth: .infinity)
+                    }.buttonStyle(.bordered)
+                }
+                Button(action: { navigation?.push(title: "Оформление шахмат") { AvraChessSettingsScreen() } }) {
+                    Label("Доска, фигуры, звуки", systemImage: "paintpalette").frame(maxWidth: .infinity)
+                }.buttonStyle(.bordered)
                 Picker("Уровень", selection: $game.level) {
                     ForEach(0..<4, id: \.self) { i in Text(AvraChessAi.levelNames[i]).tag(i) }
                 }

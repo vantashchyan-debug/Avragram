@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 internal import TelegramApi
 import MtProtoKit
+import AvraCore
 
 /// Avragram: hidden service messages of the online games (AvraChess "#avrachess", AvraSea "#avrasea"),
 /// the same protocol as the Android app, and the mute feature.
@@ -105,9 +106,55 @@ public func avraDeleteHiddenMessages(account: Account, ids: [Int32]) -> Signal<N
         if let result = result {
             switch result {
             case let .affectedMessages(affectedMessagesData):
-                stateManager.addUpdateGroups([.updatePts(pts: affectedMessagesData.pts, ptsCount: affectedMessagesData.ptsCount)])
+                stateManager?.addUpdateGroups([.updatePts(pts: affectedMessagesData.pts, ptsCount: affectedMessagesData.ptsCount)])
             }
         }
         return .complete()
+    }
+}
+
+/// Avragram: keep messages that others delete (Avragram → Privacy). Deletions that arrive from the
+/// server are skipped; the ids are remembered so they can be shown as deleted.
+public enum AvraKeepDeleted {
+    public static var enabled: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: "avra.keepDeleted")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "avra.keepDeleted")
+        }
+    }
+
+    static func remember(globalIds: [Int32]) {
+        var list = UserDefaults.standard.array(forKey: "avra.deleted.global") as? [Int] ?? []
+        list.append(contentsOf: globalIds.map { Int($0) })
+        UserDefaults.standard.set(Array(list.suffix(5000)), forKey: "avra.deleted.global")
+    }
+
+    static func remember(messageIds: [MessageId]) {
+        var list = UserDefaults.standard.array(forKey: "avra.deleted.channel") as? [String] ?? []
+        list.append(contentsOf: messageIds.map { "\($0.peerId.toInt64()):\($0.id)" })
+        UserDefaults.standard.set(Array(list.suffix(5000)), forKey: "avra.deleted.channel")
+    }
+
+    public static var count: Int {
+        return (UserDefaults.standard.array(forKey: "avra.deleted.global")?.count ?? 0) + (UserDefaults.standard.array(forKey: "avra.deleted.channel")?.count ?? 0)
+    }
+}
+
+/// Avragram badge handshake: an invisible "seen emoji 🅰" typing action to a user.
+public func avraSendBadgeHandshake(account: Account, peerId: PeerId) -> Signal<Never, NoError> {
+    return account.postbox.transaction { transaction -> Api.InputPeer? in
+        return transaction.getPeer(peerId).flatMap(apiInputPeer)
+    }
+    |> mapToSignal { inputPeer -> Signal<Never, NoError> in
+        guard let inputPeer = inputPeer else {
+            return .complete()
+        }
+        return account.network.request(Api.functions.messages.setTyping(flags: 0, peer: inputPeer, topMsgId: nil, action: .sendMessageEmojiInteractionSeen(.init(emoticon: AvraBadge.emoticon))))
+        |> ignoreValues
+        |> `catch` { _ -> Signal<Never, NoError> in
+            return .complete()
+        }
     }
 }

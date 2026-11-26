@@ -7,6 +7,7 @@ import TelegramCore
 import Display
 import AccountContext
 import SGSwiftUI
+import AvraCore
 
 /// Online games and mute for iPhone, wire-compatible with Avragram for Android:
 ///  - AvraChess: hidden "#avrachess v=1 g=… t=… w=… b=… m=… c=… s=…" messages (same fields, same
@@ -26,6 +27,10 @@ public final class AvraOnline {
         Self.context = context
         AvraMute.load(account: context.account.peerId)
         loadSelfName(context: context)
+        let account = context.account
+        AvraBadge.shared.configure(selfId: account.peerId.id._internalGetInt64Value()) { userId in
+            let _ = avraSendBadgeHandshake(account: account, peerId: AvraOnline.peerId(userId: userId)).start()
+        }
         AvraMessageHook.shared.handler = { peerId, messageId, outgoing, text, date in
             if AvraChessNet.isProtocol(text) {
                 DispatchQueue.main.async { AvraChessNet.receive(peerId: peerId, messageId: messageId, outgoing: outgoing, text: text, date: date) }
@@ -96,10 +101,11 @@ public final class AvraOnline {
 
     /// Opens a game from a card link; true when the link was an Avragram card.
     public static func openCard(url: String, context: AccountContext, navigationController: NavigationController?) -> Bool {
-        guard let r = url.range(of: "Avragram#avra") else { return false }
-        let tail = String(url[r.upperBound...])
+        // only the exact card address: https://github.com/vantashchyan-debug/Avragram#avra<kind>-<id>-<card>
+        guard url.hasPrefix(cardUrl + "avra") else { return false }
+        let tail = String(url.dropFirst(cardUrl.count + 4))
         let parts = tail.split(separator: "-").map(String.init)
-        guard parts.count >= 3 else { return false }
+        guard parts.count == 3, parts[1].count <= 16, parts[1].allSatisfy({ $0.isLetter || $0.isNumber }) else { return false }
         let kind = parts[0], id = parts[1], card = parts[2]
         let presentationData = context.sharedContext.currentPresentationData.with { $0 }
         if kind == "chess" {
