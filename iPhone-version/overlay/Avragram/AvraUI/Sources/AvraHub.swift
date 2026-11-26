@@ -96,7 +96,7 @@ struct AvraHubView: View {
                     }
                 }
 
-                Text("Avragram для iPhone основан на Swiftgram (GPL). Онлайн-игры, темы, спам, саундпад и voice changer переносятся с Android по этапам.")
+                Text("Avragram для iPhone основан на Swiftgram (GPL). Онлайн-игры совместимы с Avragram для Android.")
                     .font(.footnote)
                     .foregroundColor(theme.secondaryTextColor)
                     .padding(.horizontal, 4)
