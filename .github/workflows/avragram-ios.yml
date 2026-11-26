@@ -53,7 +53,9 @@ jobs:
             --configuration=release_arm64 \
             --buildNumber=${{ github.run_number }}
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/Telegram.ipa "$GITHUB_WORKSPACE/out/Avragram-iOS.ipa"
+          IPA=$(ls bazel-bin/Telegram/*.ipa 2>/dev/null | head -1)
+          [ -z "$IPA" ] && IPA=$(ls bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.ipa | head -1)
+          cp "$IPA" "$GITHUB_WORKSPACE/out/Avragram-iOS.ipa"
           ls -la "$GITHUB_WORKSPACE/out"
 
       - name: Publish
