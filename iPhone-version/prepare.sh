@@ -15,6 +15,7 @@ sg = sys.argv[1]
 cfg = json.load(open(os.path.join(sg, "build-system/appstore-configuration.json")))
 cfg["api_id"] = os.environ["AVRA_API_ID"]
 cfg["api_hash"] = os.environ["AVRA_API_HASH"]
+cfg.setdefault("sg_config", "")  # Swiftgram's own server settings: none for Avragram
 json.dump(cfg, open(os.path.join(sg, "build-system/avragram-configuration.json"), "w"), indent=2)
 PY
 
