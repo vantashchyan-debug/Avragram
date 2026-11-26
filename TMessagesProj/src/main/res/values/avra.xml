@@ -375,4 +375,27 @@ Actual:
     <string name="AvraFakeMuteText">Every new message from this person is **deleted for them** right after it arrives: they think it is gone. **You still see it**, marked as deleted.\n\nWorks in this private chat until you remove it. Replaces the normal mute.</string>
     <string name="AvraFakeMuted">%1$s is fake-muted: their messages vanish for them, you still read them</string>
     <string name="AvraFakeUnmuted">Fake mute for %1$s is off</string>
+    <string name="AvraIntroScreen">Launch screen</string>
+    <string name="AvraIntroOff">Off</string>
+    <string name="AvraIntroWhat">What to show</string>
+    <string name="AvraIntroDefault">Standard video</string>
+    <string name="AvraIntroOwnVideo">My video</string>
+    <string name="AvraIntroOwnPhoto">My photo</string>
+    <string name="AvraIntroPick">Choose…</string>
+    <string name="AvraIntroChange">Tap again to change</string>
+    <string name="AvraIntroWhatInfo">Choose a video or a photo from the gallery. Hold a row to pick another file.</string>
+    <string name="AvraIntroImporting">Copying the file…</string>
+    <string name="AvraIntroDuration">Photo duration</string>
+    <string name="AvraIntroSeconds">%1$d s</string>
+    <string name="AvraIntroDurationInfo">How long the photo stays on the screen. Tap it to skip earlier.</string>
+    <string name="AvraIntroPreview">Preview</string>
+    <string name="AvraIntroReset">Delete my video and photo</string>
+    <string name="AvraIntroSaved">Launch screen saved</string>
+    <string name="AvraIntroPickFailed">Could not open the file</string>
+    <string name="AvraBadge">Avragram badge</string>
+    <string name="AvraBadgeSetting">\"A\" next to the names of other Avragram users</string>
+    <string name="AvraBadgeSettingInfo">When you open a private chat, Avragram sends a hidden signal. Another Avragram recognises it and both of you get the \"A\" badge. Other apps may show a short \"watching 🅰\". Badges of other clients are not shown.</string>
+    <string name="AvraBadgeInfo">%1$s also uses Avragram</string>
+    <string name="AvraBadgeSelf">You use Avragram</string>
+    <string name="AvraBadgeInfoSub">Only Avragram users see this badge</string>
 </resources>

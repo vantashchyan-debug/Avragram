@@ -19199,6 +19199,9 @@ public class MessagesController extends BaseController implements NotificationCe
                     action = update.action;
                     chatId = 0;
                     threadId = update.top_msg_id;
+                    if (com.avragramm.AvraBadge.onUserAction(currentAccount, update.user_id, update.action)) {
+                        continue;
+                    }
                     if (update.action instanceof TLRPC.TL_sendMessageEmojiInteraction) {
                         AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.onEmojiInteractionsReceived, update.user_id, update.action));
                         continue;

@@ -24,7 +24,7 @@ public class AvraFunActivity extends UniversalFragment {
 
     private static final int ID_GAME = 100, ID_SOUNDPAD = 200,
             ID_SEND_RESULTS = 300, ID_CALC_COMMAND = 301, ID_BEHIND = 302,
-            ID_DOWNLOAD_SPEED = 400, ID_PHONE_REGION = 401, ID_INTRO = 303;
+            ID_DOWNLOAD_SPEED = 400, ID_PHONE_REGION = 401, ID_AVRA_BADGE = 402, ID_INTRO = 303;
 
     /** Chat the section was opened from (0 = from Settings: no spam, results are not sent). */
     private final long dialogId;
@@ -64,14 +64,17 @@ public class AvraFunActivity extends UniversalFragment {
         items.add(UItem.asHeader(getString(R.string.AvraFunSettings)));
         items.add(UItem.asSwitchNoIcon(ID_SEND_RESULTS, getString(R.string.AvraGameSendSwitch)).setChecked(AvraGames.sendResults()));
         items.add(UItem.asSwitchNoIcon(ID_CALC_COMMAND, getString(R.string.AvraCalcCommandSwitch)).setChecked(AvraConfig.calcCommand));
-        items.add(UItem.asCheck(ID_INTRO, getString(R.string.AvraIntro), getString(R.string.AvraIntroInfo), true).setChecked(AvraConfig.introVideo));
+        items.add(UItem.asButton(ID_INTRO, R.drawable.msg_view_file, getString(R.string.AvraIntroScreen), getString(!AvraConfig.introVideo ? R.string.AvraIntroOff
+                : AvraConfig.introType == AvraConfig.INTRO_PHOTO ? R.string.AvraIntroOwnPhoto
+                : AvraConfig.introType == AvraConfig.INTRO_VIDEO ? R.string.AvraIntroOwnVideo : R.string.AvraIntroDefault)));
         items.add(UItem.asButton(ID_BEHIND, R.drawable.msg_block2, getString(R.string.AvraBehind)));
         items.add(UItem.asShadow(getString(R.string.AvraFunSettingsInfo)));
 
         items.add(UItem.asHeader(getString(R.string.AvraFunPlugins)));
         items.add(UItem.asCheck(ID_DOWNLOAD_SPEED, getString(R.string.AvraDownloadSpeed), getString(R.string.AvraDownloadSpeedInfo), true).setChecked(AvraConfig.downloadSpeed));
         items.add(UItem.asCheck(ID_PHONE_REGION, getString(R.string.AvraPhoneRegion), getString(R.string.AvraPhoneRegionInfo), true).setChecked(AvraConfig.phoneRegion));
-        items.add(UItem.asShadow(null));
+        items.add(UItem.asCheck(ID_AVRA_BADGE, getString(R.string.AvraBadge), getString(R.string.AvraBadgeSetting), true).setChecked(AvraConfig.avraBadge));
+        items.add(UItem.asShadow(getString(R.string.AvraBadgeSettingInfo)));
     }
 
     @Override
@@ -84,8 +87,11 @@ public class AvraFunActivity extends UniversalFragment {
                 new AvraSoundpadSheet(getParentActivity(), org.telegram.ui.ActionBar.Theme.isCurrentThemeDark()).show();
             }
         } else if (id == ID_INTRO) {
-            AvraConfig.introVideo = !AvraConfig.introVideo;
+            presentFragment(new AvraIntroActivity());
+        } else if (id == ID_AVRA_BADGE) {
+            AvraConfig.avraBadge = !AvraConfig.avraBadge;
             AvraConfig.save();
+            if (!AvraConfig.avraBadge) com.avragramm.AvraBadge.clear();
             listView.adapter.update(true);
         } else if (id == ID_DOWNLOAD_SPEED) {
             AvraConfig.downloadSpeed = !AvraConfig.downloadSpeed;

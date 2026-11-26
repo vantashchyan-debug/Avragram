@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -16,18 +17,26 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.Components.LayoutHelper;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
- * Launch video: plays res/raw/avra_intro.mp4 full screen over the app on a cold start from the
- * launcher. Tap skips it. Sound follows the ringer: silent / vibrate → muted. Can be turned off
- * in the Fun settings.
+ * Launch screen: full screen over the app on a cold start from the launcher — the built-in
+ * res/raw/avra_intro.mp4, your own video or your own photo for N seconds (Fun → Launch screen).
+ * Tap skips it. Sound follows the ringer: silent / vibrate → muted.
  */
 public final class AvraIntro {
 
@@ -63,15 +72,86 @@ public final class AvraIntro {
         }
     }
 
+    /** Settings → "Preview". */
+    public static void preview(Activity activity) {
+        if (activity == null) return;
+        try {
+            show(activity);
+        } catch (Throwable t) {
+            FileLog.e(t);
+        }
+    }
+
+    // ---- own video / photo --------------------------------------------------------------------
+
+    private static File dir() {
+        File d = new File(ApplicationLoader.applicationContext.getFilesDir(), "avra_intro");
+        d.mkdirs();
+        return d;
+    }
+
+    public static File customVideo() {
+        return new File(dir(), "custom.mp4");
+    }
+
+    public static File customPhoto() {
+        return new File(dir(), "custom.jpg");
+    }
+
+    /** Copies a picked file into the app's own storage. Background thread. */
+    public static boolean importFile(Uri uri, boolean photo) {
+        File target = photo ? customPhoto() : customVideo();
+        File tmp = new File(target.getPath() + ".tmp");
+        try (InputStream in = ApplicationLoader.applicationContext.getContentResolver().openInputStream(uri);
+             OutputStream out = new FileOutputStream(tmp)) {
+            if (in == null) return false;
+            byte[] buf = new byte[64 * 1024];
+            int n;
+            long total = 0;
+            while ((n = in.read(buf)) > 0) {
+                out.write(buf, 0, n);
+                total += n;
+            }
+            if (total == 0) return false;
+        } catch (Throwable t) {
+            FileLog.e(t);
+            tmp.delete();
+            return false;
+        }
+        target.delete();
+        return tmp.renameTo(target);
+    }
+
+    /** What will actually be shown: own photo / video only while its file exists. */
+    private static int source() {
+        AvraConfig.ensureLoaded();
+        if (AvraConfig.introType == AvraConfig.INTRO_PHOTO && customPhoto().length() > 0) return AvraConfig.INTRO_PHOTO;
+        if (AvraConfig.introType == AvraConfig.INTRO_VIDEO && customVideo().length() > 0) return AvraConfig.INTRO_VIDEO;
+        return AvraConfig.INTRO_DEFAULT;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private static void show(Activity activity) {
+        final int source = source();
         ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
         FrameLayout overlay = new FrameLayout(activity);
         overlay.setBackgroundColor(Color.BLACK);
         overlay.setClickable(true);
 
-        TextureView texture = new TextureView(activity);
-        overlay.addView(texture, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        TextureView texture = null;
+        ImageView photo = null;
+        if (source == AvraConfig.INTRO_PHOTO) {
+            int w = Math.max(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y);
+            Bitmap bitmap = ImageLoader.loadBitmap(customPhoto().getAbsolutePath(), null, w, w, true);
+            if (bitmap == null) return;
+            photo = new ImageView(activity);
+            photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            photo.setImageBitmap(bitmap);
+            overlay.addView(photo, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        } else {
+            texture = new TextureView(activity);
+            overlay.addView(texture, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        }
 
         TextView skip = new TextView(activity);
         skip.setText(LocaleController.getString(R.string.AvraIntroSkip));
@@ -104,8 +184,29 @@ public final class AvraIntro {
             }).start();
         };
         overlay.setOnClickListener(v -> close.run());
-        // Safety net: never keep the app covered if the player stalls.
+        overlay.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                close.run();
+            }
+        });
+
+        if (photo != null) {
+            AvraConfig.ensureLoaded();
+            int sec = Math.max(1, Math.min(10, AvraConfig.introPhotoSec));
+            photo.setAlpha(0f);
+            photo.animate().alpha(1f).setDuration(200).start();
+            AndroidUtilities.runOnUIThread(close, sec * 1000L);
+            return;
+        }
+
+        // Safety net: never keep the app covered if the player stalls (moved to the clip length once it is known).
         AndroidUtilities.runOnUIThread(close, 15000);
+        final TextureView textureView = texture;
 
         texture.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
@@ -115,17 +216,28 @@ public final class AvraIntro {
                     MediaPlayer p = new MediaPlayer();
                     player[0] = p;
                     Context ctx = activity.getApplicationContext();
-                    p.setDataSource(ctx, Uri.parse("android.resource://" + ctx.getPackageName() + "/" + R.raw.avra_intro));
+                    if (source == AvraConfig.INTRO_VIDEO) {
+                        p.setDataSource(customVideo().getAbsolutePath());
+                    } else {
+                        p.setDataSource(ctx, Uri.parse("android.resource://" + ctx.getPackageName() + "/" + R.raw.avra_intro));
+                    }
                     p.setSurface(new Surface(st));
                     AudioManager am = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
                     if (am != null && am.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) p.setVolume(0f, 0f);
-                    p.setOnVideoSizeChangedListener((mp, vw, vh) -> centerCrop(texture, vw, vh));
+                    p.setOnVideoSizeChangedListener((mp, vw, vh) -> centerCrop(textureView, vw, vh));
                     p.setOnCompletionListener(mp -> close.run());
                     p.setOnErrorListener((mp, what, extra) -> {
                         close.run();
                         return true;
                     });
-                    p.setOnPreparedListener(MediaPlayer::start);
+                    p.setOnPreparedListener(mp -> {
+                        int duration = mp.getDuration();
+                        if (duration > 0) {
+                            AndroidUtilities.cancelRunOnUIThread(close);
+                            AndroidUtilities.runOnUIThread(close, duration + 3000L);
+                        }
+                        mp.start();
+                    });
                     p.prepareAsync();
                 } catch (Throwable t) {
                     FileLog.e(t);
@@ -136,7 +248,7 @@ public final class AvraIntro {
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture st, int w, int h) {
                 MediaPlayer p = player[0];
-                if (p != null) centerCrop(texture, p.getVideoWidth(), p.getVideoHeight());
+                if (p != null) centerCrop(textureView, p.getVideoWidth(), p.getVideoHeight());
             }
 
             @Override
@@ -147,16 +259,6 @@ public final class AvraIntro {
 
             @Override
             public void onSurfaceTextureUpdated(SurfaceTexture st) {
-            }
-        });
-        overlay.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                close.run();
             }
         });
     }

@@ -32510,6 +32510,7 @@ public class ChatActivity extends BaseFragment implements
     public void onResume() {
         super.onResume();
         com.avragramm.AvraVoice.currentChatDialogId = dialog_id; // AvraGramm
+        if (currentUser != null && currentEncryptedChat == null && chatMode == MODE_DEFAULT) com.avragramm.AvraBadge.onChatOpened(currentAccount, currentUser); // Avragram
         ChatScreenshotExportBridge.onChatResumed(this);
         if (quickAttachOnResume != null) {
             Runnable action = quickAttachOnResume;

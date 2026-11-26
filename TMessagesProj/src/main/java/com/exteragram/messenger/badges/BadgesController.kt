@@ -96,6 +96,8 @@ object BadgesController {
 
     @JvmOverloads
     fun getBadge(obj: TLObject? = UserConfig.getInstance(UserConfig.selectedAccount).currentUser): BadgeDTO? {
+        // Avragram: only the "A" badge of other Avragram users; exteraGram server badges are hidden
+        return if (obj is TLRPC.User && com.avragramm.AvraBadge.isAvragram(obj)) com.avragramm.AvraBadge.BADGE else null
         try {
             val (id, isUser) = when (obj) {
                 is TLRPC.User -> obj.id to true
@@ -232,6 +234,10 @@ object BadgesController {
         enterFrom: SupporterEnterFrom? = null
     ) {
         user ?: return
+        if (com.avragramm.AvraBadge.isAvragram(user)) {
+            com.avragramm.AvraBadge.showInfo(fragment, user)
+            return
+        }
         val isDev = isDeveloper(user)
         if (false) {
         } else if (isDev || hasCustomBadge(user)) {

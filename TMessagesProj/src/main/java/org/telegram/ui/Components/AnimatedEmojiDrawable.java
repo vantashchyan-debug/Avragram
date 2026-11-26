@@ -1360,6 +1360,11 @@ public class AnimatedEmojiDrawable extends Drawable {
         }
 
         public boolean set(long documentId, int cacheType, boolean animated) {
+            if (documentId == com.avragramm.AvraBadge.DOCUMENT_ID) {
+                if (drawables[0] instanceof com.avragramm.AvraBadge.BadgeDrawable) return false;
+                set(com.avragramm.AvraBadge.drawable(), animated);
+                return true;
+            }
             if (drawables[0] instanceof AnimatedEmojiDrawable && ((AnimatedEmojiDrawable) drawables[0]).getDocumentId() == documentId) {
                 return false;
             }

@@ -28,6 +28,13 @@ public final class AvraConfig {
     public static boolean downloadSpeed = true;
     public static boolean phoneRegion = true;
     public static boolean introVideo = true;
+    /** Launch screen source: built-in video, own video or own photo (files in filesDir/avra_intro). */
+    public static final int INTRO_DEFAULT = 0, INTRO_VIDEO = 1, INTRO_PHOTO = 2;
+    public static int introType = INTRO_DEFAULT;
+    /** How long an own photo stays on screen, seconds. */
+    public static int introPhotoSec = 3;
+    /** "A" badge for other Avragram users (found by a hidden handshake in private chats). */
+    public static boolean avraBadge = true;
     public static final int GLASS_OFF = 0, GLASS_FROSTED = 1, GLASS_LIQUID = 2;
 
     private static volatile boolean loaded;
@@ -55,6 +62,9 @@ public final class AvraConfig {
         downloadSpeed = p.getBoolean("downloadSpeed", true);
         phoneRegion = p.getBoolean("phoneRegion", true);
         introVideo = p.getBoolean("introVideo", true);
+        introType = p.getInt("introType", INTRO_DEFAULT);
+        introPhotoSec = p.getInt("introPhotoSec", 3);
+        avraBadge = p.getBoolean("avraBadge", true);
         loaded = true;
     }
 
@@ -70,6 +80,9 @@ public final class AvraConfig {
                 .putBoolean("downloadSpeed", downloadSpeed)
                 .putBoolean("phoneRegion", phoneRegion)
                 .putBoolean("introVideo", introVideo)
+                .putInt("introType", introType)
+                .putInt("introPhotoSec", introPhotoSec)
+                .putBoolean("avraBadge", avraBadge)
                 .apply();
     }
 

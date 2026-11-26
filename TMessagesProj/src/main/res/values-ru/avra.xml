@@ -375,4 +375,27 @@
     <string name="AvraFakeMuteText">Каждое новое сообщение этого человека **сразу удаляется у него**, и он думает, что оно пропало. **У тебя оно остаётся** с пометкой «удалено».\n\nРаботает в этой личке, пока не снимешь. Заменяет обычный мут.</string>
     <string name="AvraFakeMuted">%1$s в фейк-муте: у него сообщения пропадают, ты их видишь</string>
     <string name="AvraFakeUnmuted">Фейк-мут для %1$s снят</string>
+    <string name="AvraIntroScreen">Заставка при запуске</string>
+    <string name="AvraIntroOff">Выключена</string>
+    <string name="AvraIntroWhat">Что показывать</string>
+    <string name="AvraIntroDefault">Стандартное видео</string>
+    <string name="AvraIntroOwnVideo">Своё видео</string>
+    <string name="AvraIntroOwnPhoto">Своё фото</string>
+    <string name="AvraIntroPick">Выбрать…</string>
+    <string name="AvraIntroChange">Нажми ещё раз, чтобы заменить</string>
+    <string name="AvraIntroWhatInfo">Выбери видео или фото из галереи. Удерживай строку, чтобы выбрать другой файл.</string>
+    <string name="AvraIntroImporting">Копирую файл…</string>
+    <string name="AvraIntroDuration">Сколько показывать фото</string>
+    <string name="AvraIntroSeconds">%1$d с</string>
+    <string name="AvraIntroDurationInfo">Столько секунд фото будет на экране. Нажатие закрывает его раньше.</string>
+    <string name="AvraIntroPreview">Посмотреть</string>
+    <string name="AvraIntroReset">Удалить своё видео и фото</string>
+    <string name="AvraIntroSaved">Заставка сохранена</string>
+    <string name="AvraIntroPickFailed">Не удалось открыть файл</string>
+    <string name="AvraBadge">Значок Avragram</string>
+    <string name="AvraBadgeSetting">«А» рядом с именем других пользователей Avragram</string>
+    <string name="AvraBadgeSettingInfo">Когда ты открываешь личный чат, Avragram отправляет скрытый сигнал. Другой Avragram его узнаёт, и у вас обоих появляется значок «А». В других приложениях может на секунду мелькнуть «смотрит 🅰». Значки других клиентов не показываются.</string>
+    <string name="AvraBadgeInfo">%1$s тоже пользуется Avragram</string>
+    <string name="AvraBadgeSelf">Ты пользуешься Avragram</string>
+    <string name="AvraBadgeInfoSub">Этот значок видят только пользователи Avragram</string>
 </resources>
