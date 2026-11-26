@@ -179,6 +179,7 @@ public final class AvraMute {
      */
     public static boolean intercept(int account, TLRPC.Message message) {
         if (com.avragramm.chess.ChessNet.onMessage(account, message)) return true; // hidden AvraChess move: applied, never shown
+        if (com.avragramm.sea.SeaNet.onMessage(account, message)) return true; // hidden AvraSea shot
         if (message == null || message.out || message.peer_id == null || message.id <= 0) return false;
         if (message.peer_id.chat_id != 0 || message.peer_id.channel_id != 0) return false;
         if (message.dialog_id != 0 && DialogObject.isEncryptedDialog(message.dialog_id)) return false;

@@ -24,7 +24,7 @@ public class AvraFunActivity extends UniversalFragment {
 
     private static final int ID_GAME = 100, ID_SOUNDPAD = 200,
             ID_SEND_RESULTS = 300, ID_CALC_COMMAND = 301, ID_BEHIND = 302,
-            ID_CHESS = 250, ID_DOWNLOAD_SPEED = 400, ID_PHONE_REGION = 401, ID_AVRA_BADGE = 402, ID_INTRO = 303;
+            ID_CHESS = 250, ID_SEA = 251, ID_DOWNLOAD_SPEED = 400, ID_PHONE_REGION = 401, ID_AVRA_BADGE = 402, ID_INTRO = 303;
 
     /** Chat the section was opened from (0 = from Settings: no spam, results are not sent). */
     private final long dialogId;
@@ -51,6 +51,9 @@ public class AvraFunActivity extends UniversalFragment {
         int chessPending = com.avragramm.chess.ChessNet.pending(currentAccount);
         items.add(UItem.asButtonWithSubtext(ID_CHESS, R.drawable.dialog_media_game_20, "♟  AvraChess",
                 chessPending > 0 ? formatString(R.string.AvraChessPending, chessPending) : getString(R.string.AvraChessInfo), 64, 60));
+        int seaPending = com.avragramm.sea.SeaNet.pending(currentAccount);
+        items.add(UItem.asButtonWithSubtext(ID_SEA, R.drawable.dialog_media_game_20, "🚢  " + getString(R.string.AvraSeaTitle),
+                seaPending > 0 ? formatString(R.string.AvraChessPending, seaPending) : getString(R.string.AvraSeaInfo), 64, 60));
         for (int i = 0; i < AvraGames.IDS.length; i++) {
             int best = AvraGames.bestAny(i);
             String sub = getString(AvraGames.DESCRIPTIONS[i]);
@@ -85,6 +88,8 @@ public class AvraFunActivity extends UniversalFragment {
         int id = item.id;
         if (id >= ID_GAME && id < ID_GAME + AvraGames.IDS.length) {
             presentFragment(new AvraGameActivity(id - ID_GAME, dialogId));
+        } else if (id == ID_SEA) {
+            presentFragment(new com.avragramm.sea.AvraSeaActivity(dialogId));
         } else if (id == ID_CHESS) {
             presentFragment(new com.avragramm.chess.AvraChessActivity(dialogId));
         } else if (id == ID_SOUNDPAD) {

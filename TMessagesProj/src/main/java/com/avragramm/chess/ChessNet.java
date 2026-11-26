@@ -662,8 +662,16 @@ public final class ChessNet {
      * {@link #onMessage}; the opponent's Avragram reads it, then deletes it for both sides.
      */
     private static void sendHidden(Game g, String text) {
-        MessagesController mc = MessagesController.getInstance(g.account);
-        TLRPC.InputPeer ip = mc.getInputPeer(g.peer);
+        sendRaw(g.account, g.peer, text, id -> {
+            g.outIds.add(id);
+            save();
+        });
+    }
+
+    /** Hidden send shared by AvraChess and AvraSea; {@code onId} gets the new message id (UI thread). */
+    public static void sendRaw(int account, long peer, String text, org.telegram.messenger.Utilities.Callback<Integer> onId) {
+        MessagesController mc = MessagesController.getInstance(account);
+        TLRPC.InputPeer ip = mc.getInputPeer(peer);
         if (ip == null) return;
         TLRPC.TL_messages_sendMessage req = new TLRPC.TL_messages_sendMessage();
         req.peer = ip;
@@ -671,7 +679,7 @@ public final class ChessNet {
         req.random_id = org.telegram.messenger.Utilities.random.nextLong();
         req.no_webpage = true;
         req.silent = true;
-        ConnectionsManager.getInstance(g.account).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+        ConnectionsManager.getInstance(account).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
             int id = 0;
             if (response instanceof TLRPC.TL_updateShortSentMessage) {
                 TLRPC.TL_updateShortSentMessage r = (TLRPC.TL_updateShortSentMessage) response;
@@ -688,15 +696,12 @@ public final class ChessNet {
             } else if (error != null) {
                 FileLog.e("AvraChess send: " + error.text);
             }
-            if (id > 0) {
-                g.outIds.add(id);
-                save();
-            }
+            if (id > 0 && onId != null) onId.run(id);
         }));
     }
 
     /** Deletes messages for both sides without touching this client's chat (they were never shown). */
-    static void deleteRemote(int account, ArrayList<Integer> ids) {
+    public static void deleteRemote(int account, ArrayList<Integer> ids) {
         if (ids == null || ids.isEmpty()) return;
         TLRPC.TL_messages_deleteMessages req = new TLRPC.TL_messages_deleteMessages();
         req.revoke = true;
@@ -711,7 +716,8 @@ public final class ChessNet {
 
     /** First line of every hidden protocol message (also what a push notification starts with). */
     public static boolean isProtocolText(String text) {
-        return text != null && (text.startsWith("♟ AvraChess") || text.contains(TAG + " v="));
+        return text != null && (text.startsWith("♟ AvraChess") || text.contains(TAG + " v=")
+                || text.startsWith("🚢 AvraSea") || text.contains("#avrasea v="));
     }
 
     /** History loads: drops the hidden protocol messages (keeps the page if nothing else is left). */

@@ -77,8 +77,8 @@ public final class AvraChatTools {
         Context ctx = fragment.getParentActivity();
         if (ctx == null) return;
         int games = com.avragramm.AvraGames.IDS.length;
-        CharSequence[] items = new CharSequence[games + 3];
-        int[] icons = new int[games + 3];
+        CharSequence[] items = new CharSequence[games + 4];
+        int[] icons = new int[games + 4];
         for (int i = 0; i < games; i++) {
             int best = com.avragramm.AvraGames.bestAny(i);
             items[i] = com.avragramm.AvraGames.TITLES[i]
@@ -92,6 +92,9 @@ public final class AvraChatTools {
         int chessPending = com.avragramm.chess.ChessNet.pending(fragment.getCurrentAccount());
         items[games + 2] = "AvraChess" + (chessPending > 0 ? "  · " + formatString(R.string.AvraChessPending, chessPending) : "");
         icons[games + 2] = R.drawable.dialog_media_game_20;
+        int seaPending = com.avragramm.sea.SeaNet.pending(fragment.getCurrentAccount());
+        items[games + 3] = getString(R.string.AvraSeaTitle) + (seaPending > 0 ? "  · " + formatString(R.string.AvraChessPending, seaPending) : "");
+        icons[games + 3] = R.drawable.dialog_media_game_20;
         AlertDialog.Builder b = new AlertDialog.Builder(ctx);
         b.setTitle(getString(R.string.AvraFun));
         b.setItems(items, icons, (d, which) -> {
@@ -101,6 +104,8 @@ public final class AvraChatTools {
                 new AvraSoundpadSheet(ctx, Theme.isCurrentThemeDark()).show();
             } else if (which == games + 2) {
                 fragment.presentFragment(new com.avragramm.chess.AvraChessActivity(dialogId));
+            } else if (which == games + 3) {
+                fragment.presentFragment(new com.avragramm.sea.AvraSeaActivity(dialogId));
             } else {
                 fragment.presentFragment(new AvraFunActivity(dialogId));
             }
