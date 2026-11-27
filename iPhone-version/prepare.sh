@@ -24,9 +24,13 @@ python3 - "$SG" <<'PY'
 import os, sys
 p = os.path.join(sys.argv[1], "Telegram/BUILD")
 s = open(p).read()
-a = s.index('name = "AppNameInfoPlist"')
-b = s.index('"""\n)', a)
-s = s[:a] + s[a:b].replace("<string>Swiftgram</string>", "<string>Avragram</string>") + s[b:]
+for fragment in ("AppNameInfoPlist", "TelegramInfoPlist"):
+    a = s.index('name = "%s"' % fragment)
+    b = s.index('"""', s.index('"""', a) + 3)
+    part = s[a:b]
+    part = part.replace("<key>CFBundleDisplayName</key>\n    <string>Swiftgram</string>", "<key>CFBundleDisplayName</key>\n    <string>Avragram</string>")
+    part = part.replace("<key>CFBundleName</key>\n    <string>Swiftgram</string>", "<key>CFBundleName</key>\n    <string>Avragram</string>")
+    s = s[:a] + part + s[b:]
 open(p, "w").write(s)
 PY
 
