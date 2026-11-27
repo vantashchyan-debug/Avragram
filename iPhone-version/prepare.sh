@@ -34,6 +34,12 @@ for fragment in ("AppNameInfoPlist", "TelegramInfoPlist"):
 open(p, "w").write(s)
 PY
 
+# 2b. "Swiftgram" in the welcome screen and in texts that name the app
+for f in "$SG"/Telegram/Telegram-iOS/*.lproj/Localizable.strings; do
+  sed -i '' -e 's/^"Tour.Title1" = "Swiftgram";/"Tour.Title1" = "Avragram";/' -e 's/^"Application.Name" = "Swiftgram";/"Application.Name" = "Avragram";/' "$f" 2>/dev/null \
+    || sed -i -e 's/^"Tour.Title1" = "Swiftgram";/"Tour.Title1" = "Avragram";/' -e 's/^"Application.Name" = "Swiftgram";/"Application.Name" = "Avragram";/' "$f"
+done
+
 # 3. App icon
 cp "$HERE/branding/AppIcon.png" "$SG/Telegram/Telegram-iOS/DefaultAppIcon.xcassets/AppIconLLC.appiconset/Swiftgram.png"
 # iOS 26+ takes the home screen icon from the Icon Composer package (glass layers)

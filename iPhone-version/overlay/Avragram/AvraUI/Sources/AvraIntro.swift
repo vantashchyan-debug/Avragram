@@ -53,6 +53,7 @@ public enum AvraIntro {
 
     /// Called once the main window is visible.
     public static func show(in window: UIWindow) {
+        NSLog("[Avra] launch hook reached")
         if AvraDemo.showIfRequested(in: window) { return }
         guard !shown, enabled else { return }
         shown = true

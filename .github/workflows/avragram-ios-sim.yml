@@ -71,11 +71,12 @@ jobs:
           sleep 25
           xcrun simctl io "$DEVICE" screenshot shots/00-launch.png
           for s in fun chess chess2 chessSettings review sea seaBattle blast snake drop run bird g2048 calc soundpad voice intro online seaOnline privacy; do
-            xcrun simctl launch --terminate-running-process "$DEVICE" "$BUNDLE" -avraDemo "$s"
-            sleep 9
+            xcrun simctl terminate "$DEVICE" "$BUNDLE" || true
+            SIMCTL_CHILD_AVRA_DEMO="$s" xcrun simctl launch "$DEVICE" "$BUNDLE" -avraDemo "$s"
+            sleep 12
             xcrun simctl io "$DEVICE" screenshot "shots/$s.png"
           done
-          xcrun simctl spawn "$DEVICE" log show --last 10m --predicate 'process CONTAINS "Swiftgram" OR process CONTAINS "Avragram"' --style compact > shots/log.txt 2>&1 || true
+          xcrun simctl spawn "$DEVICE" log show --last 10m --predicate 'eventMessage CONTAINS "[Avra]" OR eventMessage CONTAINS "SG.Launch"' --style compact > shots/log.txt 2>&1 || true
           ls -la shots
 
       - name: Upload screenshots

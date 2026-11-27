@@ -5,21 +5,39 @@ import SwiftUI
 /// Screenshot mode for CI: launched with "-avraDemo <screen>", the app shows that Avragram screen over
 /// everything (no account needed). Used only by the simulator workflow; never triggered otherwise.
 enum AvraDemo {
-    private static var window: UIWindow?
-
     static let screens = ["fun", "chess", "chess2", "chessSettings", "review", "sea", "seaBattle", "blast", "snake", "drop", "run", "bird", "g2048",
                           "calc", "soundpad", "voice", "intro", "online", "seaOnline", "privacy"]
 
-    static func showIfRequested(in mainWindow: UIWindow) -> Bool {
+    private static var host: UIViewController?
+
+    static var requested: String? {
         let args = ProcessInfo.processInfo.arguments
-        guard let i = args.firstIndex(of: "-avraDemo"), i + 1 < args.count, screens.contains(args[i + 1]),
-              let scene = mainWindow.windowScene else { return false }
-        let host = UIHostingController(rootView: NavigationView { view(args[i + 1]) }.navigationViewStyle(.stack))
-        let w = UIWindow(windowScene: scene)
-        w.rootViewController = host
-        w.windowLevel = .alert + 1
-        w.makeKeyAndVisible()
-        window = w
+        if let i = args.firstIndex(of: "-avraDemo"), i + 1 < args.count, screens.contains(args[i + 1]) { return args[i + 1] }
+        if let env = ProcessInfo.processInfo.environment["AVRA_DEMO"], screens.contains(env) { return env }
+        return nil
+    }
+
+    static func showIfRequested(in mainWindow: UIWindow) -> Bool {
+        guard let name = requested else { return false }
+        NSLog("[Avra] demo requested: %@", name)
+        let controller = UIHostingController(rootView: NavigationView { view(name) }.navigationViewStyle(.stack))
+        host = controller
+        func attach(_ attempt: Int) {
+            let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap { $0.windows }
+            let target = windows.first { $0.isKeyWindow } ?? mainWindow
+            if controller.view.superview !== target {
+                controller.view.removeFromSuperview()
+                controller.view.frame = target.bounds
+                controller.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                target.addSubview(controller.view)
+            }
+            target.bringSubviewToFront(controller.view)
+            NSLog("[Avra] demo shown in %@ (attempt %d)", String(describing: type(of: target)), attempt)
+            if attempt < 6 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { attach(attempt + 1) }
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { attach(0) }
         return true
     }
 
