@@ -52,7 +52,7 @@ jobs:
             --configuration=debug_sim_arm64 \
             --buildNumber=${{ github.run_number }}
           mkdir -p "$GITHUB_WORKSPACE/sim"
-          IPA=$(ls bazel-bin/Telegram/*.ipa | head -1)
+          IPA="$(pwd)/$(ls bazel-bin/Telegram/*.ipa | head -1)"
           cd "$GITHUB_WORKSPACE/sim" && unzip -q "$IPA" && ls Payload
 
       - name: Screenshots
