@@ -255,6 +255,8 @@ public final class AvraUpdater {
                 Release r = new Release();
                 r.tag = o.optString("tag_name");
                 r.version = clean(r.tag);
+                // only Avragram releases "v1.x.y": never a tag carrying the Telegram / exteraGram version (13.x)
+                if (!r.tag.matches("v?\\d{1,2}\\.\\d{1,3}(\\.\\d{1,3})?") || num(r.version.split("\\.")[0]) >= 10) continue;
                 r.notes = o.optString("body", "");
                 r.pageUrl = o.optString("html_url", RELEASES_URL);
                 r.date = o.optString("published_at", "");
