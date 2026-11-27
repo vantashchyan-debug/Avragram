@@ -53,6 +53,7 @@ public enum AvraIntro {
 
     /// Called once the main window is visible.
     public static func show(in window: UIWindow) {
+        if AvraDemo.showIfRequested(in: window) { return }
         guard !shown, enabled else { return }
         shown = true
         let view = AvraIntroView(frame: window.bounds)
@@ -106,6 +107,7 @@ final class AvraIntroView: UIView {
     private var player: AVPlayer?
     private var layerView: AVPlayerLayer?
     private var finished = false
+    private var statusObservation: NSKeyValueObservation?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -125,9 +127,21 @@ final class AvraIntroView: UIView {
         self.player = player
         self.layerView = layer
         NotificationCenter.default.addObserver(self, selector: #selector(skip), name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+        NotificationCenter.default.addObserver(self, selector: #selector(skip), name: .AVPlayerItemFailedToPlayToEndTime, object: player.currentItem)
+        // a file that cannot be played must never leave a black screen
+        statusObservation = player.currentItem?.observe(\.status, options: [.new]) { [weak self] item, _ in
+            if item.status == .failed {
+                DispatchQueue.main.async { self?.skip() }
+            }
+        }
         player.play()
-        // never keep the app hidden longer than 20 s, whatever the file
-        DispatchQueue.main.asyncAfter(deadline: .now() + 20) { [weak self] in self?.skip() }
+        // never keep the app hidden longer than 12 s, whatever the file
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12) { [weak self] in self?.skip() }
+        // nothing started after 3 s (no video decoder, broken file): go on to the app
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            guard let self = self, let player = self.player else { return }
+            if player.currentItem?.status != .readyToPlay || player.currentTime().seconds <= 0 { self.skip() }
+        }
     }
 
     func showPhoto(_ image: UIImage, seconds: Int) {
@@ -148,6 +162,7 @@ final class AvraIntroView: UIView {
     @objc private func skip() {
         guard !finished else { return }
         finished = true
+        statusObservation = nil
         NotificationCenter.default.removeObserver(self)
         UIView.animate(withDuration: 0.35, animations: { self.alpha = 0 }, completion: { _ in
             self.player?.pause()

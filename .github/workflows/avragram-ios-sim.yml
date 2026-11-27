@@ -1,0 +1,85 @@
+name: Avragram iOS simulator screenshots
+
+# Builds Avragram for the iOS simulator, launches it and takes screenshots of every Avragram screen
+# (demo mode "-avraDemo <screen>", no account needed) plus a normal launch. Started by hand.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: xcode-27
+    timeout-minutes: 360
+    steps:
+      - name: Avragram sources
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: iPhone-version
+
+      - name: Swiftgram sources
+        run: |
+          set -e
+          COMMIT=$(cat iPhone-version/SWIFTGRAM_COMMIT)
+          sudo mkdir -p /Users/Shared/telegram-ios
+          sudo chown -R "$(whoami)" /Users/Shared/telegram-ios
+          cd /Users/Shared/telegram-ios
+          git init -q
+          git remote add origin https://github.com/Swiftgram/Telegram-iOS.git
+          git fetch -q --depth 1 origin "$COMMIT"
+          git checkout -q FETCH_HEAD
+          git submodule update --init --recursive --depth 1 --jobs 8
+
+      - name: Make it Avragram
+        env:
+          AVRA_API_ID: ${{ secrets.AVRA_API_ID }}
+          AVRA_API_HASH: ${{ secrets.AVRA_API_HASH }}
+        run: bash iPhone-version/prepare.sh /Users/Shared/telegram-ios
+
+      - name: Build for the simulator
+        run: |
+          set -e
+          cd /Users/Shared/telegram-ios
+          XCODE_VERSION=$(python3 -c 'import json;print(json.load(open("versions.json"))["xcode"])')
+          sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app/Contents/Developer
+          python3 build-system/Make/ImportCertificates.py --path build-system/fake-codesigning/certs
+          python3 -u build-system/Make/Make.py \
+            --bazelUserRoot="/private/var/tmp/_bazel_containerhost" \
+            build --continueOnError \
+            --configurationPath="build-system/avragram-configuration.json" \
+            --codesigningInformationPath=build-system/fake-codesigning \
+            --configuration=debug_sim_arm64 \
+            --buildNumber=${{ github.run_number }}
+          mkdir -p "$GITHUB_WORKSPACE/sim"
+          IPA=$(ls bazel-bin/Telegram/*.ipa | head -1)
+          cd "$GITHUB_WORKSPACE/sim" && unzip -q "$IPA" && ls Payload
+
+      - name: Screenshots
+        run: |
+          set -x
+          cd "$GITHUB_WORKSPACE/sim"
+          APP=$(ls -d Payload/*.app | head -1)
+          DEVICE=$(xcrun simctl list devices available | grep -E "iPhone (1[5-9]|2[0-9]) Pro \(" | head -1 | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/')
+          [ -z "$DEVICE" ] && DEVICE=$(xcrun simctl list devices available | grep -E "iPhone" | head -1 | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/')
+          xcrun simctl boot "$DEVICE" || true
+          xcrun simctl bootstatus "$DEVICE" -b
+          xcrun simctl install "$DEVICE" "$APP"
+          BUNDLE=$(/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "$APP/Info.plist")
+          mkdir -p shots
+          xcrun simctl launch "$DEVICE" "$BUNDLE"
+          sleep 25
+          xcrun simctl io "$DEVICE" screenshot shots/00-launch.png
+          for s in fun chess chess2 chessSettings review sea seaBattle blast snake drop run bird g2048 calc soundpad voice intro online seaOnline privacy; do
+            xcrun simctl launch --terminate-running-process "$DEVICE" "$BUNDLE" -avraDemo "$s"
+            sleep 9
+            xcrun simctl io "$DEVICE" screenshot "shots/$s.png"
+          done
+          xcrun simctl spawn "$DEVICE" log show --last 10m --predicate 'process CONTAINS "Swiftgram" OR process CONTAINS "Avragram"' --style compact > shots/log.txt 2>&1 || true
+          ls -la shots
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: avragram-ios-screens
+          path: sim/shots

@@ -406,9 +406,17 @@ struct AvraSeaGrid: View {
 
 struct AvraSeaScreen: View {
     @StateObject var game: AvraSeaGame
-    @Environment(\.sgTheme) var theme
 
     init(level: Int) { _game = StateObject(wrappedValue: AvraSeaGame(level: level)) }
+
+    var body: some View {
+        AvraSeaScreenBody(game: game)
+    }
+}
+
+struct AvraSeaScreenBody: View {
+    @ObservedObject var game: AvraSeaGame
+    @Environment(\.sgTheme) var theme
 
     var body: some View {
         ScrollView {
